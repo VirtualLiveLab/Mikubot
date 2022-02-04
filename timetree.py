@@ -3,6 +3,7 @@ import json
 import datetime
 import discord
 import Keys
+from pprint import pprint
 
 keyAPI = Keys.RetKEY("TimeTree2022")
 # calenderID = '2FetEotw8UeF'  # 2021
@@ -17,6 +18,7 @@ def getEventFromAPI():
     req.add_header('Accept', 'application/vnd.timetree.v1+json')
     with urllib.request.urlopen(req) as res:
         data = json.loads(res.read().decode('UTF-8'))
+    pprint(data)
     return data
 
 

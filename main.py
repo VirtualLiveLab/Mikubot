@@ -101,8 +101,8 @@ async def on_member_join(member):
 async def timetree(inter):
     inter_ = inter
     json = TT.getTodaysEventsJson('ミクミク!')
-    embed = discord.Embed(title=json.title, description=json.description, color=0x5efceb)
-    await inter_.reply(embed=embed)
+    # pprint(json)
+    await inter_.reply(embed=json)
 
 
 @slash.command(name='miku', description='ミクさんが返事をしてくれるよ', guild_ids=guilds)
@@ -179,12 +179,12 @@ async def delid(inter, id):
         await inter.reply(embed=embed)
 
 
-@slash.command(name='miku', description='ミクさんが返事をしてくれるよ', guild_ids=guilds, )
+@slash.command(name='miku', description='ミクさんが返事をしてくれるよ', guild_ids=guilds)
 async def miku(inter):
     await inter.reply("MIKU!!!")
 
 
-@slash.command(name='wether', description='今日の天気は...', guild_ids=guilds, )
+@slash.command(name='wether', description='今日の天気は...', guild_ids=guilds)
 async def wether(inter):
     await weatherParser(weatherURL)
     tenki_text = tenki[0][:-14]
