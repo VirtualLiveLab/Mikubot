@@ -140,7 +140,7 @@ async def addid(inter, text_id, role_id):
         await inter_.reply(embed=embed)
 
     else:
-        embed = discord.Embed(description="You have not permission", color=0xFF0000)
+        embed = discord.Embed(description="You have no permission", color=0xFF0000)
         await inter_.reply(embed=embed)
 
 
@@ -156,7 +156,7 @@ async def list(inter):
         await inter_.reply(embed=embed)
 
     else:
-        embed = discord.Embed(description="You have not permission", color=0xFF0000)
+        embed = discord.Embed(description="You have no permission", color=0xFF0000)
         await inter_.reply(embed=embed)
 
 
@@ -175,7 +175,7 @@ async def delid(inter, id):
         await inter_.reply(embed=embed)
 
     else:
-        embed = discord.Embed(description="You have not permission", color=0xFF0000)
+        embed = discord.Embed(description="You have no permission", color=0xFF0000)
         await inter.reply(embed=embed)
 
 
