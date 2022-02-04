@@ -1,11 +1,10 @@
 import discord
 import SQLite as SQL
-from discord.ext import commands
-from discord.ext import tasks
+from discord.ext import commands, tasks
 from dislash import InteractionClient, slash_commands, Option, OptionType
 from pprint import pprint
 from datetime import datetime
-# from timetreepack import timetree
+import timetree as TT
 import Keys as K
 import urllib.request
 from bs4 import BeautifulSoup
@@ -15,7 +14,7 @@ guilds = [938738282710335559]
 Intents = discord.Intents.all()
 client = commands.Bot(command_prefix='/', intents=Intents)
 slash = slash_commands.SlashClient(client)
-inter_client = InteractionClient(client)
+# inter_client = InteractionClient(client)
 
 weatherURL = 'https://rss-weather.yahoo.co.jp/rss/days/13.xml'
 tenki = []
@@ -37,6 +36,14 @@ async def on_ready():
     embed = discord.Embed(description="ミクが起動したよ!", color=0x66DDCC)
     await chennel.send(embed=embed)
     await client.change_presence(activity=discord.Game('プロセカ'))
+
+
+@tasks.loop(minutes=1)
+async def loop():
+    channel = client.get_channel(int('823479703302045708'))
+    now = datetime.now().strftime('%H:%M')
+    if now == '08:39':
+        await channel.send(embed=TT.getTodaysEvents('おはミク!!'))
 
 
 @client.event
@@ -92,8 +99,10 @@ async def on_member_join(member):
 
 @slash.command(name='timetree', description='今日の予定をとってくるよ', guild_ids=guilds)
 async def timetree(inter):
-    embed = discord.Embed(description="なれんじさんのせいで実装できてません", color=0x8affff)
-    await inter.reply(embed=embed)
+    inter_ = inter
+    json = TT.getTodaysEventsJson('ミクミク!')
+    embed = discord.Embed(title=json.title, description=json.description, color=0x5efceb)
+    await inter_.reply(embed=embed)
 
 
 @slash.command(name='miku', description='ミクさんが返事をしてくれるよ', guild_ids=guilds)
@@ -103,7 +112,8 @@ async def miku(inter):
 
 @slash.command(name='helloworld', description='Hello world!', guild_ids=guilds)
 async def helloworld(inter):
-    user = inter.author
+    inter_ = inter
+    user = inter_.author
     emb = discord.Embed(color=discord.Color.blurple())
     emb.title = str(user)
     emb.description = (
@@ -111,7 +121,7 @@ async def helloworld(inter):
         f"**ID:** `{user.id}`"
     )
     emb.set_thumbnail(url=user.avatar_url)
-    await inter.respond(embed=emb)
+    await inter_.respond(embed=emb)
 
 
 @slash.command(name='addlist', description='データベースに情報を追加するよ!', options=[
@@ -119,47 +129,50 @@ async def helloworld(inter):
     Option('role_id', '変換先のロールid', OptionType.STRING, required=True),
 ], guild_ids=guilds)
 async def addid(inter, text_id, role_id):
-    guild_id = inter.guild_id
+    inter_ = inter
+    guild_id = inter_.guild_id
     guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
     admin = guild.get_role(938738282894852105)
-    user = inter.author
+    user = inter_.author
     if admin in user.roles:
         SQL.set_id(text_id, role_id)
         embed = SQL.makeDBembed()
-        await inter.reply(embed=embed)
+        await inter_.reply(embed=embed)
 
     else:
         embed = discord.Embed(description="You have not permission", color=0xFF0000)
-        await inter.reply(embed=embed)
+        await inter_.reply(embed=embed)
 
 
 @slash.command(name='list', description='データベースを確認するよ!', guild_ids=guilds)
 async def list(inter):
-    guild_id = inter.guild_id
+    inter_ = inter
+    guild_id = inter_.guild_id
     guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
     admin = guild.get_role(938738282894852105)
-    user = inter.author
+    user = inter_.author
     if admin in user.roles:
         embed = SQL.makeDBembed()
-        await inter.reply(embed=embed)
+        await inter_.reply(embed=embed)
 
     else:
         embed = discord.Embed(description="You have not permission", color=0xFF0000)
-        await inter.reply(embed=embed)
+        await inter_.reply(embed=embed)
 
 
 @slash.command(name='delid', description='データベースから情報を削除するよ!', options=[
     Option('id', '変換元の固有id(一つ目の値)', OptionType.INTEGER, required=True)
 ], guild_ids=guilds)
 async def delid(inter, id):
-    guild_id = inter.guild_id
+    inter_ = inter
+    guild_id = inter_.guild_id
     guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
     admin = guild.get_role(938738282894852105)
-    user = inter.author
+    user = inter_.author
     if admin in user.roles:
         SQL.del_id(id)
         embed = SQL.makeDBembed()
-        await inter.reply(embed=embed)
+        await inter_.reply(embed=embed)
 
     else:
         embed = discord.Embed(description="You have not permission", color=0xFF0000)
