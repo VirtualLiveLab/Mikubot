@@ -48,8 +48,8 @@ async def loop():
 
 @client.event
 async def on_raw_reaction_add(payload):
-    # if payload.emoji.id != 824617616651059271:
-    #     return
+    if payload.emoji.id != 939218534515494932:
+        return
     print(payload.message_id)
     willAddRoleId = SQL.out(payload.message_id)
     if willAddRoleId == -1:
@@ -63,6 +63,8 @@ async def on_raw_reaction_add(payload):
 
 @client.event
 async def on_raw_reaction_remove(payload):
+    if payload.emoji.id != 939218534515494932:
+        return
     willAddRoleId = SQL.out(payload.message_id)
     if willAddRoleId == -1:
         return
