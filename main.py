@@ -40,7 +40,7 @@ async def on_ready():
 
 @tasks.loop(minutes=1)
 async def loop():
-    channel = client.get_channel(int('823479703302045708'))
+    channel = client.get_channel(int('941312720492433449'))
     now = datetime.now().strftime('%H:%M')
     if now == '08:39':
         await channel.send(embed=TT.getTodaysEvents('おはミク!!'))
