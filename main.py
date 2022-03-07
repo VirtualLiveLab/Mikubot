@@ -195,4 +195,5 @@ async def wether(inter):
     await inter.reply(embed=embed)
 
 
+loop.start()
 client.run(K.RetKEY("VLL2022TOKEN"))
