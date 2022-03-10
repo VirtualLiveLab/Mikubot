@@ -18,7 +18,7 @@ slash = slash_commands.SlashClient(client)
 
 weatherURL = 'https://rss-weather.yahoo.co.jp/rss/days/13.xml'
 tenki = []
-
+    
 async def weatherParser(rssurl):
    with urllib.request.urlopen(rssurl) as res:
       xml = res.read()

@@ -1,9 +1,7 @@
 # ライブラリのインポート
-from email import header
 from pprint import pprint
 import discord
 from discord.ext import commands
-import csv
 import requests
 
 # おまじない(Botの用意)
