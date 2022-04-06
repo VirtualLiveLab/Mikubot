@@ -2,11 +2,10 @@ import urllib.request
 import json
 import datetime
 import discord
-import Keys
 from pprint import pprint
+import os
 
-keyAPI = Keys.RetKEY("TimeTree2022")
-# calenderID = '2FetEotw8UeF'  # 2021
+keyAPI = os.getenv('ApiKey')
 calenderID = 'oYuKQ3sxKCyn'  # 2022
 
 

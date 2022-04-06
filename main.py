@@ -5,9 +5,9 @@ from dislash import InteractionClient, slash_commands, Option, OptionType
 from pprint import pprint
 from datetime import datetime
 import timetree as TT
-import Keys as K
 import urllib.request
 from bs4 import BeautifulSoup
+import os
 
 # コマンドが使えるようにするサーバーのIDを列挙
 guilds = [938738282710335559]
@@ -196,4 +196,4 @@ async def wether(inter):
 
 
 loop.start()
-client.run(K.RetKEY("VLL2022TOKEN"))
+client.run(os.getenv('Token'))
