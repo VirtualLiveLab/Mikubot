@@ -30,7 +30,7 @@ jobs:
 
       - name: Build and Push Container
         run: |-
-          docker build . -t ${{ env.IMAGE }} --build-arg token=${{ secrets.DISCORD_TOKEN }}
+          docker build . -t ${{ env.IMAGE }} --build-arg token=${{ secrets.DISCORD_TOKEN }} apiKey=${{ secrets.TIMETREE2022_APIKEY }}
           docker push ${{ env.IMAGE }}
 
 #       - name: Deploy to Cloud Run
