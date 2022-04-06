@@ -13,6 +13,14 @@ ENV LC_ALL ja_JP.UTF-8
 ENV TZ JST-9
 ENV TERM xterm
 
+# 環境変数にDiscordのトークンの追加
+ARG token
+ENV Token=${token}
+
+# 環境変数にTimeTreeのトークンの追加
+ARG apiKey
+ENV ApiKey=${apiKey}
+
 RUN apt-get install -y vim less
 RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
