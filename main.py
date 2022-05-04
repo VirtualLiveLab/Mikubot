@@ -195,5 +195,62 @@ async def wether(inter):
     await inter.reply(embed=embed)
 
 
+@slash.command(name='kaikei', guild_ids=guilds)
+async def kaikei(inter):
+    pass
+
+
+@kaikei.sub_command(description="remove role")
+async def remove(inter):
+    inter_ = inter
+    
+    for x in inter.author.roles:
+        if x.role_id == 938738282894852100:
+            count = 1
+
+    if count == 1:
+        try:
+            guild_id = inter_.guild_id
+            guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
+            role = guild.get_role(938738282894852100)
+            embed = discord.Embed(title="success!", description="add role!", color=0x00ff00)
+            await inter_.member.remove_roles(role)
+            await inter_.reply(embed=embed)
+
+        except:
+            embed = discord.Embed(title="error!", description="Not found Role!", color=0xff0000)
+            await inter_.reply(embed=embed)
+
+    if count == 0:
+        embed = discord.Embed(title="error!", description="you don't have permission!", color=0xff0000)
+        await inter_.reply(embed=embed)
+
+
+@kaikei.sub_command(description="add role")
+async def add(inter):
+    inter_ = inter
+    
+    for x in inter.author.roles:
+        if x.role_id == 938738282894852100:
+            count = 1
+
+    if count == 1:
+        try:
+            guild_id = inter_.guild_id
+            guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
+            role = guild.get_role(938738282894852100)
+            embed = discord.Embed(title="success!", description="add role!", color=0x00ff00)
+            await inter_.member.add_roles(role)
+            await inter_.reply(embed=embed)
+
+        except:
+            embed = discord.Embed(title="error!", description="Not found Role!", color=0xff0000)
+            await inter_.reply(embed=embed)
+
+    if count == 0:
+        embed = discord.Embed(title="error!", description="you don't have permission!", color=0xff0000)
+        await inter_.reply(embed=embed)
+
+
 loop.start()
 client.run(os.getenv('Token'))
