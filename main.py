@@ -200,12 +200,14 @@ async def kaikei(inter):
     pass
 
 
-@kaikei.sub_command(description="remove role")
-async def remove(inter):
+@kaikei.sub_command(description="remove role", options=[
+    Option('user', "remove", OptionType.USER, required=True)
+])
+async def remove(inter, user):
     inter_ = inter
-    
+    count = 0
     for x in inter.author.roles:
-        if x.role_id == 938738282894852100:
+        if x.id == 938738282894852103:
             count = 1
 
     if count == 1:
@@ -213,8 +215,8 @@ async def remove(inter):
             guild_id = inter_.guild_id
             guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
             role = guild.get_role(938738282894852100)
-            embed = discord.Embed(title="success!", description="add role!", color=0x00ff00)
-            await inter_.member.remove_roles(role)
+            embed = discord.Embed(title="success!", description="remove role from " + user.name, color=0x00ff00)
+            await user.remove_roles(role)
             await inter_.reply(embed=embed)
 
         except:
@@ -226,12 +228,14 @@ async def remove(inter):
         await inter_.reply(embed=embed)
 
 
-@kaikei.sub_command(description="add role")
-async def add(inter):
+@kaikei.sub_command(description="add role", options=[
+    Option('user', "add", OptionType.USER, required=True)
+])
+async def add(inter, user):
     inter_ = inter
-    
+    count = 0
     for x in inter.author.roles:
-        if x.role_id == 938738282894852100:
+        if x.id == 938738282894852103:
             count = 1
 
     if count == 1:
@@ -239,12 +243,12 @@ async def add(inter):
             guild_id = inter_.guild_id
             guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
             role = guild.get_role(938738282894852100)
-            embed = discord.Embed(title="success!", description="add role!", color=0x00ff00)
-            await inter_.member.add_roles(role)
+            embed = discord.Embed(title="success!", description="add role " + user.name, color=0x00ff00)
+            await user.add_roles(role)
             await inter_.reply(embed=embed)
 
         except:
-            embed = discord.Embed(title="error!", description="Not found Role!", color=0xff0000)
+            embed = discord.Embed(title="error!", description="Error!", color=0xff0000)
             await inter_.reply(embed=embed)
 
     if count == 0:
