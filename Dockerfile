@@ -30,4 +30,6 @@ RUN pip install dislash.py
 RUN pip install datetime
 RUN pip install bs4
 
-CMD ["python","main.py"]
+RUN chmod 744 /startup.sh
+
+CMD ["/startup.sh"]
