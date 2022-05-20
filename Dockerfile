@@ -29,6 +29,6 @@ RUN pip install dislash.py
 RUN pip install datetime
 RUN pip install bs4 \
 
-RUN chmod +x /root/startup.sh
+RUN chmod 744 /root/startup.sh
 
 cmd ["sh","-c","/root/startup.sh"]
