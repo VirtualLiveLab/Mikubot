@@ -1,8 +1,7 @@
 FROM python:3
 USER root
 
-WORKDIR /opt
-COPY . /opt
+copy . /root/
 
 RUN apt-get update
 RUN apt-get -y install locales && \
@@ -28,8 +27,8 @@ RUN pip install --upgrade setuptools
 RUN pip install discord.py
 RUN pip install dislash.py
 RUN pip install datetime
-RUN pip install bs4
+RUN pip install bs4 \
 
-RUN chmod 744 startup.sh
+RUN chmod +x /root/startup.sh
 
-CMD ["startup.sh"]
+cmd ["sh","-c","/root/startup.sh"]
