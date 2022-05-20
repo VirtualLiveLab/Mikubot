@@ -1,7 +1,6 @@
 FROM python:3
 USER root
 
-
 copy . /root/
 
 RUN apt-get update
@@ -21,7 +20,7 @@ ENV Token=${token}
 ARG apiKey
 ENV ApiKey=${apiKey}
 
-RUN apt-get install -y vim less
+RUN #apt-get install -y vim less
 RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
 
@@ -30,4 +29,6 @@ RUN pip install dislash.py
 RUN pip install datetime
 RUN pip install bs4
 
-CMD ./root/startup.sh
+RUN chmod 744 /root/startup.sh
+
+CMD ["./root/startup.sh"]
