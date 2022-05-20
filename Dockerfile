@@ -1,7 +1,7 @@
 FROM python:3
-USER root
 
-copy . /root/
+WORKDIR /app
+COPY . /app
 
 RUN apt-get update
 RUN apt-get -y install locales && \
@@ -29,6 +29,6 @@ RUN pip install dislash.py
 RUN pip install datetime
 RUN pip install bs4
 
-RUN chmod 744 /root/startup.sh
+RUN chmod 744 /app/startup.sh
 
-CMD ["./root/startup.sh"]
+CMD ["/app/startup.sh"]
