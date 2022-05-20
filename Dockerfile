@@ -1,6 +1,7 @@
 FROM python:3
 USER root
 
+
 copy . /root/
 
 RUN apt-get update
@@ -27,8 +28,6 @@ RUN pip install --upgrade setuptools
 RUN pip install discord.py
 RUN pip install dislash.py
 RUN pip install datetime
-RUN pip install bs4 \
+RUN pip install bs4
 
-RUN chmod 744 /root/startup.sh
-
-cmd ["sh","-c","/root/startup.sh"]
+CMD ./root/startup.sh
