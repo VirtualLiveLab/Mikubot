@@ -5,7 +5,7 @@ import discord
 from pprint import pprint
 import os
 
-keyAPI = os.getenv('ApiKey')
+keyAPI = os.getenv('apikey')
 calenderID = 'oYuKQ3sxKCyn'  # 2022
 
 

@@ -14,11 +14,11 @@ ENV TERM xterm
 
 # 環境変数にDiscordのトークンの追加
 ARG token
-ENV Token=${token}
+ENV token=${token}
 
 # 環境変数にTimeTreeのトークンの追加
-ARG apiKey
-ENV ApiKey=${apiKey}
+ARG apikey
+ENV apikey=${apiKey}
 
 RUN #apt-get install -y vim less
 RUN pip install --upgrade pip

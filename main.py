@@ -19,14 +19,14 @@ slash = slash_commands.SlashClient(client)
 weatherURL = 'https://rss-weather.yahoo.co.jp/rss/days/13.xml'
 tenki = []
     
-async def weatherParser(rssurl):
-   with urllib.request.urlopen(rssurl) as res:
-      xml = res.read()
-      soup = BeautifulSoup(xml, "html.parser")
-      for item in soup.find_all("item"):
-         title = item.find("title").string
-         if title.find("[ PR ]") == -1:
-            tenki.append(title)
+# async def weatherParser(rssurl):
+#    with urllib.request.urlopen(rssurl) as res:
+#       xml = res.read()
+#       soup = BeautifulSoup(xml, "html.parser")
+#       for item in soup.find_all("item"):
+#          title = item.find("title").string
+#          if title.find("[ PR ]") == -1:
+#             tenki.append(title)
 
 @client.event
 async def on_ready():
@@ -186,13 +186,13 @@ async def miku(inter):
     await inter.reply("MIKU!!!")
 
 
-@slash.command(name='wether', description='今日の天気は...', guild_ids=guilds)
-async def wether(inter):
-    await weatherParser(weatherURL)
-    tenki_text = tenki[0][:-14]
-    embed = discord.Embed(title='今日の天気は...', description=tenki_text, color=0x8affff)
-    tenki.clear()
-    await inter.reply(embed=embed)
+# @slash.command(name='weather', description='今日の天気は...', guild_ids=guilds)
+# async def weather(inter):
+#     await weatherParser(weatherURL)
+#     tenki_text = tenki[0][:-14]
+#     embed = discord.Embed(title='今日の天気は...', description=tenki_text, color=0x8affff)
+#     tenki.clear()
+#     await inter.reply(embed=embed)
 
 
 @slash.command(name='kaikei', guild_ids=guilds)
@@ -257,4 +257,4 @@ async def add(inter, user):
 
 
 loop.start()
-client.run(os.getenv('Token'))
+client.run(os.getenv('token'))
