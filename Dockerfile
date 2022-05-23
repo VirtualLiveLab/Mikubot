@@ -14,13 +14,14 @@ ENV TERM xterm
 
 # 環境変数にDiscordのトークンの追加
 ARG token
-ENV token=${token}
+ENV token=$token
 
 # 環境変数にTimeTreeのトークンの追加
-ARG apikey
-ENV apikey=${apiKey}
+ARG apiKey
+ENV apikey=$apiKey
 
 RUN #apt-get install -y vim less
+RUN apt update && apt -y install supervisor
 RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
 
@@ -31,4 +32,4 @@ RUN pip install bs4
 
 RUN chmod 744 /app/startup.sh
 
-CMD ["/app/startup.sh"]
+CMD ["sh", "-c", "/app/startup.sh"]

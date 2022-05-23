@@ -175,4 +175,4 @@ async def vote_name(ctx):
         await msg.edit(components=[])
 
 
-bot.run(os.getenv('Token'))
+bot.run(os.getenv('token'))
