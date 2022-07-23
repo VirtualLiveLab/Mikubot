@@ -15,18 +15,7 @@ Intents = discord.Intents.all()
 client = commands.Bot(command_prefix='/', intents=Intents)
 slash = slash_commands.SlashClient(client)
 # inter_client = InteractionClient(client)
-
-weatherURL = 'https://rss-weather.yahoo.co.jp/rss/days/13.xml'
-tenki = []
     
-# async def weatherParser(rssurl):
-#    with urllib.request.urlopen(rssurl) as res:
-#       xml = res.read()
-#       soup = BeautifulSoup(xml, "html.parser")
-#       for item in soup.find_all("item"):
-#          title = item.find("title").string
-#          if title.find("[ PR ]") == -1:
-#             tenki.append(title)
 
 @client.event
 async def on_ready():
@@ -186,15 +175,6 @@ async def miku(inter):
     await inter.reply("MIKU!!!")
 
 
-# @slash.command(name='weather', description='今日の天気は...', guild_ids=guilds)
-# async def weather(inter):
-#     await weatherParser(weatherURL)
-#     tenki_text = tenki[0][:-14]
-#     embed = discord.Embed(title='今日の天気は...', description=tenki_text, color=0x8affff)
-#     tenki.clear()
-#     await inter.reply(embed=embed)
-
-
 @slash.command(name='vote', description='vote', guild_ids=guilds)
 async def vote(ctx):
     row = ActionRow(
@@ -250,61 +230,6 @@ async def vote(ctx):
         await msg.edit(components=[])
 
 
-@slash.command(name='vote_id', description='vote add id', guild_ids=guilds)
-async def vote_id(ctx):
-    row = ActionRow(
-        Button(
-            style=ButtonStyle.green,
-            label="A",
-            custom_id="A"
-        ),
-        Button(
-            style=ButtonStyle.red,
-            label="B",
-            custom_id="B"
-        )
-    )
-    msg = await ctx.send("投票", components=[row])
-    A = []
-    B = []
-    on_click = msg.create_click_listener(timeout=30)
-
-    @on_click.matching_id("A")
-    async def on_test_button(inter):
-        if (str(inter.author.id) in A) or (str(inter.author.id) in B):
-            await inter.reply("You are already voted!", ephemeral=True)
-
-        else:
-            A.append(str(inter.author.id))
-            await inter.reply("You've voted A", ephemeral=True)
-
-    @on_click.matching_id("B")
-    async def on_test_button(inter):
-        if (str(inter.author.id) in A) or (str(inter.author.id) in B):
-            await inter.reply("You are already voted!", ephemeral=True)
-
-        else:
-            B.append(str(inter.author.id))
-            await inter.reply("You've voted B", ephemeral=True)
-
-    @on_click.timeout
-    async def on_timeout():
-        embed = discord.Embed(
-            title="結果",
-            color=0x00ff00,
-        )
-        embed.set_author(name=ctx.author,
-                         icon_url=ctx.author.avatar_url  # Botのアイコンを設定してみる
-                         )
-        embed.add_field(name="A", value=str(len(A)) + "\n" + "\n".join(A))
-        embed.add_field(name="B", value=str(len(B)) + "\n" + "\n".join(B))
-        embed.set_footer(text="made by P4sTela",
-                         icon_url="https://raw.githubusercontent.com/P4sTela/P4sTela/main/iconmono_500.png")
-
-        await ctx.send(embed=embed)
-        await msg.edit(components=[])
-
-
 @slash.command(name='vote_name', description='vote add name', guild_ids=guilds)
 async def vote_name(ctx):
     row = ActionRow(
@@ -353,8 +278,6 @@ async def vote_name(ctx):
                          )
         embed.add_field(name="A", value=str(len(A)) + "\n" + "\n".join(A))
         embed.add_field(name="B", value=str(len(B)) + "\n" + "\n".join(B))
-        embed.set_footer(text="made by P4sTela",
-                         icon_url="https://raw.githubusercontent.com/P4sTela/P4sTela/main/iconmono_500.png")
 
         await ctx.send(embed=embed)
         await msg.edit(components=[])
