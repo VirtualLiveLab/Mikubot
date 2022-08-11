@@ -221,8 +221,6 @@ async def vote(ctx):
                          )
         embed.add_field(name="A", value=str(len(A)))
         embed.add_field(name="B", value=str(len(B)))
-        embed.set_footer(text="made by P4sTela",
-                         icon_url="https://raw.githubusercontent.com/P4sTela/P4sTela/main/iconmono_500.png")
 
         await ctx.send(embed=embed)
         await msg.edit(components=[])
