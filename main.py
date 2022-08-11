@@ -5,8 +5,6 @@ from dislash import InteractionClient, slash_commands, Option, OptionType, Actio
 from pprint import pprint
 from datetime import datetime
 import timetree as TT
-import urllib.request
-from bs4 import BeautifulSoup
 import os
 
 # コマンドが使えるようにするサーバーのIDを列挙
