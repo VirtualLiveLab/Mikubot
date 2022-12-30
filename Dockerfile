@@ -26,7 +26,7 @@ RUN apt -y install supervisor
 RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
 
-RUN pip install discord.py
+RUN pip install discord.py==1.7.3
 RUN pip install dislash.py
 RUN pip install datetime
 
