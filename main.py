@@ -88,7 +88,7 @@ async def on_member_join(member):
 
 
 @slash.command(name='omikuji', description='omikuji!!!!!', guild_ids=guilds)
-async def timetree(inter):
+async def omikuji(inter):
     inter_ = inter
     ran = random.random()
     if ran < 0.01:
