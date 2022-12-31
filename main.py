@@ -6,6 +6,7 @@ from pprint import pprint
 from datetime import datetime
 import timetree as TT
 import os
+import random
 
 # コマンドが使えるようにするサーバーのIDを列挙
 guilds = [938738282710335559]
@@ -84,6 +85,29 @@ async def on_message(message):
 async def on_member_join(member):
     role_buhi = discord.utils.get(member.guild.roles, id=938738282894852100)
     await member.add_roles(role_buhi)
+
+
+@slash.command(name='omikuji', description='omikuji!!!!!', guild_ids=guilds)
+async def timetree(inter):
+    inter_ = inter
+    ran = random.random()
+    if ran < 0.01:
+        txt = "すごく大吉！！！！"
+    elif ran < 0.1:
+        txt = "大吉！"
+    elif ran < 0.3:
+        txt = "吉！"
+    elif ran < 0.6:
+        txt = "中吉！"
+    elif ran < 0.8:
+        txt = "小吉"
+    elif ran < 0.99:
+        txt = "末吉！"
+    else:
+        txt = "凶！"
+    emb = discord.Embed(color=0x66DDCC)
+    emb.description = txt
+    await inter_.reply(embed=emb)
 
 
 @slash.command(name='timetree', description='今日の予定をとってくるよ', guild_ids=guilds)
