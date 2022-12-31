@@ -21,7 +21,7 @@ async def on_ready():
     print('Done Login')
     ch_id = 938738283364618264  # general
     chennel = client.get_channel(ch_id)
-    embed = discord.Embed(description="ミクが起動したよ!", color=0x66DDCC)
+    embed = discord.Embed(description="あけましておめでとうございます!\nミクが起動したよ!", color=0x66DDCC)
     await chennel.send(embed=embed)
     await client.change_presence(activity=discord.Game('プロセカ'))
 
