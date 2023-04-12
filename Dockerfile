@@ -32,4 +32,4 @@ RUN pip install datetime
 
 RUN chmod 744 /app/startup.sh
 
-CMD ["sh", "-c", "/app/startup.sh"]
+CMD ["python", "/app/main.py"]

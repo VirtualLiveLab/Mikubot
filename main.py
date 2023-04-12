@@ -18,7 +18,7 @@ slash = slash_commands.SlashClient(client)
 ###### id
 general_ch = 1089948444531097791  # general
 oshirase_ch = 1090159702870081638  # お知らせ
-role_ch = 1089948444531097783  # role
+role_ch = 1095718001283706940  # role
 
 ###### role_id
 buhiminou_role = 1089948443444781121
