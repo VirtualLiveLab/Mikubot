@@ -14,12 +14,21 @@ Intents = discord.Intents.all()
 client = commands.Bot(command_prefix='/', intents=Intents)
 slash = slash_commands.SlashClient(client)
 # inter_client = InteractionClient(client)
-    
+
+###### id
+general_ch = 938738283364618264  # general
+oshirase_ch = 941312720492433449 # お知らせ
+role_ch = 939218534515494932 # role
+
+###### role_id
+buhiminou_role = 938738282894852100
+admin_role = 938738282894852105
+kaikei_role = 938738282894852103
 
 @client.event
 async def on_ready():
     print('Done Login')
-    ch_id = 938738283364618264  # general
+    ch_id = general_ch
     chennel = client.get_channel(ch_id)
     embed = discord.Embed(description="ミクが起動したよ!", color=0x66DDCC)
     # await chennel.send(embed=embed)
@@ -28,7 +37,7 @@ async def on_ready():
 
 @tasks.loop(minutes=1)
 async def loop():
-    channel = client.get_channel(941312720492433449)
+    channel = client.get_channel(oshirase_ch)
     now = datetime.now().strftime('%H:%M')
     if now == '08:39':
         await channel.send(embed=TT.getTodaysEvents('おはミク!!'))
@@ -36,7 +45,7 @@ async def loop():
 
 @client.event
 async def on_raw_reaction_add(payload):
-    if payload.emoji.id != 939218534515494932:
+    if payload.emoji.id != role_ch:
         return
     print(payload.message_id)
     willAddRoleId = SQL.out(payload.message_id)
@@ -51,7 +60,7 @@ async def on_raw_reaction_add(payload):
 
 @client.event
 async def on_raw_reaction_remove(payload):
-    if payload.emoji.id != 939218534515494932:
+    if payload.emoji.id != role_ch:
         return
     willAddRoleId = SQL.out(payload.message_id)
     if willAddRoleId == -1:
@@ -83,31 +92,31 @@ async def on_message(message):
 
 @client.event
 async def on_member_join(member):
-    role_buhi = discord.utils.get(member.guild.roles, id=938738282894852100)
+    role_buhi = discord.utils.get(member.guild.roles, id=buhiminou_role)
     await member.add_roles(role_buhi)
 
 
-@slash.command(name='omikuji', description='omikuji!!!!!', guild_ids=guilds)
-async def omikuji(inter):
-    inter_ = inter
-    ran = random.random()
-    if ran < 0.01:
-        txt = "すごく大吉！！！！"
-    elif ran < 0.1:
-        txt = "大吉！"
-    elif ran < 0.3:
-        txt = "吉！"
-    elif ran < 0.6:
-        txt = "中吉！"
-    elif ran < 0.8:
-        txt = "小吉！"
-    elif ran < 0.99:
-        txt = "末吉！"
-    else:
-        txt = "凶！"
-    emb = discord.Embed(color=0x66DDCC)
-    emb.description = txt
-    await inter_.reply(embed=emb)
+# @slash.command(name='omikuji', description='omikuji!!!!!', guild_ids=guilds)
+# async def omikuji(inter):
+#     inter_ = inter
+#     ran = random.random()
+#     if ran < 0.01:
+#         txt = "すごく大吉！！！！"
+#     elif ran < 0.1:
+#         txt = "大吉！"
+#     elif ran < 0.3:
+#         txt = "吉！"
+#     elif ran < 0.6:
+#         txt = "中吉！"
+#     elif ran < 0.8:
+#         txt = "小吉！"
+#     elif ran < 0.99:
+#         txt = "末吉！"
+#     else:
+#         txt = "凶！"
+#     emb = discord.Embed(color=0x66DDCC)
+#     emb.description = txt
+#     await inter_.reply(embed=emb)
 
 
 @slash.command(name='timetree', description='今日の予定をとってくるよ', guild_ids=guilds)
@@ -145,7 +154,7 @@ async def addid(inter, text_id, role_id):
     inter_ = inter
     guild_id = inter_.guild_id
     guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
-    admin = guild.get_role(938738282894852105)
+    admin = guild.get_role(admin_role)
     user = inter_.author
     if admin in user.roles:
         SQL.set_id(text_id, role_id)
@@ -162,7 +171,7 @@ async def list(inter):
     inter_ = inter
     guild_id = inter_.guild_id
     guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
-    admin = guild.get_role(938738282894852105)
+    admin = guild.get_role(admin_role)
     user = inter_.author
     if admin in user.roles:
         embed = SQL.makeDBembed()
@@ -180,7 +189,7 @@ async def delid(inter, id):
     inter_ = inter
     guild_id = inter_.guild_id
     guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
-    admin = guild.get_role(938738282894852105)
+    admin = guild.get_role(admin_role)
     user = inter_.author
     if admin in user.roles:
         SQL.del_id(id)
@@ -315,14 +324,14 @@ async def remove(inter, user):
     inter_ = inter
     count = 0
     for x in inter.author.roles:
-        if x.id == 938738282894852103:
+        if x.id == kaikei_role:
             count = 1
 
     if count == 1:
         try:
             guild_id = inter_.guild_id
             guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
-            role = guild.get_role(938738282894852100)
+            role = guild.get_role(buhiminou_role)
             embed = discord.Embed(title="success!", description="remove role from " + user.name, color=0x00ff00)
             await user.remove_roles(role)
             await inter_.reply(embed=embed)
@@ -343,14 +352,14 @@ async def add(inter, user):
     inter_ = inter
     count = 0
     for x in inter.author.roles:
-        if x.id == 938738282894852103:
+        if x.id == kaikei_role:
             count = 1
 
     if count == 1:
         try:
             guild_id = inter_.guild_id
             guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
-            role = guild.get_role(938738282894852100)
+            role = guild.get_role(buhiminou_role)
             embed = discord.Embed(title="success!", description="add role " + user.name, color=0x00ff00)
             await user.add_roles(role)
             await inter_.reply(embed=embed)
