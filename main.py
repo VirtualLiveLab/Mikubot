@@ -9,21 +9,21 @@ import os
 import random
 
 # コマンドが使えるようにするサーバーのIDを列挙
-guilds = [938738282710335559]
+guilds = [1089948443297992915]
 Intents = discord.Intents.all()
 client = commands.Bot(command_prefix='/', intents=Intents)
 slash = slash_commands.SlashClient(client)
 # inter_client = InteractionClient(client)
 
 ###### id
-general_ch = 938738283364618264  # general
-oshirase_ch = 941312720492433449 # お知らせ
-role_ch = 939218534515494932 # role
+general_ch = 1089948444531097791  # general
+oshirase_ch = 1090159702870081638  # お知らせ
+role_ch = 1089948444531097783  # role
 
 ###### role_id
-buhiminou_role = 938738282894852100
-admin_role = 938738282894852105
-kaikei_role = 938738282894852103
+buhiminou_role = 1089948443444781121
+admin_role = 1089948443465764936
+kaikei_role = 1089948443444781122
 
 @client.event
 async def on_ready():
