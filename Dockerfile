@@ -1,35 +1,33 @@
-FROM python:3.9
+FROM python:3.10-buster as builder
+
+WORKDIR /opt
+
+# python environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONUTF8=1 \
+    PYTHONIOENCODING=UTF-8 \
+    PIP_DISABLE_PIP_VERSION_CHECK=on
+
+# install python dependencies
+COPY requirements.txt /opt/
+RUN pip install --no-cache-dir -U pip  &&\
+    pip install --no-cache-dir -U setuptools  && \
+    pip install --no-cache-dir -U wheel  && \
+    pip install --no-cache-dir -r requirements.txt
+
+
+FROM python:3.10-slim-buster as runner
 
 WORKDIR /app
-COPY . /app
 
-#RUN apt-get update
-#RUN apt-get -y install locales && \
-#    localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
-ENV LANG ja_JP.UTF-8
-ENV LANGUAGE ja_JP:ja
-ENV LC_ALL ja_JP.UTF-8
-ENV TZ JST-9
-ENV TERM xterm
+# permission settings
+RUN groupadd -r app && useradd -r -g app app
+RUN chown -R app:app /app
+USER app
 
-# 環境変数にDiscordのトークンの追加
-ARG token
-ENV token=$token
+COPY --from=builder /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
+COPY --chown=app:app . ./
 
-# 環境変数にTimeTreeのトークンの追加
-ARG apiKey
-ENV apikey=$apiKey
-
-RUN #apt-get install -y vim less
-RUN apt update
-RUN apt -y install supervisor
-RUN pip install --upgrade pip
-RUN pip install --upgrade setuptools
-
-RUN pip install discord.py==1.7.3
-RUN pip install dislash.py
-RUN pip install datetime
-
-RUN chmod 744 /app/startup.sh
-
-CMD ["python", "/app/main.py"]
+# start process
+ENTRYPOINT ["python", "main.py"]
