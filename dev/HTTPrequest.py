@@ -14,7 +14,7 @@ url = "https://discord.com/api/v8/guilds/1089948443297992915/members?limit=500"
 # }
 
 headers = {
-    "Authorization": "Bot OTM4NzU3OTEzODk0MzI2Mjgy.Yfu8bw.LAdzsApJc6ymDqHwrd9kzE7BzHI" # Practice
+    "Authorization": "Bot" # Practice
 }
 
 # name = ["Hatsune","世界の真ん中を歩く","Hello, World!","MC1","フォニイ","ロウワー","グッバイ宣言","天ノ弱","スーパーヒーロー","T.A.O","MC2","孤独の果て","ビバハピ","えれくとりっく・えんじぇぅ","ルカルカ★ナイトフィーバー","on the rocks","MC3","エゴ","霽れを待つ","Last Night, Good Night","ファイヴ","MC4","ODDS & ENDS","アンコール","Catch the Wave","水色侵略","愛言葉Ⅱ","MC5","Connecting","39","ED","テーマ曲"]
