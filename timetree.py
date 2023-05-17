@@ -10,8 +10,7 @@ calenderID = 'yJojmgmD7kt9'  # 2023
 
 
 def getEventFromAPI():
-    url = 'https://timetreeapis.com/calendars/{}/upcoming_events?timezone=Asia/Tokyo'.format(
-        calenderID.join(calenderID.split()))
+    url = 'https://timetreeapis.com/calendars/yJojmgmD7kt9/upcoming_events?timezone=Asia/Tokyo'
     req = urllib.request.Request(url)
     req.add_header('Authorization', 'Bearer ' + keyAPI)
     req.add_header('Accept', 'application/vnd.timetree.v1+json')
