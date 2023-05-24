@@ -6,7 +6,6 @@ from pprint import pprint
 from datetime import datetime
 import timetree as TT
 import os
-import random
 
 # コマンドが使えるようにするサーバーのIDを列挙
 guilds = [1089948443297992915]
@@ -21,7 +20,7 @@ oshirase_ch = 1090159702870081638  # お知らせ
 role_ch = 1095718001283706940  # role
 
 ###### role_id
-buhiminou_role = 1089948443444781121
+buhiminou_role = 1107943462881468426
 admin_role = 1089948443465764936
 kaikei_role = 1089948443444781122
 
@@ -31,9 +30,7 @@ async def on_ready():
     ch_id = general_ch
     chennel = client.get_channel(ch_id)
     embed = discord.Embed(description="ミクが起動したよ!", color=0x66DDCC)
-    # await chennel.send(embed=embed)
     await client.change_presence(activity=discord.Game('プロセカ'))
-
 
 @tasks.loop(minutes=1)
 async def loop():
@@ -41,7 +38,6 @@ async def loop():
     now = datetime.now().strftime('%H:%M')
     if now == '08:39':
         await channel.send(embed=TT.getTodaysEvents('おはミク!!'))
-
 
 @client.event
 async def on_raw_reaction_add(payload):
@@ -53,10 +49,9 @@ async def on_raw_reaction_add(payload):
         return
 
     guild_id = payload.guild_id
-    guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
+    guild = client.get_guild(guild_id)
     role = guild.get_role(willAddRoleId)
     await payload.member.add_roles(role)
-
 
 @client.event
 async def on_raw_reaction_remove(payload):
@@ -67,11 +62,10 @@ async def on_raw_reaction_remove(payload):
         return
 
     guild_id = payload.guild_id
-    guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
+    guild = client.get_guild(guild_id)
     role = guild.get_role(willAddRoleId)
     member = guild.get_member(payload.user_id)
     await member.remove_roles(role)
-
 
 @client.event
 async def on_message(message):
@@ -89,48 +83,20 @@ async def on_message(message):
     elif 'ミクさん！' == message.content:
         await message.channel.send('呼んだ？')
 
-
 @client.event
 async def on_member_join(member):
     role_buhi = discord.utils.get(member.guild.roles, id=buhiminou_role)
     await member.add_roles(role_buhi)
 
-
-# @slash.command(name='omikuji', description='omikuji!!!!!', guild_ids=guilds)
-# async def omikuji(inter):
-#     inter_ = inter
-#     ran = random.random()
-#     if ran < 0.01:
-#         txt = "すごく大吉！！！！"
-#     elif ran < 0.1:
-#         txt = "大吉！"
-#     elif ran < 0.3:
-#         txt = "吉！"
-#     elif ran < 0.6:
-#         txt = "中吉！"
-#     elif ran < 0.8:
-#         txt = "小吉！"
-#     elif ran < 0.99:
-#         txt = "末吉！"
-#     else:
-#         txt = "凶！"
-#     emb = discord.Embed(color=0x66DDCC)
-#     emb.description = txt
-#     await inter_.reply(embed=emb)
-
-
 @slash.command(name='timetree', description='今日の予定をとってくるよ', guild_ids=guilds)
 async def timetree(inter):
     inter_ = inter
     json = TT.getTodaysEventsJson('ミクミク!')
-    # pprint(json)
     await inter_.reply(embed=json)
-
 
 @slash.command(name='miku', description='ミクさんが返事をしてくれるよ', guild_ids=guilds)
 async def miku(inter):
     await inter.reply("MIKU!!!")
-
 
 @slash.command(name='helloworld', description='Hello world!', guild_ids=guilds)
 async def helloworld(inter):
@@ -145,7 +111,6 @@ async def helloworld(inter):
     emb.set_thumbnail(url=user.avatar_url)
     await inter_.respond(embed=emb)
 
-
 @slash.command(name='addlist', description='データベースに情報を追加するよ!', options=[
     Option('text_id', '変換元のテキストid', OptionType.STRING, required=True),
     Option('role_id', '変換先のロールid', OptionType.STRING, required=True),
@@ -153,7 +118,7 @@ async def helloworld(inter):
 async def addid(inter, text_id, role_id):
     inter_ = inter
     guild_id = inter_.guild_id
-    guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
+    guild = client.get_guild(guild_id)
     admin = guild.get_role(admin_role)
     user = inter_.author
     if admin in user.roles:
@@ -165,12 +130,11 @@ async def addid(inter, text_id, role_id):
         embed = discord.Embed(description="You have no permission", color=0xFF0000)
         await inter_.reply(embed=embed)
 
-
 @slash.command(name='list', description='データベースを確認するよ!', guild_ids=guilds)
 async def list(inter):
     inter_ = inter
     guild_id = inter_.guild_id
-    guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
+    guild = client.get_guild(guild_id)
     admin = guild.get_role(admin_role)
     user = inter_.author
     if admin in user.roles:
@@ -181,14 +145,13 @@ async def list(inter):
         embed = discord.Embed(description="You have no permission", color=0xFF0000)
         await inter_.reply(embed=embed)
 
-
 @slash.command(name='delid', description='データベースから情報を削除するよ!', options=[
     Option('id', '変換元の固有id(一つ目の値)', OptionType.INTEGER, required=True)
 ], guild_ids=guilds)
 async def delid(inter, id):
     inter_ = inter
     guild_id = inter_.guild_id
-    guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
+    guild = client.get_guild(guild_id)
     admin = guild.get_role(admin_role)
     user = inter_.author
     if admin in user.roles:
@@ -200,11 +163,9 @@ async def delid(inter, id):
         embed = discord.Embed(description="You have no permission", color=0xFF0000)
         await inter.reply(embed=embed)
 
-
 @slash.command(name='miku', description='ミクさんが返事をしてくれるよ', guild_ids=guilds)
 async def miku(inter):
     await inter.reply("MIKU!!!")
-
 
 @slash.command(name='vote', description='vote', guild_ids=guilds)
 async def vote(ctx):
@@ -258,7 +219,6 @@ async def vote(ctx):
         await ctx.send(embed=embed)
         await msg.edit(components=[])
 
-
 @slash.command(name='vote_name', description='vote add name', guild_ids=guilds)
 async def vote_name(ctx):
     row = ActionRow(
@@ -311,11 +271,9 @@ async def vote_name(ctx):
         await ctx.send(embed=embed)
         await msg.edit(components=[])
 
-
 @slash.command(name='kaikei', guild_ids=guilds)
 async def kaikei(inter):
     pass
-
 
 @kaikei.sub_command(description="remove role", options=[
     Option('user', "remove", OptionType.USER, required=True)
@@ -330,7 +288,7 @@ async def remove(inter, user):
     if count == 1:
         try:
             guild_id = inter_.guild_id
-            guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
+            guild = client.get_guild(guild_id)
             role = guild.get_role(buhiminou_role)
             embed = discord.Embed(title="success!", description="remove role from " + user.name, color=0x00ff00)
             await user.remove_roles(role)
@@ -343,7 +301,6 @@ async def remove(inter, user):
     if count == 0:
         embed = discord.Embed(title="error!", description="you don't have permission!", color=0xff0000)
         await inter_.reply(embed=embed)
-
 
 @kaikei.sub_command(description="add role", options=[
     Option('user', "add", OptionType.USER, required=True)
@@ -358,7 +315,7 @@ async def add(inter, user):
     if count == 1:
         try:
             guild_id = inter_.guild_id
-            guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
+            guild = client.get_guild(guild_id)
             role = guild.get_role(buhiminou_role)
             embed = discord.Embed(title="success!", description="add role " + user.name, color=0x00ff00)
             await user.add_roles(role)
