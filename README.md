@@ -16,12 +16,13 @@ VLL Discord サーバーのためのBot
 
 ### データベースを操作するコマンドが削除されました
 
-これは`sushi_chan_sub`の技術力不足が原因です。必要なら実装します
-でもなんか使われてないらしいしいいよね
+これは`sushi_chan_sub`の技術力不足が原因です。必要なら実装します。
 
 ### メッセージURLの展開ができます
 
 VLL Discord内のBotに閲覧権限があるチャンネルのメッセージURLを送信すると、そのメッセージの内容を展開して表示します。
+
+※多分Botが参加してさえいれば別のサーバーのメッセージも展開できます(未検証)
 
 ### 誰でもピン留めを利用できます
 
@@ -67,6 +68,13 @@ WIP
 pipではなくpoetryを使用するようになりました。また、pre-commitを使用して
 デプロイ用`requirements.txt`の自動生成を行うようになりました。
 
+```bash
+git clone <this repo>
+cd <this repo>
+poetry install
+poetry run pre-commit install
+```
+
 ### 依存ライブラリを更新しました
 
 `discord.py v1.7.3`及び`dislash.py`は今後利用できなくなる可能性があるため、`discord.py v2`ベースですべて書き直しました。
@@ -83,7 +91,8 @@ VSCode向けの新規Cog作成スニペットを追加してあります。
 
 ### CI
 
-- `pre-commit`を使用して、基本的なコードチェックと`requirements.txt`の自動生成を行っています。
+- `pre-commit`を使用して、基本的なコードチェックを行っています。`requirements.txt`の更新を忘れるとCIが失敗します。
+  - Pull Request内であれば修正を自動でコミットしてくれます。
 - Dockerイメージのビルドまでを事前にテストしています。(起動確認はしていません)
 - typoチェッカーも回しています。
 
@@ -144,3 +153,9 @@ class TestView(View):
 ```
 
 </details>
+
+## 後日追加予定の機能
+
+### リマインダー
+
+**締切を守ろう！！！！！！！**
