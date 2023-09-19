@@ -15,3 +15,6 @@ RoleSelectCallback: TypeAlias = Callable[
 ]
 MentionableSelectCallback: TypeAlias = Callable[[Interaction, list[Role | Member | User]], Awaitable[None]]
 UserSelectCallback: TypeAlias = Callable[[Interaction, list[User | Member]], Awaitable[None]]
+
+# ModalCallback
+ModalCallback: TypeAlias = Callable[[Interaction, dict[str, str]], Awaitable[None]]
