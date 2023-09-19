@@ -43,6 +43,8 @@ class SelectOptions(SelectOptionsBase):
 class ChannelSelectOptions(SelectOptionsBase):
     channel_types: list[ChannelType] = Field(default=[])
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
 
 class RoleSelectOptions(SelectOptionsBase):
     pass
