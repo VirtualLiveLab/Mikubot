@@ -7,6 +7,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from components.ui.common.button import Button
+from components.ui.common.modal import Modal, TextInput
 from components.ui.common.select import Select, SelectOption, SelectOptions
 from components.ui.send import ViewSender
 from components.ui.state import State
@@ -77,6 +78,35 @@ class TestView(View):
             await interaction.response.defer()
             self.count.set_state(lambda x: x - 1)
 
+        async def on_submit(interaction: discord.Interaction, values: dict[str, str]) -> None:
+            await interaction.response.defer(ephemeral=True)
+            try:
+                value = int(values["数字"])
+            except ValueError:
+                return await interaction.followup.send("数字を入力してください", ephemeral=True)
+            else:
+                self.count.set_state(value)
+
+        async def send_modal(interaction: discord.Interaction) -> None:
+            await interaction.response.send_modal(
+                Modal(
+                    title="数字を入力してください",
+                    inputs=[
+                        TextInput(
+                            "数字",
+                            style={
+                                "default": str(self.count.get_state()),
+                                "placeholder": "数字を入力してください",
+                                "row": 0,
+                                "field": "short",
+                            },
+                            options={"required": True, "min_length": 1, "max_length": 3},
+                        ),
+                    ],
+                    on_submit=on_submit,
+                ),
+            )
+
         async def reset(interaction: discord.Interaction) -> None:
             await interaction.response.defer()
             self.count.set_state(0)
@@ -96,6 +126,7 @@ class TestView(View):
             children=[
                 Button("+1", style={"color": "green"}, on_click=increment),
                 Button("-1", style={"color": "red"}, on_click=decrement),
+                Button("input", style={"color": "blurple"}, on_click=send_modal),
                 Button(
                     "Reset",
                     style={
