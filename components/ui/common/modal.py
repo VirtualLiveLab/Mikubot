@@ -1,62 +1,69 @@
-from typing import Literal
+from typing import Literal, TypedDict
 
 from discord import Interaction, TextStyle, ui
-from pydantic import BaseModel, Field
 
 from components.ui.type import ModalCallback
 
 
-class TextInput(BaseModel):
-    label: str
-    style: TextStyle = Field(default=TextStyle.short)
-    placeholder: str | None = Field(default=None)
-    default: str | None = Field(default=None)
-    required: bool = Field(default=False)
-    custom_id: str | None = Field(default=None)
-    min_length: int | None = Field(default=None)
-    max_length: int | None = Field(default=None)
-    row: Literal[0, 1, 2, 3, 4] = Field(default=0)
-    value: str = Field(default="")
+class TextInputStyle(TypedDict, total=False):
+    field: Literal["short", "long"]
+    placeholder: str | None
+    default: str | None
+    row: Literal[0, 1, 2, 3, 4]
 
 
-class ModalOption(BaseModel):
-    title: str = Field(min_length=1, max_length=45)
-    inputs: list[TextInput] = Field(default=[])
+class TextInputOption(TypedDict, total=False):
+    required: bool
+    min_length: int | None
+    max_length: int | None
+
+
+class TextInput(ui.TextInput):
+    def __init__(
+        self,
+        label: str,
+        /,
+        *,
+        style: TextInputStyle,
+        options: TextInputOption,
+        custom_id: str | None = None,
+    ) -> None:
+        __d = {
+            "label": label,
+            "style": TextStyle[style.get("type", "short")],
+            "placeholder": style.get("placeholder", None),
+            "default": style.get("default", None),
+            "required": options.get("required", False),
+            "row": style.get("row", None),
+            "min_length": options.get("min_length", None),
+            "max_length": options.get("max_length", None),
+        }
+        if custom_id:
+            __d["custom_id"] = custom_id
+        super().__init__(**__d)
 
 
 class Modal(ui.Modal):
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         *,
-        option: ModalOption,
+        title: str,
+        inputs: list[TextInput],
         timeout: float | None = None,
         custom_id: str | None = None,
         on_submit: ModalCallback | None = None,
     ) -> None:
         __d = {
-            "title": option.title,
+            "title": title,
             "timeout": timeout,
         }
         if custom_id:
             __d["custom_id"] = custom_id
         self.__callback_fn = on_submit
-        self.__inputs = option.inputs
+        self.__inputs = inputs
         super().__init__(**__d)
         for _in in self.__inputs:
-            __input_d = {
-                "label": _in.label,
-                "style": _in.style,
-                "placeholder": _in.placeholder,
-                "default": _in.default,
-                "required": _in.required,
-                "min_length": _in.min_length,
-                "max_length": _in.max_length,
-                "row": _in.row,
-            }
-            if _in.custom_id:
-                __input_d["custom_id"] = _in.custom_id
-            self.add_item(ui.TextInput(**__input_d))
-            del __input_d
+            self.add_item(_in)
 
     async def on_submit(self, interaction: Interaction) -> None:
         if self.__callback_fn:
