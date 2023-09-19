@@ -12,7 +12,7 @@ class TextInputStyle(TypedDict, total=False):
     row: Literal[0, 1, 2, 3, 4]
 
 
-class TextInputOption(TypedDict, total=False):
+class TextInputConfig(TypedDict, total=False):
     required: bool
     min_length: int | None
     max_length: int | None
@@ -25,7 +25,7 @@ class TextInput(ui.TextInput):
         /,
         *,
         style: TextInputStyle,
-        options: TextInputOption,
+        config: TextInputConfig,
         custom_id: str | None = None,
     ) -> None:
         __d = {
@@ -33,10 +33,10 @@ class TextInput(ui.TextInput):
             "style": TextStyle[style.get("type", "short")],
             "placeholder": style.get("placeholder", None),
             "default": style.get("default", None),
-            "required": options.get("required", False),
+            "required": config.get("required", False),
             "row": style.get("row", None),
-            "min_length": options.get("min_length", None),
-            "max_length": options.get("max_length", None),
+            "min_length": config.get("min_length", None),
+            "max_length": config.get("max_length", None),
         }
         if custom_id:
             __d["custom_id"] = custom_id

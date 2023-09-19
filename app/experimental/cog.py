@@ -122,7 +122,7 @@ class TestView(View):
                                 "row": 0,
                                 "field": "short",
                             },
-                            options={"required": True, "min_length": 1, "max_length": 3},
+                            config={"required": True, "min_length": 1, "max_length": 3},
                         ),
                     ],
                     on_submit=on_submit,
