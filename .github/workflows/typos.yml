@@ -17,7 +17,7 @@ jobs:
       - name: typos-action
         uses: crate-ci/typos@v1.16.11
         with:
-          config: ./_typos.toml
+          config: _typos.toml
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
