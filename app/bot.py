@@ -28,9 +28,8 @@ class Bot(commands.Bot):
         self.failed_exts: list[str] = []
         self.failed_views: list[str] = []
 
-        # set to None if you want to sync as global commands
-        # self.app_cmd_sync_target = discord.Object(int(os.environ["GUILD_ID"]))
-        self.app_cmd_sync_target = None
+        # set local application command sync target
+        self.local_app_cmd_sync_target = discord.Object(int(os.environ["GUILD_ID"]))
 
         # set intents
         intents = discord.Intents.all()
@@ -79,11 +78,19 @@ class Bot(commands.Bot):
 
     async def sync_app_commands(self) -> None:
         try:
-            synced = await self.tree.sync(guild=self.app_cmd_sync_target)
+            # execute global sync
+            synced = await self.tree.sync(guild=None)
+            # execute guild sync
+            if self.local_app_cmd_sync_target is not None:
+                local_synced = await self.tree.sync(guild=self.local_app_cmd_sync_target)
+            else:
+                local_synced = None
         except Exception:
             self.logger.exception("Failed to sync application commands")
         else:
             msg = f"{len(synced)} Application commands synced successfully"
+            if local_synced is not None:
+                msg += f"\n{len(local_synced)} Local application commands synced successfully (Guild: {self.local_app_cmd_sync_target.id})"  # noqa: E501
             self.logger.info(msg)
 
     async def setup_views(self) -> None:
