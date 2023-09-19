@@ -2,9 +2,13 @@ name: Check typos
 
 on:
   push:
+    paths-ignore:
+      - "./legacy/**"
   pull_request:
     branches:
       - "**"
+    paths-ignore:
+      - "./legacy/**"
   workflow_dispatch:
 
 jobs:
