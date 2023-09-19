@@ -9,7 +9,6 @@ on:
       - ".env.example"
       - "railway.toml"
       - "renovate.json"
-      - "./legacy/**"
   pull_request:
     branches: ["main", "master"]
     paths-ignore:
@@ -18,7 +17,6 @@ on:
       - ".env.example"
       - "railway.toml"
       - "renovate.json"
-      - "./legacy/**"
   workflow_dispatch:
 
 jobs:

@@ -3,12 +3,8 @@ name: "pre-commit"
 on:
   push:
     branches: ["main", "master"]
-    paths-ignore:
-      - "./legacy/**"
   pull_request:
     branches: ["main", "master"]
-    paths-ignore:
-      - "./legacy/**"
 
 jobs:
   pre-commit:
