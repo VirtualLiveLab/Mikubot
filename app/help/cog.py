@@ -7,7 +7,7 @@ from discord.ext import commands
 
 from app.help.const import FEATURE_LABEL_LIST, FeatureLabel
 from app.help.embed import get_help_embed
-from components.ui import Select, SelectOption, SelectOptions, State, View, ViewObject, ViewSender
+from components.ui import Select, SelectOption, State, View, ViewObject, ViewSender
 
 if TYPE_CHECKING:
     # import some original class
@@ -53,13 +53,13 @@ class HelpView(View):
             ],
             children=[
                 Select(
-                    options=SelectOptions(
-                        max_values=1,
-                        options=[
+                    config={
+                        "max_values": 1,
+                        "options": [
                             SelectOption(label=n, value=n, selected_by_default=n == self.current())
                             for n in FEATURE_LABEL_LIST
                         ],
-                    ),
+                    },
                     style={
                         "placeholder": "使い方を見たい機能を選択してください。",
                     },
