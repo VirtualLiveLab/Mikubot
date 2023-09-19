@@ -9,7 +9,7 @@ TOKEN等はGithub ActionsのSecretsに格納しDockerでBuildする際に環境�
 `gcloud compute instances update-container [コンテナ名] --container-image [GCR]:[タグ名]`
 VLL Discord サーバーのためのBot
 
-## Mikubot(旧)からの変更点
+## v2の変更点
 
 <details open>
 <summary>利用者向け</summary>
