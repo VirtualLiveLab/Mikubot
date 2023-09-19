@@ -31,26 +31,28 @@ class SelectOption(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
-class SelectOptionsBase(BaseModel):
-    min_values: int | None = Field(default=1, ge=0, le=25)
-    max_values: int | None = Field(default=1, ge=1, le=25)
+class SelectConfigBase(TypedDict, total=False):
+    min_values: int | None
+    max_values: int | None
 
 
-class SelectOptions(SelectOptionsBase):
-    options: list[SelectOption] = Field(min_length=1, max_length=25)
+class SelectConfig(SelectConfigBase):
+    options: list[SelectOption]
 
 
-class ChannelSelectOptions(SelectOptionsBase):
-    channel_types: list[ChannelType] = Field(default=[])
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+class ChannelSelectConfig(SelectConfigBase):
+    channel_types: list[ChannelType]
 
 
-class RoleSelectOptions(SelectOptionsBase):
+class RoleSelectConfig(SelectConfigBase):
     pass
 
 
-class MentionableSelectOptions(SelectOptionsBase):
+class MentionableSelectConfig(SelectConfigBase):
+    pass
+
+
+class UserSelectConfig(SelectConfigBase):
     pass
 
 
@@ -58,7 +60,7 @@ class Select(ui.Select):
     def __init__(
         self,
         *,
-        options: SelectOptions,
+        config: SelectConfig,
         style: SelectStyle,
         custom_id: str | None = None,
         on_select: SelectCallback | None = None,
@@ -70,8 +72,8 @@ class Select(ui.Select):
             "disabled": __disabled,
             "placeholder": __placeholder,
             "row": __row,
-            "min_values": options.min_values,
-            "max_values": options.max_values,
+            "min_values": config.get("min_values", None),
+            "max_values": config.get("max_values", None),
             "options": [
                 _SelectOption(
                     label=option.label,
@@ -80,7 +82,7 @@ class Select(ui.Select):
                     emoji=option.emoji,
                     default=option.selected_by_default,
                 )
-                for option in options.options
+                for option in config["options"]
             ],
         }
         if custom_id:
@@ -97,7 +99,7 @@ class ChannelSelect(ui.ChannelSelect):
     def __init__(
         self,
         *,
-        options: ChannelSelectOptions,
+        config: ChannelSelectConfig,
         style: SelectStyle,
         custom_id: str | None = None,
         on_select: ChannelSelectCallback | None = None,
@@ -109,9 +111,9 @@ class ChannelSelect(ui.ChannelSelect):
             "disabled": __disabled,
             "placeholder": __placeholder,
             "row": __row,
-            "min_values": options.min_values,
-            "max_values": options.max_values,
-            "channel_types": options.channel_types,
+            "min_values": config.get("min_values", None),
+            "max_values": config.get("max_values", None),
+            "channel_types": config["channel_types"],
         }
         if custom_id:
             __d["custom_id"] = custom_id
@@ -127,7 +129,7 @@ class RoleSelect(ui.RoleSelect):
     def __init__(
         self,
         *,
-        options: RoleSelectOptions,
+        config: RoleSelectConfig,
         style: SelectStyle,
         custom_id: str | None = None,
         on_select: RoleSelectCallback | None = None,
@@ -139,8 +141,8 @@ class RoleSelect(ui.RoleSelect):
             "disabled": __disabled,
             "placeholder": __placeholder,
             "row": __row,
-            "min_values": options.min_values,
-            "max_values": options.max_values,
+            "min_values": config.get("min_values", None),
+            "max_values": config.get("max_values", None),
         }
         if custom_id:
             __d["custom_id"] = custom_id
@@ -156,7 +158,7 @@ class MentionableSelect(ui.MentionableSelect):
     def __init__(
         self,
         *,
-        options: RoleSelectOptions,
+        config: MentionableSelectConfig,
         style: SelectStyle,
         custom_id: str | None = None,
         on_select: MentionableSelectCallback | None = None,
@@ -168,8 +170,8 @@ class MentionableSelect(ui.MentionableSelect):
             "disabled": __disabled,
             "placeholder": __placeholder,
             "row": __row,
-            "min_values": options.min_values,
-            "max_values": options.max_values,
+            "min_values": config.get("min_values", None),
+            "max_values": config.get("max_values", None),
         }
         if custom_id:
             __d["custom_id"] = custom_id
@@ -185,7 +187,7 @@ class UserSelect(ui.UserSelect):
     def __init__(
         self,
         *,
-        options: RoleSelectOptions,
+        config: UserSelectConfig,
         style: SelectStyle,
         custom_id: str | None = None,
         on_select: UserSelectCallback | None = None,
@@ -197,8 +199,8 @@ class UserSelect(ui.UserSelect):
             "disabled": __disabled,
             "placeholder": __placeholder,
             "row": __row,
-            "min_values": options.min_values,
-            "max_values": options.max_values,
+            "min_values": config.get("min_values", None),
+            "max_values": config.get("max_values", None),
         }
         if custom_id:
             __d["custom_id"] = custom_id

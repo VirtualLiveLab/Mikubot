@@ -1,6 +1,6 @@
 from .common.button import Button, LinkButton
 from .common.modal import Modal, TextInput
-from .common.select import ChannelSelect, MentionableSelect, RoleSelect, Select, SelectOption, SelectOptions, UserSelect
+from .common.select import ChannelSelect, MentionableSelect, RoleSelect, Select, SelectOption, UserSelect
 from .send import ViewSender
 from .state import State
 from .status import StatusUI
@@ -13,7 +13,6 @@ __all__ = [
     "TextInput",
     "Select",
     "SelectOption",
-    "SelectOptions",
     "ChannelSelect",
     "RoleSelect",
     "MentionableSelect",
