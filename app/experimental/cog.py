@@ -1,6 +1,6 @@
 import asyncio
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 import discord
 from discord import app_commands
@@ -33,7 +33,16 @@ class TestCog(commands.Cog):
         self.bot = bot
 
     @app_commands.guilds(int(os.environ["GUILD_ID"]))  # type: ignore[arg-type]
-    @app_commands.command(name="try-status", description="StatusUIのテストコマンド")
+    @app_commands.command(name="experimental", description="実験的機能を試すコマンド")
+    async def experimental(self, interaction: discord.Interaction, feature: Literal["status", "state"]) -> None:
+        if feature == "state":
+            await self.try_state(interaction)
+        elif feature == "status":
+            await self.try_status(interaction)
+
+        else:
+            await interaction.response.send_message("不明な機能です", ephemeral=True)
+
     async def try_status(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
 
@@ -61,8 +70,6 @@ class TestCog(commands.Cog):
         ui.update(key="STATUS_2", status=Status.FAILED, message="ステータス2でエラーが発生")
         await ui.sync()
 
-    @app_commands.guilds(int(os.environ["GUILD_ID"]))  # type: ignore[arg-type]
-    @app_commands.command(name="try-state", description="Stateのテストコマンド")
     async def try_state(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
         view = ViewSender(TestView())
