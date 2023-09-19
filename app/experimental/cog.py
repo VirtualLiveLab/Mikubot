@@ -3,18 +3,21 @@ import os
 from typing import TYPE_CHECKING, Literal
 
 import discord
-from discord import app_commands
+from discord import ChannelType, app_commands
+from discord.app_commands import AppCommandChannel, AppCommandThread
 from discord.ext import commands
 
 from components.ui import (
     Button,
+    ChannelSelect,
+    MentionableSelect,
     Modal,
     Select,
     SelectOption,
-    SelectOptions,
     State,
     StatusUI,
     TextInput,
+    UserSelect,
     View,
     ViewObject,
     ViewSender,
@@ -34,12 +37,13 @@ class TestCog(commands.Cog):
 
     @app_commands.guilds(int(os.environ["GUILD_ID"]))  # type: ignore[arg-type]
     @app_commands.command(name="experimental", description="実験的機能を試すコマンド")
-    async def experimental(self, interaction: discord.Interaction, feature: Literal["status", "state"]) -> None:
+    async def experimental(self, interaction: discord.Interaction, feature: Literal["status", "state", "select"]) -> None:
         if feature == "state":
             await self.try_state(interaction)
         elif feature == "status":
             await self.try_status(interaction)
-
+        elif feature == "select":
+            await self.try_select(interaction)
         else:
             await interaction.response.send_message("不明な機能です", ephemeral=True)
 
@@ -73,6 +77,11 @@ class TestCog(commands.Cog):
     async def try_state(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
         view = ViewSender(TestView())
+        await view.send(target=interaction.followup, ephemeral=False)
+
+    async def try_select(self, interaction: discord.Interaction) -> None:
+        await interaction.response.defer()
+        view = ViewSender(SelectView())
         await view.send(target=interaction.followup, ephemeral=False)
 
 
@@ -150,18 +159,73 @@ class TestView(View):
                     on_click=reset,
                 ),
                 Select(
-                    options=SelectOptions(
-                        max_values=2,
-                        options=[
+                    config={
+                        "max_values": 2,
+                        "options": [
                             SelectOption(label="A", description="Aです"),
                             SelectOption(label="B", description="Bです"),
                         ],
-                    ),
+                    },
                     style={
                         "placeholder": "Select",
                         "row": 2,
                     },
                     on_select=on_select,
+                ),
+            ],
+        )
+
+
+class SelectView(View):
+    def __init__(self) -> None:
+        self.selected_channel: State[list[AppCommandChannel | AppCommandThread]] = State([], self)
+        self.selected_user: State[list[discord.User | discord.Member]] = State([], self)
+        self.selected_mentionable: State[list[discord.User | discord.Member | discord.Role]] = State([], self)
+        super().__init__()
+
+    def export(self) -> ViewObject:
+        e = discord.Embed(
+            title="Select",
+        )
+        e.add_field(name="Selected Channel", value="\n".join(s.name for s in self.selected_channel.get_state()))
+        e.add_field(name="Selected User", value="\n".join(s.name for s in self.selected_user.get_state()))
+        e.add_field(name="Selected Mentionable", value="\n".join(s.name for s in self.selected_mentionable.get_state()))
+
+        async def on_channel_select(
+            interaction: discord.Interaction,
+            values: list[AppCommandChannel | AppCommandThread],
+        ) -> None:
+            await interaction.response.defer()
+            self.selected_channel.set_state(values)
+
+        async def on_user_select(interaction: discord.Interaction, values: list[discord.User | discord.Member]) -> None:
+            await interaction.response.defer()
+            self.selected_user.set_state(values)
+
+        async def on_mentionable_select(
+            interaction: discord.Interaction,
+            values: list[discord.User | discord.Member | discord.Role],
+        ) -> None:
+            await interaction.response.defer()
+            self.selected_mentionable.set_state(values)
+
+        return ViewObject(
+            embeds=[e],
+            children=[
+                ChannelSelect(
+                    config={"min_values": 1, "max_values": 4, "channel_types": [ChannelType.text, ChannelType.voice]},
+                    style={"placeholder": "select channel", "row": 0},
+                    on_select=on_channel_select,
+                ),
+                UserSelect(
+                    config={"min_values": 1, "max_values": 4},
+                    style={"placeholder": "select user", "row": 1},
+                    on_select=on_user_select,
+                ),
+                MentionableSelect(
+                    config={"min_values": 1, "max_values": 4},
+                    style={"placeholder": "select mentionable", "row": 2},
+                    on_select=on_mentionable_select,
                 ),
             ],
         )
