@@ -6,13 +6,19 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from components.ui.common.button import Button
-from components.ui.common.modal import Modal, TextInput
-from components.ui.common.select import Select, SelectOption, SelectOptions
-from components.ui.send import ViewSender
-from components.ui.state import State
-from components.ui.status import StatusUI
-from components.ui.view import View, ViewObject
+from components.ui import (
+    Button,
+    Modal,
+    Select,
+    SelectOption,
+    SelectOptions,
+    State,
+    StatusUI,
+    TextInput,
+    View,
+    ViewObject,
+    ViewSender,
+)
 from const.enums import Color, Status
 
 if TYPE_CHECKING:

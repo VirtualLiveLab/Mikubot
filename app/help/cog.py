@@ -7,10 +7,7 @@ from discord.ext import commands
 
 from app.help.const import FEATURE_LABEL_LIST, FeatureLabel
 from app.help.embed import get_help_embed
-from components.ui.common.select import Select, SelectOption, SelectOptions
-from components.ui.send import ViewSender
-from components.ui.state import State
-from components.ui.view import View, ViewObject
+from components.ui import Select, SelectOption, SelectOptions, State, View, ViewObject, ViewSender
 
 if TYPE_CHECKING:
     # import some original class

@@ -6,7 +6,7 @@ from discord.ext import commands
 from dispander import dispand
 
 from app.core.chat import embed
-from components.ui.common.button import LinkButton
+from components.ui import LinkButton
 from const.enums import Color
 
 if TYPE_CHECKING:
