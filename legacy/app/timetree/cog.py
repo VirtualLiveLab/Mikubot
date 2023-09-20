@@ -5,12 +5,13 @@ import discord
 from discord import app_commands
 from discord.ext import commands, tasks
 
-from app.timetree.embed import today_event_embed
 from components.ui import StatusUI
 from const.enums import Color, Status
-from timetree import Client as TimeTreeClient
+from legacy.timetree import Client as TimeTreeClient
 from utils.finder import Finder
 from utils.time import TimeUtils
+
+from .embed import today_event_embed
 
 if TYPE_CHECKING:
     # import some original class

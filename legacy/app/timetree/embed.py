@@ -3,7 +3,7 @@ import datetime
 from discord import Embed
 
 from const.enums import Color
-from timetree import Event
+from legacy.timetree import Event
 from utils.time import JST
 
 # Embed field limit:25

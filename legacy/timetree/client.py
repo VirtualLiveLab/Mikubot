@@ -3,7 +3,7 @@ from typing import Literal
 
 import aiohttp
 
-from timetree.object.event import Event
+from .object import Event
 
 calender_2023_id = "yJojmgmD7kt9"  # 2023
 

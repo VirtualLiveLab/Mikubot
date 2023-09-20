@@ -4,7 +4,7 @@ from logging import getLogger
 
 from dotenv import load_dotenv
 
-from timetree.client import Client
+from .client import Client
 
 
 async def main() -> None:
