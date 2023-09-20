@@ -4,17 +4,17 @@ on:
   push:
     branches: ["main", "master"]
     paths-ignore:
+      - "legacy/**"
       - "**.md"
       - ".vscode/**"
-      - ".env.example"
       - "railway.toml"
       - "renovate.json"
   pull_request:
     branches: ["main", "master"]
     paths-ignore:
+      - "legacy/**"
       - "**.md"
       - ".vscode/**"
-      - ".env.example"
       - "railway.toml"
       - "renovate.json"
   workflow_dispatch:
