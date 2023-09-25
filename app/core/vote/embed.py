@@ -1,8 +1,9 @@
 from discord import Embed
 
-from app.core.vote.type import VoteOption
 from const.discord import VOTE_FOOTER_MESSAGE
 from const.enums import Color
+
+from .type import VoteOption
 
 
 def vote_embed(question: str, option: list[VoteOption]) -> Embed:

@@ -1,14 +1,14 @@
-import os
 from typing import TYPE_CHECKING, ClassVar
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from app.core.vote.embed import vote_embed, vote_result_embed
-from app.core.vote.type import VoteOption
 from const.discord import VOTE_FOOTER_MESSAGE
 from utils.io import read_json
+
+from .embed import vote_embed, vote_result_embed
+from .type import VoteOption
 
 if TYPE_CHECKING:
     # import some original class
@@ -25,7 +25,6 @@ class Vote(commands.Cog):
         self.vote_count_ctx_menu = app_commands.ContextMenu(
             name="投票を集計する",
             callback=self.vote_count_callback,
-            guild_ids=[int(os.environ["GUILD_ID"])],
         )
         self.bot.tree.add_command(self.vote_count_ctx_menu)
 
@@ -33,7 +32,6 @@ class Vote(commands.Cog):
         name="vote",
         description="最大20択で投票を作成するよ！選択肢をすべて省略するとはい/いいえの投票になるよ！",
     )
-    @app_commands.guilds(int(os.environ["GUILD_ID"]))
     @app_commands.rename(**(__renamed_options | {"question": "質問文"}))
     async def vote(  # noqa: PLR0913
         self,

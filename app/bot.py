@@ -6,11 +6,12 @@ import discord
 # import sentry_sdk
 from discord.ext import commands
 
-from app import embed
 from const.log import command_log, login_log
 from utils.cog import CogLoader
 from utils.finder import Finder
 from utils.logger import get_my_logger
+
+from .embed import ready_embed
 
 if not __debug__:
     from dotenv import load_dotenv
@@ -50,7 +51,7 @@ class Bot(commands.Bot):
     async def on_ready(self) -> None:
         self.logger.info(login_log(user=self.user, guild_amount=len(self.guilds)))
         channel = await Finder(self).find_channel(int(os.environ["LOG_CHANNEL_ID"]), expected_type=discord.TextChannel)
-        emb = embed.ready_embed(
+        emb = ready_embed(
             latency=self.latency,
             failed_exts=self.failed_exts,
             failed_views=self.failed_views,

@@ -6,7 +6,7 @@ from const.enums import Color
 
 def get_help_embed(name: FeatureLabel) -> Embed:
     d: dict[FeatureLabel, Embed] = {
-        "部費ロール": buhi_embed(),
+        # "部費ロール": buhi_embed(),
         "ヘルプ": help_embed(),
         "その他": other_embed(),
         "投票": vote_embed(),
@@ -52,8 +52,8 @@ def vote_embed() -> Embed:
     e.add_field(
         name="使い方(2択)",
         value="""
-質問文のみを指定すると自動的に2択の投票が作成されます。
-例: `/vote 今日の晩御飯は？`
+質問文のみを指定すると自動的にはい/いいえの2択の投票が作成されます。
+例: `/vote あなたはVLL部員ですか？`
 """,
         inline=False,
     )
@@ -102,7 +102,7 @@ def dispand_embed() -> Embed:
     e.description = "メッセージURLを展開します。"
     e.add_field(
         name="使い方",
-        value="Mikubotが導入されているかつ__**閲覧権限がある**__チャンネルのメッセージURLを送信すると、埋め込みで展開されます。",
+        value="Mikubotが導入されているサーバー内かつ__**閲覧権限がある**__チャンネルのメッセージURLを送信すると、埋め込みで展開されます。",
         inline=False,
     )
     return e

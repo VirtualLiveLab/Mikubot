@@ -1,4 +1,3 @@
-import os
 from typing import TYPE_CHECKING
 
 import discord
@@ -20,7 +19,6 @@ class Pin(commands.Cog):
         self.logger = get_my_logger(__name__)
         self.ctx_pin_message = app_commands.ContextMenu(
             name="Pin / Unpin",
-            guild_ids=[int(os.environ["GUILD_ID"])],
             callback=self.ctx_pin_message_callback,
         )
         self.bot.tree.add_command(self.ctx_pin_message)
