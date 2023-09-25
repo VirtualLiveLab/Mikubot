@@ -2,6 +2,10 @@ name: Check typos
 
 on:
   push:
+    branches:
+      - master
+    paths-ignore:
+      - "legacy/**"
   pull_request:
     branches:
       - master
@@ -10,7 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  check-typos:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

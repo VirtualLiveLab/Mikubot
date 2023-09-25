@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  docker:
+  docker-build-check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

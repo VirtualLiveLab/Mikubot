@@ -8,6 +8,8 @@ on:
       - "legacy/**"
       - "**.md"
       - ".vscode/**"
+      - "railway.toml"
+      - "renovate.json"
   workflow_dispatch:
 
 env:
