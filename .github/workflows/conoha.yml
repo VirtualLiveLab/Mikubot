@@ -43,7 +43,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ env.IMAGE_TAG }}
+          tags: ${{ vars.IMAGE_TAG }}
           cache-from: type=gha
           cache-to: type=gha, mode=max
 
@@ -56,7 +56,7 @@ jobs:
           # always remove old container: https://stackoverflow.com/questions/34228864/stop-and-delete-docker-container-if-its-running
           script: |
             echo ${{secrets.GITHUB_TOKEN}} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-            docker pull ${{ env.IMAGE_TAG }}
+            docker pull ${{ vars.IMAGE_TAG }}
             docker stop ${{ env.CONTAINER_NAME }} || true && docker rm ${{ env.CONTAINER_NAME }} || true
             docker run \
               -d \
@@ -64,7 +64,7 @@ jobs:
               --env DISCORD_BOT_TOKEN=${{secrets.DISCORD_TOKEN}} \
               --env LOG_CHANNEL_ID=${{vars.LOG_CHANNEL_ID}} \
               --env GUILD_ID=${{vars.GUILD_ID}} \
-              ${{ env.IMAGE_TAG }}
+              ${{ vars.IMAGE_TAG }}
             docker image prune -f
           script_stop: true
 
