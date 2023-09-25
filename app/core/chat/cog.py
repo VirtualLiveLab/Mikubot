@@ -52,11 +52,11 @@ class Chat(commands.Cog):
 
     @commands.Cog.listener("on_message")
     async def on_message(self, message: discord.Message) -> None:
-        if message.author.id == self.bot.user.id:  # type: ignore[union-attr]
+        if self.bot.user is not None and message.author.id == self.bot.user.id:
             return
 
         extractor = MessageExtractor(self.bot)
-        extracted_messages = await extractor.extract_from_message(message=message)
+        extracted_messages = await extractor.from_message(message=message)
 
         for msg in extracted_messages:
             try:
