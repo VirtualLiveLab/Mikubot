@@ -1,4 +1,3 @@
-import os
 from typing import TypeVar, overload
 
 import discord
@@ -57,9 +56,6 @@ class Finder:
         #         self.logger.exception(literal.CHANNEL_NOT_FOUND)
         #         raise TypeError(f"Channel is not a {type}")
         # return channel
-
-    async def find_log_channel(self) -> discord.TextChannel:
-        return await self.find_channel(int(os.environ["LOG_CHANNEL_ID"]), expected_type=discord.TextChannel)
 
     async def find_guild(self, guild_id: int) -> discord.Guild:
         guild = self.bot.get_guild(guild_id)
