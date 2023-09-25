@@ -1,0 +1,25 @@
+{
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "cSpell.words": [
+        "pydantic",
+        "pyright"
+    ],
+    "editor.formatOnSave": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "python.formatting.blackArgs": [
+        "--line-length=125",
+        "--target-version=py310"
+    ],
+    "python.languageServer": "Pylance",
+    "python.linting.enabled": true,
+    "python.linting.lintOnSave": true,
+    "mypy-type-checker.args": [
+        "--config-file=pyproject.toml"
+    ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true
+    }
+}

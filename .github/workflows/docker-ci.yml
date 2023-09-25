@@ -1,0 +1,35 @@
+name: Docker Image CI
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - "legacy/**"
+      - "**.md"
+      - ".vscode/**"
+      - "railway.toml"
+      - "renovate.json"
+  workflow_dispatch:
+
+jobs:
+  docker-build-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha, mode=max
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true

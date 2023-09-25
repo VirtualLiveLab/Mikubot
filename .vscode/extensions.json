@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+        "streetsidesoftware.code-spell-checker",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.isort",
+        "shardulm94.trailing-spaces",
+        "exiasr.hadolint",
+        "ms-python.mypy-type-checker",
+        "charliermarsh.ruff"
+    ]
+}

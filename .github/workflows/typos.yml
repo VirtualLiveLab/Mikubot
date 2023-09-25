@@ -1,0 +1,29 @@
+name: Check typos
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - "legacy/**"
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - "legacy/**"
+  workflow_dispatch:
+
+jobs:
+  check-typos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: typos-action
+        uses: crate-ci/typos@v1.16.12
+        with:
+          config: _typos.toml
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true

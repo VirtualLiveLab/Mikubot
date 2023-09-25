@@ -1,35 +1,27 @@
-FROM python:3.9
+ARG PYTHON_VERSION_CODE=3.11
 
+FROM python:${PYTHON_VERSION_CODE}-buster as builder
+ARG PYTHON_VERSION_CODE
+WORKDIR /opt
+# python environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# install python dependencies
+COPY requirements.txt /opt/
+RUN python -m pip install --no-cache-dir -U pip setuptools wheel && \
+    python -m pip install --no-cache-dir -r requirements.txt
+
+FROM python:${PYTHON_VERSION_CODE}-slim-buster as runner
+ARG PYTHON_VERSION_CODE
 WORKDIR /app
-COPY . /app
+# permission settings
+RUN groupadd -r app && useradd -r -g app app
+RUN chown -R app:app /app
+USER app
 
-#RUN apt-get update
-#RUN apt-get -y install locales && \
-#    localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
-ENV LANG ja_JP.UTF-8
-ENV LANGUAGE ja_JP:ja
-ENV LC_ALL ja_JP.UTF-8
-ENV TZ JST-9
-ENV TERM xterm
+COPY --from=builder /usr/local/lib/python${PYTHON_VERSION_CODE}/site-packages /usr/local/lib/python${PYTHON_VERSION_CODE}/site-packages
+COPY --chown=app:app . ./
 
-# 環境変数にDiscordのトークンの追加
-ARG token
-ENV token=$token
-
-# 環境変数にTimeTreeのトークンの追加
-ARG apiKey
-ENV apikey=$apiKey
-
-RUN #apt-get install -y vim less
-RUN apt update
-RUN apt -y install supervisor
-RUN pip install --upgrade pip
-RUN pip install --upgrade setuptools
-
-RUN pip install discord.py==1.7.3
-RUN pip install dislash.py
-RUN pip install datetime
-
-RUN chmod 744 /app/startup.sh
-
-CMD ["python", "/app/main.py"]
+# start process
+ENTRYPOINT ["python", "main.py"]
