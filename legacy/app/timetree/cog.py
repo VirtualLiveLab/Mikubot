@@ -40,7 +40,7 @@ class TimeTree(commands.Cog):
                 color=Color.WARNING,
             )
 
-        channel = await Finder(self.bot).find_channel(int(os.environ["CHANNEL_ID"]), expected_type=discord.TextChannel)
+        channel = await Finder(self.bot).find_channel(int(os.environ["LOG_CHANNEL_ID"]), expected_type=discord.TextChannel)
         await channel.send(embed=embed)
         return
 

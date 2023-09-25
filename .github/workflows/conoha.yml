@@ -60,7 +60,7 @@ jobs:
               -d \
               --name ${{env.CONTAINER_NAME}} \
               --env DISCORD_BOT_TOKEN=${{secrets.DISCORD_TOKEN}} \
-              --env CHANNEL_ID=${{vars.CHANNEL_ID}} \
+              --env LOG_CHANNEL_ID=${{vars.LOG_CHANNEL_ID}} \
               --env GUILD_ID=${{vars.GUILD_ID}} \
               ${{ env.IMAGE_TAG }}
             docker image prune -f
