@@ -4,11 +4,23 @@ on:
   push:
     branches:
       - master
+    paths-ignore:
+      - "legacy/**"
+      - "**.md"
+      - ".vscode/**"
   workflow_dispatch:
+
+env:
+  IMAGE_TAG: ghcr.io/${{ github.repository_owner }}/mikubot:latest
+  CONTAINER_NAME: mikubot
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,6 +41,27 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/conoha-vps:${{ github.sha }}
+          tags: ${{ env.IMAGE_TAG }}
           cache-from: type=gha
           cache-to: type=gha, mode=max
+
+      - name: SSH to ConoHa VPS
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          # always remove old container: https://stackoverflow.com/questions/34228864/stop-and-delete-docker-container-if-its-running
+          script: |
+            echo ${{secrets.GITHUB_TOKEN}} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+            docker pull ${{ env.IMAGE_TAG }}
+            docker stop ${{ env.CONTAINER_NAME }} || true && docker rm ${{ env.CONTAINER_NAME }} || true
+            docker run \
+              -d \
+              --name ${{env.CONTAINER_NAME}} \
+              --env DISCORD_BOT_TOKEN=${{secrets.DISCORD_TOKEN}} \
+              --env CHANNEL_ID=${{vars.CHANNEL_ID}} \
+              --env GUILD_ID=${{vars.GUILD_ID}} \
+              ${{ env.IMAGE_TAG }}
+            docker image prune -f
+          script_stop: true
