@@ -65,3 +65,7 @@ jobs:
               ${{ env.IMAGE_TAG }}
             docker image prune -f
           script_stop: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true

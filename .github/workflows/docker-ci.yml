@@ -1,14 +1,6 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches: ["main", "master"]
-    paths-ignore:
-      - "legacy/**"
-      - "**.md"
-      - ".vscode/**"
-      - "railway.toml"
-      - "renovate.json"
   pull_request:
     branches: ["main", "master"]
     paths-ignore:
