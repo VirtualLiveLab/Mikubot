@@ -2,11 +2,13 @@ name: "pre-commit"
 
 on:
   push:
-    branches: ["main", "master"]
+    branches:
+      - master
     paths-ignore:
       - "legacy/**"
   pull_request:
-    branches: ["main", "master"]
+    branches:
+      - master
     paths-ignore:
       - "legacy/**"
 
