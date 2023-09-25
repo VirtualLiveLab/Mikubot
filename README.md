@@ -1,13 +1,10 @@
 # Mikubot
 
-TOKEN等はGithub ActionsのSecretsに格納しDockerでBuildする際に環境変数に加えています。
-
-### memo
-
-#### コンテナのアップデート
-
-`gcloud compute instances update-container [コンテナ名] --container-image [GCR]:[タグ名]`
 VLL Discord サーバーのためのBot
+
+~~TOKEN等はGithub ActionsのSecretsに格納しDockerでBuildする際に環境変数に加えています。~~
+
+イメージに焼き付けたくなかったので実行時に`--env`オプションで渡してます。
 
 ## v2の変更点
 
@@ -18,7 +15,7 @@ VLL Discord サーバーのためのBot
 
 VLL Discord内のBotに閲覧権限があるチャンネルのメッセージURLを送信すると、そのメッセージの内容を展開して表示します。
 
-※多分Botが参加してさえいれば別のサーバーのメッセージも展開できます(未検証)
+Botが見れさえすれば、たとえばVLL DiscordからKAFUECサーバー上のメッセージの展開もできます。
 
 ### 誰でもピン留めを利用できます
 
@@ -42,23 +39,6 @@ TimeTreeAPIが2023年12月22日に廃止されることが判明したので、T
 日時を設定して事前に設定したメンションなどを飛ばせるようにします。
 
 **締切を守ろう！！！！！！！**
-
-</details>
-
-<details>
-<summary>会計担当者向け</summary>
-
-### **部費未納ロールの処理が一部廃止されました**
-
-詳しくは[こちら](#ロール関係の処理が一部変更されました)をご覧ください。
-</details>
-
-<details>
-<summary>ロール処理</summary>
-
-### ロール関係の処理が一部変更されました
-
-WIP
 
 </details>
 
@@ -98,10 +78,10 @@ VSCode向けの新規Cog作成スニペットを追加してあります。
 - Dockerイメージのビルドまでを事前にテストしています。(起動確認はしていません)
 - typoチェッカーも回しています。
 
-### ビルド
+### ビルド・デプロイ
 
-現在は`sushi_chan_sub`が開発用に使っている`PaaS`向けのDockerfileになっています。
-あとからGCP向けに書き直します。
+GitHub Actionsでイメージをビルドして、現在VLL Wikiなどを稼働させているConoHa VPS上へ
+自動デプロイする設定になっています。
 
 ### 謎のライブラリ(experimental)
 
