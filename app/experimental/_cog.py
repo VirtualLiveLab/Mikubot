@@ -91,7 +91,7 @@ class TestView(View):
         self.selected: State[list[str]] = State([], self)
         super().__init__()
 
-    def export(self) -> ViewObject:
+    def render(self) -> ViewObject:
         async def increment(interaction: discord.Interaction) -> None:
             await interaction.response.defer()
             self.count.set_state(lambda x: x + 1)
@@ -145,7 +145,7 @@ class TestView(View):
 
         return ViewObject(
             embeds=[e],
-            children=[
+            components=[
                 Button("+1", style={"color": "green"}, on_click=increment),
                 Button("-1", style={"color": "red"}, on_click=decrement),
                 Button("input", style={"color": "blurple"}, on_click=send_modal),
@@ -183,7 +183,7 @@ class SelectView(View):
         self.selected_mentionable: State[list[discord.User | discord.Member | discord.Role]] = State([], self)
         super().__init__()
 
-    def export(self) -> ViewObject:
+    def render(self) -> ViewObject:
         e = discord.Embed(
             title="Select",
         )
@@ -211,7 +211,7 @@ class SelectView(View):
 
         return ViewObject(
             embeds=[e],
-            children=[
+            components=[
                 ChannelSelect(
                     config={"min_values": 1, "max_values": 4, "channel_types": [ChannelType.text, ChannelType.voice]},
                     style={"placeholder": "select channel", "row": 0},

@@ -17,11 +17,11 @@ class ViewSender:
         self.__logger = get_my_logger(__name__)
 
     def _get_view_dict(self, timeout: float | None = None) -> dict[str, Any]:
-        d = self.__view.export().model_dump(exclude_none=True)
+        d = self.__view.render().model_dump(exclude_none=True)
         view = discord.ui.View(timeout=timeout)
-        children = d.pop("children", None)
-        if children:
-            for c in children:
+        components = d.pop("components", None)
+        if components:
+            for c in components:
                 view.add_item(c)
         return {"view": view, **d}
 

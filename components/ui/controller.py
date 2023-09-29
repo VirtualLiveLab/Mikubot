@@ -11,7 +11,10 @@ from .view import View, ViewObject
 class ViewObjectDict(TypedDict, total=False):
     """
     ViewObjectDict is a type hint for the dictionary that is used to send a view to Discord.
+
     This can be passed to `discord.abc.Messageable.send` as unpacked keyword arguments.
+
+    Accessing the keys are not recommended since the existence of the keys are not guaranteed.
 
     Example
     -------
@@ -32,7 +35,7 @@ class ViewObjectDict(TypedDict, total=False):
 class ViewControllerBase:
     def __init__(self, view: View, timeout: float | None = 180) -> None:
         self.__view = view
-        self.__raw_view: ui.View = ui.View(timeout=timeout)
+        self.__raw_view = ui.View(timeout=timeout)
 
     async def send(self, target: discord.abc.Messageable) -> None:
         # await target.send(**self._process_view_for_discord())
@@ -59,7 +62,7 @@ class ViewControllerBase:
         await self.__raw_view.wait()
 
     def _process_view_for_discord(self) -> ViewObjectDict:
-        view_object: ViewObject = self.__view.export()
+        view_object: ViewObject = self.__view.render()
         d: ViewObjectDict = {}
 
         d["content"] = view_object.content
@@ -68,10 +71,10 @@ class ViewControllerBase:
         if view_object.files:
             d["files"] = view_object.files
 
-        if view_object.children:
+        if view_object.components:
             v = self.__raw_view
             v.clear_items()
-            for child in view_object.children:
+            for child in view_object.components:
                 v.add_item(child)
             d["view"] = v
 

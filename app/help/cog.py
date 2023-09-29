@@ -39,7 +39,7 @@ class HelpView(View):
         super().__init__()
         self.current: State[FeatureLabel] = State(command_name, self)
 
-    def export(self) -> ViewObject:
+    def render(self) -> ViewObject:
         async def on_select(interaction: discord.Interaction, values: list[str]) -> None:
             await interaction.response.defer(ephemeral=True)
             if (selected := values[0]) not in FEATURE_LABEL_LIST:
@@ -50,7 +50,7 @@ class HelpView(View):
             embeds=[
                 get_help_embed(self.current()),
             ],
-            children=[
+            components=[
                 Select(
                     config={
                         "max_values": 1,
