@@ -1,11 +1,14 @@
 from collections.abc import Generator
-from typing import Any, TypedDict
+from typing import TYPE_CHECKING, Any, TypedDict
 
 import discord
 from discord import ui
 
-from .state import State
-from .view import View, ViewObject
+from components.ui.state import State
+from components.ui.view import View
+
+if TYPE_CHECKING:
+    from components.ui.view import ViewObject
 
 
 class ViewObjectDict(TypedDict, total=False):
@@ -32,14 +35,17 @@ class ViewObjectDict(TypedDict, total=False):
     view: ui.View
 
 
-class ViewControllerBase:
-    def __init__(self, view: View, timeout: float | None = 180) -> None:
-        self.__view = view
+class BaseController:
+    def __init__(self, timeout: float | None = 180) -> None:
+        self.__view: View
         self.__raw_view = ui.View(timeout=timeout)
+        self.__message: discord.Message
 
-    async def send(self, target: discord.abc.Messageable) -> None:
-        # await target.send(**self._process_view_for_discord())
-        raise NotImplementedError
+    async def send(self, view: View) -> None:
+        self.__view = view
+
+    async def sync(self) -> None:
+        pass
 
     def stop(self) -> dict[str, Any]:
         """
