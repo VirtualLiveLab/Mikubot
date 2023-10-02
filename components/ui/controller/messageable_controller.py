@@ -14,4 +14,4 @@ class MessageableController(ViewController):
         target = self.__messageable
         view_kwargs = self._process_view_for_discord("files")
 
-        self.__message = await target.send(**view_kwargs)
+        self.message = await target.send(**view_kwargs)

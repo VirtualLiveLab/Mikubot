@@ -4,7 +4,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from components.ui import Select, SelectOption, State, View, ViewObject, ViewSender
+from components.ui import InteractionController, Select, SelectOption, State, View, ViewObject
 
 from .const import FEATURE_LABEL_LIST, FeatureLabel
 from .embed import get_help_embed
@@ -30,8 +30,8 @@ class Help(commands.Cog):
         await interaction.response.defer(ephemeral=True)
         if not feature_name:
             feature_name = "ヘルプ"
-        view = ViewSender(HelpView(command_name=feature_name))
-        await view.send(interaction.followup)
+        controller = InteractionController(HelpView(command_name=feature_name), interaction=interaction)
+        await controller.send()
 
 
 class HelpView(View):

@@ -10,7 +10,6 @@ from utils.logger import get_my_logger
 
 if TYPE_CHECKING:
     from components.ui.controller.controller import ViewController
-    from components.ui.send import ViewSender
 
 
 class ViewObject(BaseModel):
@@ -28,8 +27,7 @@ class View:
         loop: asyncio.AbstractEventLoop | None = None,
     ) -> None:
         self._loop = loop or asyncio.get_event_loop()
-        # ViewSender will be deprecated in the future
-        self._controller: ViewSender | ViewController | None = None
+        self._controller: ViewController | None = None
         self.__logger = get_my_logger(__name__)
 
     def render(self) -> ViewObject:
@@ -38,5 +36,11 @@ class View:
     def sync(self) -> None:
         if self._controller:
             self._loop.create_task(self._controller.sync())
+        else:
+            self.__logger.warning("ViewSender is not set")
+
+    def stop(self) -> None:
+        if self._controller:
+            self._controller.stop()
         else:
             self.__logger.warning("ViewSender is not set")

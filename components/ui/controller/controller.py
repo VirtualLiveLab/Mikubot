@@ -23,7 +23,7 @@ class ViewController:
         self.__view = view
         view._controller = self  # noqa: SLF001
         self.__raw_view = ui.View(timeout=timeout)
-        self.__message: discord.Message
+        self.message: discord.Message | None = None
 
     async def send(self) -> None:
         # implement this in subclasses
@@ -33,9 +33,12 @@ class ViewController:
         """
         Sync the message with current view.
         """
+        if self.message is None:
+            return
+
         # maybe validation for self.__view is needed
         d = self._process_view_for_discord("attachment")
-        self.__message = await self.__message.edit(**d)
+        self.message = await self.message.edit(**d)
 
     def stop(self) -> None:
         """

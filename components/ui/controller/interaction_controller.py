@@ -24,13 +24,13 @@ class InteractionController(ViewController):
 
         if target.is_expired():
             if target.channel is not None and not isinstance(target.channel, discord.CategoryChannel | discord.ForumChannel):
-                self.__message = await target.channel.send(**view_kwargs)
+                self.message = await target.channel.send(**view_kwargs)
             return
 
         if target.response.is_done():
-            self.__message = await target.followup.send(**view_kwargs, ephemeral=self.__ephemeral, wait=True)
+            self.message = await target.followup.send(**view_kwargs, ephemeral=self.__ephemeral, wait=True)
             return
 
         await target.response.send_message(**view_kwargs, ephemeral=self.__ephemeral)
-        self.__message = await target.original_response()
+        self.message = await target.original_response()
         return

@@ -10,6 +10,7 @@ from discord.ext import commands
 from components.ui import (
     Button,
     ChannelSelect,
+    InteractionController,
     MentionableSelect,
     Modal,
     Select,
@@ -20,9 +21,8 @@ from components.ui import (
     UserSelect,
     View,
     ViewObject,
-    ViewSender,
 )
-from components.ui.controller import InteractionController
+from const.emoji import WASTE_BASKET
 from const.enums import Color, Status
 
 if TYPE_CHECKING:
@@ -86,8 +86,8 @@ class TestCog(commands.Cog):
 
     async def try_select(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
-        view = ViewSender(SelectView())
-        await view.send(target=interaction.followup, ephemeral=False)
+        controller = InteractionController(SelectView(), interaction=interaction)
+        await controller.send()
 
 
 class TestView(View):
@@ -138,6 +138,10 @@ class TestView(View):
             await interaction.response.defer()
             self.count.set_state(0)
 
+        async def stop(interaction: discord.Interaction) -> None:
+            await interaction.response.defer()
+            self.stop()
+
         async def on_select(interaction: discord.Interaction, values: list[str]) -> None:
             await interaction.response.defer()
             self.selected.set_state(values)
@@ -163,6 +167,7 @@ class TestView(View):
                     },
                     on_click=reset,
                 ),
+                Button(style={"emoji": WASTE_BASKET, "color": "red"}, on_click=stop),
                 Select(
                     config={
                         "max_values": 2,
@@ -173,7 +178,7 @@ class TestView(View):
                     },
                     style={
                         "placeholder": "Select",
-                        "row": 2,
+                        "row": 1,
                     },
                     on_select=on_select,
                 ),
