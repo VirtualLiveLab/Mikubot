@@ -2,16 +2,15 @@ import discord
 
 from components.ui.view import View
 
-from .controller import BaseController
+from .controller import ViewController
 
 
-class MessageableController(BaseController):
-    def __init__(self, messageable: discord.abc.Messageable, *, timeout: float | None = 180) -> None:
-        super().__init__(timeout=timeout)
+class MessageableController(ViewController):
+    def __init__(self, view: View, *, messageable: discord.abc.Messageable, timeout: float | None = 180) -> None:
+        super().__init__(view, timeout=timeout)
         self.__messageable = messageable
 
-    async def send(self, view: View) -> None:
-        self.__view = view
+    async def send(self) -> None:
         target = self.__messageable
         view_kwargs = self._process_view_for_discord("files")
 

@@ -12,7 +12,7 @@ class ViewSender:
         view: View,
     ) -> None:
         self.__view = view
-        self.__view._sender = self  # noqa: SLF001
+        self.__view._controller = self  # noqa: SLF001
         self.__message: discord.Message
         self.__logger = get_my_logger(__name__)
 

@@ -22,6 +22,7 @@ from components.ui import (
     ViewObject,
     ViewSender,
 )
+from components.ui.controller import InteractionController
 from const.enums import Color, Status
 
 if TYPE_CHECKING:
@@ -76,8 +77,12 @@ class TestCog(commands.Cog):
 
     async def try_state(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
-        view = ViewSender(TestView())
-        await view.send(target=interaction.followup, ephemeral=False)
+        controller = InteractionController(TestView(), interaction=interaction)
+        await controller.send()
+
+        res = await controller.wait()
+        for k, v in res.states.items():
+            await interaction.followup.send(f"State {k}: {v}")
 
     async def try_select(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()

@@ -1,5 +1,5 @@
 from collections.abc import Generator
-from typing import TYPE_CHECKING, Any, Literal, overload
+from typing import TYPE_CHECKING, Any, Literal, NamedTuple, overload
 
 import discord
 from discord import ui
@@ -13,15 +13,19 @@ if TYPE_CHECKING:
     from components.ui.view import ViewObject
 
 
-class BaseController:
-    def __init__(self, *, timeout: float | None = 180) -> None:
-        self.__view: View
+class ViewResult(NamedTuple):
+    timed_out: bool
+    states: dict[str, Any]
+
+
+class ViewController:
+    def __init__(self, view: View, *, timeout: float | None = 180) -> None:
+        self.__view = view
+        view._controller = self  # noqa: SLF001
         self.__raw_view = ui.View(timeout=timeout)
         self.__message: discord.Message
 
-    async def send(self, view: View) -> None:
-        # maybe validation for self.__view is needed
-        self.__view = view
+    async def send(self) -> None:
         # implement this in subclasses
         raise NotImplementedError
 
@@ -33,25 +37,31 @@ class BaseController:
         d = self._process_view_for_discord("attachment")
         self.__message = await self.__message.edit(**d)
 
-    def stop(self) -> dict[str, Any]:
+    def stop(self) -> None:
         """
         Stop the view and return the state of all states in the view.
+        """
+        self.__raw_view.stop()
+
+    async def wait(self) -> ViewResult:
+        """
+        Wait for the view to stop and return the state of all states in the view.
 
         Returns
         -------
-        dict[str, Any]
-            The state of all states in the view.
-            Keys are the names of the states.
+        `ViewResult`
+            The result of the view.
+
+            `timed_out` is True if the view timed out and False otherwise. same as `discord.ui.View.wait`.
+
+            `states` is a dictionary of all states in the view.
         """
-        self.__raw_view.stop()
+        timed_out = await self.__raw_view.wait()
 
         d = {}
         for key, state in self._get_all_state_in_view():
             d[key] = state.get_state()
-        return d
-
-    async def wait(self) -> bool:
-        return await self.__raw_view.wait()
+        return ViewResult(timed_out, d)
 
     def _get_all_state_in_view(self) -> Generator[tuple[str, State[Any]], None, None]:
         for k, v in self.__view.__dict__.items():

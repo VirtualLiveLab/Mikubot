@@ -2,17 +2,23 @@ import discord
 
 from components.ui.view import View
 
-from .controller import BaseController
+from .controller import ViewController
 
 
-class InteractionController(BaseController):
-    def __init__(self, interaction: discord.Interaction, *, timeout: float | None = 180, ephemeral: bool = False) -> None:
-        super().__init__(timeout=timeout)
+class InteractionController(ViewController):
+    def __init__(
+        self,
+        view: View,
+        *,
+        interaction: discord.Interaction,
+        timeout: float | None = 180,
+        ephemeral: bool = False,
+    ) -> None:
+        super().__init__(view, timeout=timeout)
         self.__interaction = interaction
         self.__ephemeral = ephemeral
 
-    async def send(self, view: View) -> None:
-        self.__view = view
+    async def send(self) -> None:
         target = self.__interaction
         view_kwargs = self._process_view_for_discord("files")
 
