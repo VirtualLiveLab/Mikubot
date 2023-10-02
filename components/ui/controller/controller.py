@@ -1,5 +1,5 @@
 from collections.abc import Generator
-from typing import TYPE_CHECKING, Any, TypedDict
+from typing import TYPE_CHECKING, Any, Literal, overload
 
 import discord
 from discord import ui
@@ -7,45 +7,31 @@ from discord import ui
 from components.ui.state import State
 from components.ui.view import View
 
+from .type import ViewObjectDictWithAttachment, ViewObjectDictWithFiles
+
 if TYPE_CHECKING:
     from components.ui.view import ViewObject
 
 
-class ViewObjectDict(TypedDict, total=False):
-    """
-    ViewObjectDict is a type hint for the dictionary that is used to send a view to Discord.
-
-    This can be passed to `discord.abc.Messageable.send` as unpacked keyword arguments.
-
-    Accessing the keys are not recommended since the existence of the keys are not guaranteed.
-
-    Example
-    -------
-    ```py
-    d: ViewObjectDict = {
-        "content": "Hello, world!",
-        "embeds": [discord.Embed(title="Hello, world!")],
-    }
-    await ctx.send(**d)
-    """
-
-    content: str
-    embeds: list[discord.Embed]
-    files: list[discord.File]
-    view: ui.View
-
-
 class BaseController:
-    def __init__(self, timeout: float | None = 180) -> None:
+    def __init__(self, *, timeout: float | None = 180) -> None:
         self.__view: View
         self.__raw_view = ui.View(timeout=timeout)
         self.__message: discord.Message
 
     async def send(self, view: View) -> None:
+        # maybe validation for self.__view is needed
         self.__view = view
+        # implement this in subclasses
+        raise NotImplementedError
 
     async def sync(self) -> None:
-        pass
+        """
+        Sync the message with current view.
+        """
+        # maybe validation for self.__view is needed
+        d = self._process_view_for_discord("attachment")
+        self.__message = await self.__message.edit(**d)
 
     def stop(self) -> dict[str, Any]:
         """
@@ -64,29 +50,73 @@ class BaseController:
             d[key] = state.get_state()
         return d
 
-    async def wait(self) -> None:
-        await self.__raw_view.wait()
+    async def wait(self) -> bool:
+        return await self.__raw_view.wait()
 
-    def _process_view_for_discord(self) -> ViewObjectDict:
+    def _get_all_state_in_view(self) -> Generator[tuple[str, State[Any]], None, None]:
+        for k, v in self.__view.__dict__.items():
+            if isinstance(v, State):
+                yield k, v
+
+    @overload
+    def _process_view_for_discord(self, mode: Literal["attachment"]) -> ViewObjectDictWithAttachment:
+        ...
+
+    @overload
+    def _process_view_for_discord(self, mode: Literal["files"]) -> ViewObjectDictWithFiles:
+        ...
+
+    def _process_view_for_discord(
+        self,
+        mode: Literal["attachment", "files"],
+    ) -> ViewObjectDictWithAttachment | ViewObjectDictWithFiles:
+        """
+        _process_view_for_discord is a helper function to process the view for Discord.
+
+        Parameters
+        ----------
+        mode : Literal[&quot;attachment&quot;, &quot;files&quot;]
+            The mode to process the view for Discord.
+
+            If the mode is `attachment`, ViewObject.files will be put into the `attachments` key.
+
+            If the mode is `files`, ViewObject.files will be put into the `files` key.
+
+        Returns
+        -------
+        ViewObjectDictWithAttachment | ViewObjectDictWithFiles
+            The processed view dictionary.
+            This can be passed to `discord.abc.Messageable.send` or `discord.abc.Messageable.edit` and etc
+            as unpacked keyword arguments.
+        """
         view_object: ViewObject = self.__view.render()
-        d: ViewObjectDict = {}
 
-        d["content"] = view_object.content
+        if mode == "attachment":
+            d_attachment: ViewObjectDictWithAttachment = {}
+            d_attachment["content"] = view_object.content
+            if view_object.embeds:
+                d_attachment["embeds"] = view_object.embeds
+            if view_object.files:
+                d_attachment["attachments"] = view_object.files
+            if view_object.components:
+                v = self.__raw_view
+                v.clear_items()
+                for child in view_object.components:
+                    v.add_item(child)
+                d_attachment["view"] = v
+            return d_attachment
+
+        d_file: ViewObjectDictWithFiles = {}
+        d_file["content"] = view_object.content
         if view_object.embeds:
-            d["embeds"] = view_object.embeds
+            d_file["embeds"] = view_object.embeds
         if view_object.files:
-            d["files"] = view_object.files
+            d_file["files"] = view_object.files
 
         if view_object.components:
             v = self.__raw_view
             v.clear_items()
             for child in view_object.components:
                 v.add_item(child)
-            d["view"] = v
-
-        return d
-
-    def _get_all_state_in_view(self) -> Generator[tuple[str, State[Any]], None, None]:
-        for k, v in self.__view.__dict__.items():
-            if isinstance(v, State):
-                yield k, v
+            d_file["view"] = v
+        return d_file
