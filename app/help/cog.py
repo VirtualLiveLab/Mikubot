@@ -37,7 +37,7 @@ class Help(commands.Cog):
 class HelpView(View):
     def __init__(self, command_name: FeatureLabel) -> None:
         super().__init__()
-        self.current: State[FeatureLabel] = State(command_name, self)
+        self.current = State[FeatureLabel](command_name, self)
 
     def render(self) -> ViewObject:
         async def on_select(interaction: discord.Interaction, values: list[str]) -> None:

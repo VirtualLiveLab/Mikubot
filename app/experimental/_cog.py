@@ -93,7 +93,7 @@ class TestCog(commands.Cog):
 class TestView(View):
     def __init__(self) -> None:
         self.count = State(0, self)
-        self.selected: State[list[str]] = State([], self)
+        self.selected = State[list[str]]([], self)
         super().__init__()
 
     def render(self) -> ViewObject:
@@ -188,9 +188,9 @@ class TestView(View):
 
 class SelectView(View):
     def __init__(self) -> None:
-        self.selected_channel: State[list[AppCommandChannel | AppCommandThread]] = State([], self)
-        self.selected_user: State[list[discord.User | discord.Member]] = State([], self)
-        self.selected_mentionable: State[list[discord.User | discord.Member | discord.Role]] = State([], self)
+        self.selected_channel = State[list[AppCommandChannel | AppCommandThread]]([], self)
+        self.selected_user = State[list[discord.User | discord.Member]]([], self)
+        self.selected_mentionable = State[list[discord.User | discord.Member | discord.Role]]([], self)
         super().__init__()
 
     def render(self) -> ViewObject:
