@@ -23,7 +23,23 @@ class ViewController:
         self.__view = view
         view._controller = self  # noqa: SLF001
         self.__raw_view = ui.View(timeout=timeout)
-        self.message: discord.Message | None = None
+        self.__message: discord.Message | None = None
+
+    @property
+    def message(self) -> discord.Message | None:
+        """
+        return attached message with the View.
+
+        Returns
+        -------
+        `discord.Message | None`
+            The attached message. None if the View is not sent yet.
+        """
+        return self.__message
+
+    @message.setter
+    def message(self, value: discord.Message | None) -> None:
+        self.__message = value
 
     async def send(self) -> None:
         # implement this in subclasses
@@ -52,7 +68,7 @@ class ViewController:
 
         Returns
         -------
-        `ViewResult`
+        `ViewResult(NamedTuple)`
             The result of the view.
 
             `timed_out` is True if the view timed out and False otherwise. same as `discord.ui.View.wait`.
