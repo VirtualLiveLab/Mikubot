@@ -7,6 +7,7 @@ from discord import ChannelType, app_commands
 from discord.app_commands import AppCommandChannel, AppCommandThread
 from discord.ext import commands
 
+from components.confirm_ui import ConfirmUI
 from components.ui import (
     Button,
     ChannelSelect,
@@ -86,6 +87,13 @@ class TestCog(commands.Cog):
 
     async def try_select(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
+
+        confirm_popup = ConfirmUI(title="テスト", description="続けますか?", default_result=False)
+        res = await confirm_popup.send_and_wait(interaction)
+        if not res:
+            await interaction.followup.send("キャンセルしました", ephemeral=True)
+            return
+
         controller = InteractionController(SelectView(), interaction=interaction)
         await controller.send()
 
