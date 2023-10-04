@@ -1,9 +1,11 @@
 import discord
 from discord import Embed, Interaction
 
-from components.ui import Button, InteractionController, MessageableController, State, View, ViewObject
 from const.emoji import CIRCLE_EMOJI, CROSS_EMOJI
 from const.enums import Color
+from ductile import State, View, ViewObject
+from ductile.controller import InteractionController, MessageableController
+from ductile.ui import Button
 
 
 class ConfirmUI:

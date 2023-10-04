@@ -2,10 +2,15 @@ import asyncio
 from collections.abc import Callable
 from typing import Any, Generic, NamedTuple, TypeVar
 
-from components.ui.view import View
-from utils.logger import get_my_logger
+from .utils import get_logger
+from .view import View
 
 T = TypeVar("T", bound=Any)
+
+__all__ = [
+    "State",
+    # "use_state",
+]
 
 
 class State(Generic[T]):
@@ -15,7 +20,7 @@ class State(Generic[T]):
 
         self._loop = loop or asyncio.get_event_loop()
         self._view = view
-        self._logger = get_my_logger(self.__class__.__name__)
+        self._logger = get_logger(self.__class__.__name__)
 
     def __call__(self) -> T:
         return self.get_state()

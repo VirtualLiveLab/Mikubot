@@ -4,8 +4,8 @@ import discord
 from discord import Emoji, PartialEmoji, ui
 from discord.interactions import Interaction
 
-from components.ui.type import InteractionCallback
-from components.ui.utils.call import call_any_function
+from ductile.types import InteractionCallback
+from ductile.utils import call_any_function
 
 
 class _ButtonStyleRequired(TypedDict):

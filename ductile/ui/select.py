@@ -5,14 +5,14 @@ from discord import SelectOption as _SelectOption
 from discord.enums import ChannelType
 from pydantic import BaseModel, ConfigDict, Field
 
-from components.ui.type import (
+from ductile.types import (
     ChannelSelectCallback,
     MentionableSelectCallback,
     RoleSelectCallback,
     SelectCallback,
     UserSelectCallback,
 )
-from components.ui.utils.call import call_any_function
+from ductile.utils import call_any_function
 
 
 class SelectStyle(TypedDict, total=False):
@@ -37,7 +37,7 @@ class SelectConfigBase(TypedDict, total=False):
 
 
 class SelectConfig(SelectConfigBase):
-    options: list[SelectOption]
+    pass
 
 
 class ChannelSelectConfig(SelectConfigBase):
@@ -57,11 +57,12 @@ class UserSelectConfig(SelectConfigBase):
 
 
 class Select(ui.Select):
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         *,
         config: SelectConfig,
         style: SelectStyle,
+        options: list[SelectOption],
         custom_id: str | None = None,
         on_select: SelectCallback | None = None,
     ) -> None:
@@ -82,7 +83,7 @@ class Select(ui.Select):
                     emoji=option.emoji,
                     default=option.selected_by_default,
                 )
-                for option in config["options"]
+                for option in options
             ],
         }
         if custom_id:

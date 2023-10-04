@@ -1,7 +1,6 @@
 from typing import TypedDict
 
 import discord
-from discord import ui
 
 
 class _ViewObjectDict(TypedDict, total=False):
@@ -24,7 +23,7 @@ class _ViewObjectDict(TypedDict, total=False):
 
     content: str
     embeds: list[discord.Embed]
-    view: ui.View
+    view: discord.ui.View
 
 
 class ViewObjectDictWithAttachment(_ViewObjectDict, total=False):

@@ -8,23 +8,21 @@ from discord.app_commands import AppCommandChannel, AppCommandThread
 from discord.ext import commands
 
 from components.confirm_ui import ConfirmUI
-from components.ui import (
+from components.status import StatusUI
+from const.emoji import WASTE_BASKET
+from const.enums import Color, Status
+from ductile import State, View, ViewObject
+from ductile.controller import InteractionController
+from ductile.ui import (
     Button,
     ChannelSelect,
-    InteractionController,
     MentionableSelect,
     Modal,
     Select,
     SelectOption,
-    State,
-    StatusUI,
     TextInput,
     UserSelect,
-    View,
-    ViewObject,
 )
-from const.emoji import WASTE_BASKET
-from const.enums import Color, Status
 
 if TYPE_CHECKING:
     # import some original class
@@ -179,15 +177,15 @@ class TestView(View):
                 Select(
                     config={
                         "max_values": 2,
-                        "options": [
-                            SelectOption(label="A", description="Aです"),
-                            SelectOption(label="B", description="Bです"),
-                        ],
                     },
                     style={
                         "placeholder": "Select",
                         "row": 1,
                     },
+                    options=[
+                        SelectOption(label="A", description="Aです"),
+                        SelectOption(label="B", description="Bです"),
+                    ],
                     on_select=on_select,
                 ),
             ],

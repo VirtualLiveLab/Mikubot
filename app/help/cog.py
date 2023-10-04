@@ -4,7 +4,9 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from components.ui import InteractionController, Select, SelectOption, State, View, ViewObject
+from ductile import State, View, ViewObject
+from ductile.controller import InteractionController
+from ductile.ui import Select, SelectOption
 
 from .const import FEATURE_LABEL_LIST, FeatureLabel
 from .embed import get_help_embed
@@ -54,14 +56,13 @@ class HelpView(View):
                 Select(
                     config={
                         "max_values": 1,
-                        "options": [
-                            SelectOption(label=n, value=n, selected_by_default=n == self.current())
-                            for n in FEATURE_LABEL_LIST
-                        ],
                     },
                     style={
                         "placeholder": "使い方を見たい機能を選択してください。",
                     },
+                    options=[
+                        SelectOption(label=n, value=n, selected_by_default=n == self.current()) for n in FEATURE_LABEL_LIST
+                    ],
                     on_select=on_select,
                 ),
             ],

@@ -4,12 +4,18 @@ from typing import TYPE_CHECKING
 import discord
 from pydantic import BaseModel, ConfigDict, Field
 
-from utils.logger import get_my_logger
+from .utils import get_logger
 
 # from components.ui.state import State
 
 if TYPE_CHECKING:
-    from components.ui.controller.controller import ViewController
+    from .controller import ViewController
+
+
+__all__ = [
+    "View",
+    "ViewObject",
+]
 
 
 class ViewObject(BaseModel):
@@ -28,7 +34,7 @@ class View:
     ) -> None:
         self._loop = loop or asyncio.get_event_loop()
         self._controller: ViewController | None = None
-        self.__logger = get_my_logger(__name__)
+        self.__logger = get_logger(__name__)
 
     def render(self) -> ViewObject:
         return ViewObject()

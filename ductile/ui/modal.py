@@ -2,7 +2,7 @@ from typing import Literal, TypedDict
 
 from discord import Interaction, TextStyle, ui
 
-from components.ui.type import ModalCallback
+from ductile.types import ModalCallback
 
 
 class TextInputStyle(TypedDict, total=False):

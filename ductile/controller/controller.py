@@ -3,14 +3,13 @@ from typing import TYPE_CHECKING, Any, Literal, NamedTuple, overload
 
 import discord
 
-from components.ui.internal import _InternalView
-from components.ui.state import State
-from components.ui.view import View
+from ductile import State, View
+from ductile.internal import _InternalView
 
 from .type import ViewObjectDictWithAttachment, ViewObjectDictWithFiles
 
 if TYPE_CHECKING:
-    from components.ui.view import ViewObject
+    from ductile import ViewObject
 
 
 class ViewResult(NamedTuple):

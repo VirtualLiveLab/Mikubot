@@ -2,7 +2,11 @@ from discord import ui
 from discord.interactions import Interaction
 from discord.ui.item import Item
 
-from components.ui.type import ViewErrorHandler, ViewTimeoutHandler
+from ductile.types import ViewErrorHandler, ViewTimeoutHandler
+
+__all__ = [
+    "_InternalView",
+]
 
 
 class _InternalView(ui.View):

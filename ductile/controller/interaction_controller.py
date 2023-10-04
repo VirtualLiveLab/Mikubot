@@ -1,6 +1,6 @@
 import discord
 
-from components.ui.view import View
+from ductile import View
 
 from .controller import ViewController
 

@@ -5,6 +5,10 @@ from typing import ParamSpec, TypeVar
 P = ParamSpec("P")
 R = TypeVar("R")
 
+__all__ = [
+    "call_any_function",
+]
+
 
 async def call_any_function(fn: Callable[P, R], *args: P.args, **kwargs: P.kwargs) -> R:
     if iscoroutinefunction(fn):
