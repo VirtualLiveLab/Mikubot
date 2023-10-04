@@ -14,6 +14,19 @@ __all__ = [
 
 
 class State(Generic[T]):
+    """
+    A class representing a state with a generic type T.
+
+    Methods:
+    --------
+    __call__() -> `T`:
+        Returns the current value of the state.
+    get_state() -> `T`:
+        Returns the current value of the state.
+    set_state(new_value: `T | Callable[[T], T]`) -> `None`:
+        Sets the current value of the state to the new value.
+    """
+
     def __init__(self, initial_value: T, view: View, /, *, loop: asyncio.AbstractEventLoop | None = None) -> None:
         self._initial_value: T = initial_value
         self._current_value: T = self._initial_value
@@ -23,12 +36,39 @@ class State(Generic[T]):
         self._logger = get_logger(self.__class__.__name__)
 
     def __call__(self) -> T:
+        """
+        Returns the current value of the state. equivalent to `State.get_state()`.
+
+        Returns
+        -------
+        `T`
+            The current value of the state.
+        """
         return self.get_state()
 
     def get_state(self) -> T:
+        """
+        Returns the current value of the state.
+
+        Returns
+        -------
+        `T`
+            The current value of the state.
+        """
         return self._current_value
 
     def set_state(self, new_value: T | Callable[[T], T]) -> None:
+        """
+        Sets the current value of the state to the new value.
+
+        After the state is changed, this method calls `View.sync()` to synchronize the view with the controller.
+
+        Parameters
+        ----------
+        new_value : `T | Callable[[T], T]`
+            The new value of the state. If the type is `Callable[[T], T]`, the callable is called with the current
+            value of the state and the return value is used as the new value of the state.
+        """
         _new_value: T = self._current_value
 
         if isinstance(new_value, Callable):
