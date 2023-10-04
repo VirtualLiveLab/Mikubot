@@ -2,8 +2,8 @@ from collections.abc import Generator
 from typing import TYPE_CHECKING, Any, Literal, NamedTuple, overload
 
 import discord
-from discord import ui
 
+from components.ui.internal import _InternalView
 from components.ui.state import State
 from components.ui.view import View
 
@@ -22,7 +22,7 @@ class ViewController:
     def __init__(self, view: View, *, timeout: float | None = 180) -> None:
         self.__view = view
         view._controller = self  # noqa: SLF001
-        self.__raw_view = ui.View(timeout=timeout)
+        self.__raw_view = _InternalView(timeout=timeout, on_error=self.__view.on_error, on_timeout=self.__view.on_timeout)
         self.__message: discord.Message | None = None
 
     @property

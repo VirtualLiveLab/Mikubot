@@ -1,10 +1,14 @@
 from collections.abc import Awaitable, Callable
 from typing import TypeAlias
 
-from discord import Interaction, Member, Role, User
+from discord import Interaction, Member, Role, User, ui
 from discord.app_commands import AppCommandChannel, AppCommandThread
 
 InteractionCallback: TypeAlias = Callable[[Interaction], Awaitable[None]]
+
+# view event handler
+ViewErrorHandler: TypeAlias = Callable[[Interaction, Exception, ui.Item], Awaitable[None]]
+ViewTimeoutHandler: TypeAlias = Callable[[], Awaitable[None]]
 
 # SelectCallback
 SelectCallback: TypeAlias = Callable[[Interaction, list[str]], Awaitable[None]]

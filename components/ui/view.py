@@ -44,3 +44,22 @@ class View:
             self._controller.stop()
         else:
             self.__logger.warning("ViewSender is not set")
+
+    async def on_error(self, interaction: discord.Interaction, error: Exception, item: discord.ui.Item) -> None:
+        """
+        on_error is called when an error occurs in the view.
+
+        Parameters
+        ----------
+        interaction : `discord.Interaction`
+            The interaction that caused the error.
+        error : `Exception`
+            The error that occurred.
+        item : `discord.ui.Item`
+            The item that caused the error.
+        """
+
+    async def on_timeout(self) -> None:
+        """
+        on_timeout is called when the view times out.
+        """
