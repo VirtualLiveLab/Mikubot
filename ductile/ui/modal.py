@@ -30,7 +30,7 @@ class TextInput(ui.TextInput):
     ) -> None:
         __d = {
             "label": label,
-            "style": TextStyle[style.get("type", "short")],
+            "style": TextStyle[style.get("field", "short")],
             "placeholder": style.get("placeholder", None),
             "default": style.get("default", None),
             "required": config.get("required", False),
