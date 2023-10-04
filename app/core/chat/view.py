@@ -1,7 +1,7 @@
 from discord import ui
+from ductile.ui import LinkButton
 
 from components.delete_button import DeleteButton
-from components.ui.common.button import LinkButton
 
 
 class DispandView(ui.View):

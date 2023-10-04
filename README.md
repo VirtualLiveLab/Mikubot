@@ -118,7 +118,7 @@ class TestView(View):
 
         return ViewObject(
             embeds=[e],
-            children=[
+            components=[
                 Button("+1", style={"color": "green"}, on_click=increment),
                 Button("-1", style={"color": "red"}, on_click=decrement),
                 Button(

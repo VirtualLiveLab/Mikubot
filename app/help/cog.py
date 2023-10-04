@@ -3,11 +3,10 @@ from typing import TYPE_CHECKING
 import discord
 from discord import app_commands
 from discord.ext import commands
+from ductile.controller import InteractionController
 
-from components.ui import Select, SelectOption, State, View, ViewObject, ViewSender
-
-from .const import FEATURE_LABEL_LIST, FeatureLabel
-from .embed import get_help_embed
+from .const import FeatureLabel
+from .view import HelpView
 
 if TYPE_CHECKING:
     # import some original class
@@ -30,42 +29,8 @@ class Help(commands.Cog):
         await interaction.response.defer(ephemeral=True)
         if not feature_name:
             feature_name = "ヘルプ"
-        view = ViewSender(HelpView(command_name=feature_name))
-        await view.send(interaction.followup)
-
-
-class HelpView(View):
-    def __init__(self, command_name: FeatureLabel) -> None:
-        super().__init__()
-        self.current: State[FeatureLabel] = State(command_name, self)
-
-    def export(self) -> ViewObject:
-        async def on_select(interaction: discord.Interaction, values: list[str]) -> None:
-            await interaction.response.defer(ephemeral=True)
-            if (selected := values[0]) not in FEATURE_LABEL_LIST:
-                selected = "ヘルプ"
-            self.current.set_state(selected)
-
-        return ViewObject(
-            embeds=[
-                get_help_embed(self.current()),
-            ],
-            children=[
-                Select(
-                    config={
-                        "max_values": 1,
-                        "options": [
-                            SelectOption(label=n, value=n, selected_by_default=n == self.current())
-                            for n in FEATURE_LABEL_LIST
-                        ],
-                    },
-                    style={
-                        "placeholder": "使い方を見たい機能を選択してください。",
-                    },
-                    on_select=on_select,
-                ),
-            ],
-        )
+        controller = InteractionController(HelpView(command_name=feature_name), interaction=interaction)
+        await controller.send()
 
 
 async def setup(bot: "Bot") -> None:
