@@ -1,9 +1,9 @@
 import discord
 from discord.app_commands import AppCommandChannel, AppCommandThread
-
-from const.emoji import WASTE_BASKET
 from ductile import State, View, ViewObject
 from ductile.ui import Button, ChannelSelect, MentionableSelect, Modal, Select, SelectOption, TextInput, UserSelect
+
+from const.emoji import WASTE_BASKET
 
 
 class TestView(View):

@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING, Literal
 import discord
 from discord import app_commands
 from discord.ext import commands
+from ductile.controller import InteractionController
 
 from components.confirm_ui import ConfirmUI
 from components.status import StatusUI
 from const.enums import Color, Status
-from ductile.controller import InteractionController
 
 from .view import SelectView, TestView
 

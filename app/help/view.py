@@ -1,5 +1,4 @@
 import discord
-
 from ductile import State, View, ViewObject
 from ductile.ui import Select, SelectOption
 
