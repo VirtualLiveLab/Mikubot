@@ -541,22 +541,18 @@ files = [
 
 [[package]]
 name = "ductile-ui"
-version = "0.1.0"
+version = "0.1.1"
 description = "A library provides interactive ui for discord.py"
 optional = false
-python-versions = "^3.10"
-files = []
-develop = false
+python-versions = ">=3.10,<4.0"
+files = [
+    {file = "ductile_ui-0.1.1-py3-none-any.whl", hash = "sha256:ab866b8726b4c8029a5cebd0ab269c6dd9c2ec5de01f28e4ca4f0cea65426639"},
+    {file = "ductile_ui-0.1.1.tar.gz", hash = "sha256:2b190f9ffe8cbd20719152db4495b21adc19e3b5566b588f26828506c866c342"},
+]
 
 [package.dependencies]
-discord-py = "^2.3"
-pydantic = "^2.4.2"
-
-[package.source]
-type = "git"
-url = "https://github.com/sushi-chaaaan/ductile-ui.git"
-reference = "main"
-resolved_reference = "d8cab35ecc50ef7065c584cc07d6509af4a9b980"
+discord-py = ">=2.3,<3.0"
+pydantic = ">=2.4.2,<3.0.0"
 
 [[package]]
 name = "filelock"
@@ -1452,4 +1448,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "4fd0f3dd547c820992b125d656dbfe35fa77507cf354214cff731edc6df97264"
+content-hash = "57979bbaab3c682865429ffc3ddfce7213ad120f90a55a83382ff5abe5aa6a0e"
