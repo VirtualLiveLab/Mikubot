@@ -541,13 +541,13 @@ files = [
 
 [[package]]
 name = "ductile-ui"
-version = "0.1.1"
+version = "0.2.2"
 description = "A library provides interactive ui for discord.py"
 optional = false
 python-versions = ">=3.10,<4.0"
 files = [
-    {file = "ductile_ui-0.1.1-py3-none-any.whl", hash = "sha256:ab866b8726b4c8029a5cebd0ab269c6dd9c2ec5de01f28e4ca4f0cea65426639"},
-    {file = "ductile_ui-0.1.1.tar.gz", hash = "sha256:2b190f9ffe8cbd20719152db4495b21adc19e3b5566b588f26828506c866c342"},
+    {file = "ductile_ui-0.2.2-py3-none-any.whl", hash = "sha256:10377b3be93eef759a9fb3e4015df5ce3b789d8df699a6acbbfd7a8bf5461022"},
+    {file = "ductile_ui-0.2.2.tar.gz", hash = "sha256:f06448e3dbbad82f7a639d5334b6b5dd781777be5403ff95d8420e18cb3def21"},
 ]
 
 [package.dependencies]
@@ -1448,4 +1448,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "57979bbaab3c682865429ffc3ddfce7213ad120f90a55a83382ff5abe5aa6a0e"
+content-hash = "89cce715d984a84f694a3f78fede580513e57514f43da8eca2f959dbb8b00971"
