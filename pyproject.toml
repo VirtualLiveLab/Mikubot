@@ -15,7 +15,7 @@ discord-py = { git = "https://github.com/Rapptz/discord.py.git", rev = "master",
 pydantic = "^2.0"
 aiohttp = "^3.8.4"
 # ductile-ui = { git = "https://github.com/sushi-chaaaan/ductile-ui.git", rev = "main" }
-ductile-ui = "^0.2.2"
+ductile-ui = "^0.2.3"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.12.0"
