@@ -89,9 +89,11 @@ class VotePanel(View):
         return ViewObject(
             embeds=[embed_is_open() if self.__manager.is_open else embed_is_closed()],
             components=[
-                Button("投票", style={"color": "green", "disabled": not self.__manager.is_open}, on_click=get_user_vote),
-                Button("締め切り", style={"color": "red", "disabled": not self.__manager.is_open}, on_click=close),
-            ],
+                Button("投票", style={"color": "green"}, on_click=get_user_vote),
+                Button("締め切り", style={"color": "red"}, on_click=close),
+            ]
+            if self.__manager.is_open
+            else [],
         )
 
 
