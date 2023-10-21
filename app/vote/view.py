@@ -19,14 +19,14 @@ class VotePanel(View):
         super().__init__()
         self.__question = question
         self.__options = options
-        self.__vote = VoteManager(options=options, is_anonymous=is_anonymous)
+        self.__manager = VoteManager(options=options, is_anonymous=is_anonymous)
 
     def render(self) -> ViewObject:
         async def get_user_vote(interaction: Interaction) -> None:
             await interaction.response.defer(ephemeral=True)
             user_vote_view = UserVoteView(
                 options=self.__options,
-                prev_chosen=self.__vote.get_user_vote(user_id=interaction.user.id),
+                prev_chosen=self.__manager.get_user_vote(user_id=interaction.user.id),
                 panel_url=interaction.message.jump_url if interaction.message else None,
             )
             controller = InteractionController(user_vote_view, interaction=interaction, timeout=120, ephemeral=True)
@@ -35,9 +35,9 @@ class VotePanel(View):
             res = states["chosen"] if "chosen" in states and isinstance(states["chosen"], UUID | None) else None
 
             if res is not None:
-                self.__vote.vote(user_id=interaction.user.id, option_id=res)
+                self.__manager.vote(user_id=interaction.user.id, option_id=res)
             else:
-                self.__vote.devote(user_id=interaction.user.id)
+                self.__manager.devote(user_id=interaction.user.id)
             self.sync()
 
         async def close(interaction: Interaction) -> None:
@@ -51,13 +51,13 @@ class VotePanel(View):
             if not res:
                 return
 
-            if self.__vote.is_open:
-                self.__vote.is_open = False
+            if self.__manager.is_open:
+                self.__manager.is_open = False
             self.sync()
             self.stop()
 
         def embed_is_open() -> Embed:
-            all_counts = self.__vote.get_count_of_all_options()
+            all_counts = self.__manager.get_count_of_all_options()
             e = Embed(
                 title=self.__question,
                 description="投票ボタンを押した後、選択肢を選んでください。",
@@ -72,7 +72,7 @@ class VotePanel(View):
             return e
 
         def embed_is_closed() -> Embed:
-            all_counts = self.__vote.get_count_of_all_options()
+            all_counts = self.__manager.get_count_of_all_options()
             e = Embed(
                 title=self.__question,
                 description="この投票は締め切られました。",
@@ -87,10 +87,10 @@ class VotePanel(View):
             return e
 
         return ViewObject(
-            embeds=[embed_is_open() if self.__vote.is_open else embed_is_closed()],
+            embeds=[embed_is_open() if self.__manager.is_open else embed_is_closed()],
             components=[
-                Button("投票", style={"color": "green", "disabled": not self.__vote.is_open}, on_click=get_user_vote),
-                Button("締め切り", style={"color": "red", "disabled": not self.__vote.is_open}, on_click=close),
+                Button("投票", style={"color": "green", "disabled": not self.__manager.is_open}, on_click=get_user_vote),
+                Button("締め切り", style={"color": "red", "disabled": not self.__manager.is_open}, on_click=close),
             ],
         )
 
