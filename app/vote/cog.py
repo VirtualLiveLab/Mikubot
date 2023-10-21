@@ -5,9 +5,10 @@ from discord import app_commands
 from discord.ext import commands
 from ductile.controller import InteractionController
 
-from app.vote.view import VotePanel
-from app.vote.vote import VoteOption
 from utils.io import read_json
+
+from .manager import VoteOption
+from .view import VotePanel
 
 if TYPE_CHECKING:
     # import some original class
@@ -17,17 +18,18 @@ if TYPE_CHECKING:
 
 
 class NewVote(commands.Cog):
-    __renamed_options: ClassVar[dict[str, str]] = {f"option{i}": f"選択肢{i}" for i in range(1, 21)}
+    __RENAMED_OPTIONS: ClassVar[dict[str, str]] = {f"option{i}": f"選択肢{i}" for i in range(1, 21)}
+    vote_app = app_commands.Group(name="vote", description="投票関連のコマンド")
 
     def __init__(self, bot: "Bot") -> None:
         self.bot = bot
 
-    @app_commands.command(  # type: ignore[arg-type]
-        name="vote-anonymous",
-        description="最大20択で投票を作成するよ！選択肢をすべて省略するとはい/いいえの投票になるよ！",
+    @vote_app.command(  # type: ignore[arg-type]
+        name="anonymous",
+        description="最大20択で匿名の投票を作成するよ！選択肢をすべて省略するとはい/いいえの投票になるよ！",
     )
-    @app_commands.rename(**(__renamed_options | {"question": "質問文"}))
-    async def vote(  # noqa: PLR0913
+    @app_commands.rename(**(__RENAMED_OPTIONS | {"question": "質問文"}))
+    async def vote_anonymous(  # noqa: PLR0913
         self,
         interaction: discord.Interaction,
         question: str,
@@ -92,7 +94,7 @@ class NewVote(commands.Cog):
         else:
             option = [VoteOption(emoji=emoji_dict[str(i)], label=raw_options[i]) for i in range(len(raw_options))]
 
-        vote_panel = VotePanel(question=question, options=option)
+        vote_panel = VotePanel(question=question, options=option, is_anonymous=True)
         controller = InteractionController(view=vote_panel, interaction=interaction, timeout=None)
         await controller.send()
 

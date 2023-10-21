@@ -6,21 +6,20 @@ from ductile.controller import InteractionController
 from ductile.types import InteractionCallback
 from ductile.ui import Button, LinkButton
 
-from const.emoji import WASTE_BASKET
+from components.confirm_ui import ConfirmUI
+from const.emoji import CIRCLE_EMOJI, WASTE_BASKET
 from const.enums import Color
-from utils.logger import get_my_logger
 
-from .type import UserVoteStatus
-from .vote import OptionId, Vote, VoteOption
+from .enum import UserVoteStatus
+from .manager import OptionId, VoteManager, VoteOption
 
 
 class VotePanel(View):
-    def __init__(self, *, question: str, options: list[VoteOption]) -> None:
+    def __init__(self, *, question: str, options: list[VoteOption], is_anonymous: bool) -> None:
         super().__init__()
         self.__question = question
         self.__options = options
-        self.__vote = Vote(options=options)
-        self.__logger = get_my_logger(__name__)
+        self.__vote = VoteManager(options=options, is_anonymous=is_anonymous)
 
     def render(self) -> ViewObject:
         async def get_user_vote(interaction: Interaction) -> None:
@@ -33,28 +32,66 @@ class VotePanel(View):
             controller = InteractionController(user_vote_view, interaction=interaction, timeout=120, ephemeral=True)
             await controller.send()
             _, states = await controller.wait()
-            self.__logger.debug(repr(states))
             res = states["chosen"] if "chosen" in states and isinstance(states["chosen"], UUID | None) else None
-            self.__logger.debug(repr(res))
+
             if res is not None:
                 self.__vote.vote(user_id=interaction.user.id, option_id=res)
             else:
                 self.__vote.devote(user_id=interaction.user.id)
             self.sync()
 
-        e = Embed(
-            title=self.__question,
-            description="投票ボタンを押した後、選択肢を選んでください。",
-            color=Color.MIKU,
-        )
-        for opt in self.__options:
-            e.add_field(
-                name=f"{opt.emoji} {opt.label}",
-                value=f"票数: {self.__vote.get_number_of_vote(option_id=opt.option_id)}",
-                inline=True,
+        async def close(interaction: Interaction) -> None:
+            await interaction.response.defer(ephemeral=True)
+            conf_ui = ConfirmUI(
+                title="投票を締め切りますか？",
+                description=f"{CIRCLE_EMOJI}を押すと投票が締め切られます。",
+                default_result=False,
             )
+            res = await conf_ui.send_and_wait(interaction, ephemeral=True, timeout=120)
+            if not res:
+                return
 
-        return ViewObject(embeds=[e], components=[Button("投票", style={"color": "green"}, on_click=get_user_vote)])
+            if self.__vote.is_open:
+                self.__vote.is_open = False
+            self.sync()
+            self.stop()
+
+        def embed_is_open() -> Embed:
+            e = Embed(
+                title=self.__question,
+                description="投票ボタンを押した後、選択肢を選んでください。",
+                color=Color.MIKU,
+            )
+            for opt in self.__options:
+                e.add_field(
+                    name=f"{opt.emoji} {opt.label}",
+                    value=f"票数: {self.__vote.get_count_of_option(option_id=opt.option_id)}",
+                    inline=True,
+                )
+            return e
+
+        def embed_is_closed() -> Embed:
+            all_counts = self.__vote.get_count_of_all_options()
+            e = Embed(
+                title=self.__question,
+                description="この投票は締め切られました。",
+                color=Color.MIKU,
+            )
+            for opt in sorted(self.__options, key=lambda o: all_counts[o.option_id], reverse=True):
+                e.add_field(
+                    name=f"{opt.emoji} {opt.label}",
+                    value=f"票数: {all_counts[opt.option_id]}",
+                    inline=True,
+                )
+            return e
+
+        return ViewObject(
+            embeds=[embed_is_open() if self.__vote.is_open else embed_is_closed()],
+            components=[
+                Button("投票", style={"color": "green", "disabled": not self.__vote.is_open}, on_click=get_user_vote),
+                Button("締め切り", style={"color": "red", "disabled": not self.__vote.is_open}, on_click=close),
+            ],
+        )
 
 
 class UserVoteView(View):
@@ -63,37 +100,37 @@ class UserVoteView(View):
         self.__options = options
         self.__prev_chosen = prev_chosen
         self.__panel_url = panel_url
-        self.status = UserVoteStatus.NOT_YET
-        self.chosen = State[OptionId | None](None, self)
+        self.__status = UserVoteStatus.NOT_YET
+        self.__chosen = State[OptionId | None](None, self)
 
     def get_vote_handler(self, option: VoteOption) -> InteractionCallback:
         async def handler(interaction: Interaction) -> None:
             await interaction.response.defer()
-            self.status = UserVoteStatus.VOTE_COMPLETE
+            self.__status = UserVoteStatus.VOTE_COMPLETE
             self.terminate(option.option_id)
 
         return handler
 
     async def devote_handler(self, interaction: Interaction) -> None:
         await interaction.response.defer()
-        self.status = UserVoteStatus.VOTE_REMOVED
+        self.__status = UserVoteStatus.VOTE_REMOVED
         self.terminate(None)
 
     async def on_timeout(self) -> None:
-        self.status = UserVoteStatus.VOTE_TIMEOUT
+        self.__status = UserVoteStatus.VOTE_TIMEOUT
         self.terminate(self.__prev_chosen)
 
     async def on_error(self, interaction: Interaction, _e: Exception, _i: ui.Item) -> None:
         await interaction.response.defer()
-        self.status = UserVoteStatus.VOTE_ERROR
+        self.__status = UserVoteStatus.VOTE_ERROR
         self.terminate(self.__prev_chosen)
 
     def terminate(self, final_state: OptionId | None) -> None:
-        self.chosen.set_state(final_state)
+        self.__chosen.set_state(final_state)
         self.stop()
 
     def render(self) -> ViewObject:
-        match self.status:
+        match self.__status:
             case UserVoteStatus.NOT_YET:
                 return self._render_not_yet()
             case UserVoteStatus.VOTE_COMPLETE:
