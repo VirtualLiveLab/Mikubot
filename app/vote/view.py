@@ -145,7 +145,13 @@ class UserVoteView(View):
 
     def _render_not_yet(self) -> ViewObject:
         return ViewObject(
-            embeds=[Embed(title="投票", description="投票したい選択肢のボタンを押してください。")],
+            embeds=[
+                Embed(
+                    title="投票",
+                    description="投票したい選択肢のボタンを押してください。",
+                    color=Color.MIKU,
+                ),
+            ],
             components=[
                 *[
                     Button(
