@@ -3,10 +3,10 @@ from discord import Embed
 from const.discord import VOTE_FOOTER_MESSAGE
 from const.enums import Color
 
-from .type import VoteOption
+from .type import OldVoteOption
 
 
-def vote_embed(question: str, option: list[VoteOption]) -> Embed:
+def vote_embed(question: str, option: list[OldVoteOption]) -> Embed:
     embed = Embed(
         color=Color.MIKU,
         title=question,
@@ -18,7 +18,7 @@ def vote_embed(question: str, option: list[VoteOption]) -> Embed:
     return embed
 
 
-def vote_result_embed(question: str, option: list[VoteOption]) -> Embed:
+def vote_result_embed(question: str, option: list[OldVoteOption]) -> Embed:
     embed = Embed(
         color=Color.MIKU,
         title=f"{question}の投票結果",
