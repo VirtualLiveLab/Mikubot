@@ -57,6 +57,7 @@ class VotePanel(View):
             self.stop()
 
         def embed_is_open() -> Embed:
+            all_counts = self.__vote.get_count_of_all_options()
             e = Embed(
                 title=self.__question,
                 description="投票ボタンを押した後、選択肢を選んでください。",
@@ -65,7 +66,7 @@ class VotePanel(View):
             for opt in self.__options:
                 e.add_field(
                     name=f"{opt.emoji} {opt.label}",
-                    value=f"票数: {self.__vote.get_count_of_option(option_id=opt.option_id)}",
+                    value=f"票数: {all_counts[opt.option_id]}",
                     inline=True,
                 )
             return e
@@ -101,32 +102,32 @@ class UserVoteView(View):
         self.__prev_chosen = prev_chosen
         self.__panel_url = panel_url
         self.__status = UserVoteStatus.NOT_YET
-        self.__chosen = State[OptionId | None](None, self)
+        self.chosen = State[OptionId | None](None, self)
 
     def get_vote_handler(self, option: VoteOption) -> InteractionCallback:
         async def handler(interaction: Interaction) -> None:
             await interaction.response.defer()
             self.__status = UserVoteStatus.VOTE_COMPLETE
-            self.terminate(option.option_id)
+            self.terminate(result=option.option_id)
 
         return handler
 
     async def devote_handler(self, interaction: Interaction) -> None:
         await interaction.response.defer()
         self.__status = UserVoteStatus.VOTE_REMOVED
-        self.terminate(None)
+        self.terminate(result=None)
 
     async def on_timeout(self) -> None:
         self.__status = UserVoteStatus.VOTE_TIMEOUT
-        self.terminate(self.__prev_chosen)
+        self.terminate(result=self.__prev_chosen)
 
     async def on_error(self, interaction: Interaction, _e: Exception, _i: ui.Item) -> None:
         await interaction.response.defer()
         self.__status = UserVoteStatus.VOTE_ERROR
-        self.terminate(self.__prev_chosen)
+        self.terminate(result=self.__prev_chosen)
 
-    def terminate(self, final_state: OptionId | None) -> None:
-        self.__chosen.set_state(final_state)
+    def terminate(self, *, result: OptionId | None) -> None:
+        self.chosen.set_state(result)
         self.stop()
 
     def render(self) -> ViewObject:
