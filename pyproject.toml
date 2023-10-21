@@ -44,7 +44,7 @@ ignore = [
 select = ["ALL"]
 
 [tool.ruff.per-file-ignores]
-"./app/**" = [
+"./src/app/**" = [
     "INP001", # add __init__.py to app directory is too much work
 ]
 "/**/tests/**" = [
