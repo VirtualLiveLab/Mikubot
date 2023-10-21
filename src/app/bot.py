@@ -62,7 +62,7 @@ class Bot(commands.Bot):
     async def load_exts(self) -> None:
         # load cogs automatically
         # "cog.py" under the "app" directory will loaded
-        loader = CogLoader("app")
+        loader = CogLoader("src/app")
         cogs = loader.glob_cog("cog.py", as_relative=True)
 
         if cogs is None or cogs == []:
