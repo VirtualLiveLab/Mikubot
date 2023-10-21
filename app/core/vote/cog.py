@@ -8,7 +8,7 @@ from const.discord import VOTE_FOOTER_MESSAGE
 from utils.io import read_json
 
 from .embed import vote_embed, vote_result_embed
-from .type import VoteOption
+from .type import OldVoteOption
 
 if TYPE_CHECKING:
     # import some original class
@@ -29,7 +29,7 @@ class Vote(commands.Cog):
         self.bot.tree.add_command(self.vote_count_ctx_menu)
 
     @app_commands.command(  # type: ignore[arg-type]
-        name="vote",
+        name="vote-public",
         description="最大20択で投票を作成するよ！選択肢をすべて省略するとはい/いいえの投票になるよ！",
     )
     @app_commands.rename(**(__renamed_options | {"question": "質問文"}))
@@ -92,11 +92,11 @@ class Vote(commands.Cog):
         emoji_dict = read_json(r"const/vote_emoji.json")
         if valid_opts == []:
             option = [
-                VoteOption(emoji=emoji_dict["0"], label="はい"),
-                VoteOption(emoji=emoji_dict["1"], label="いいえ"),
+                OldVoteOption(emoji=emoji_dict["0"], label="はい"),
+                OldVoteOption(emoji=emoji_dict["1"], label="いいえ"),
             ]
         else:
-            option = [VoteOption(emoji=emoji_dict[str(i)], label=valid_opts[i]) for i in range(len(valid_opts))]
+            option = [OldVoteOption(emoji=emoji_dict[str(i)], label=valid_opts[i]) for i in range(len(valid_opts))]
 
         embed = vote_embed(question, option)
         msg = await interaction.followup.send(embed=embed, wait=True)
@@ -130,11 +130,11 @@ class Vote(commands.Cog):
 
         return True
 
-    def process_vote_message(self, message: discord.Message) -> list[VoteOption]:
+    def process_vote_message(self, message: discord.Message) -> list[OldVoteOption]:
         em = message.embeds[0]
 
         return [
-            VoteOption(
+            OldVoteOption(
                 label=f.value,
                 emoji=f.name,
                 current=self.get_reaction_count(message.reactions, f.name),
