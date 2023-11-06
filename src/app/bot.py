@@ -6,6 +6,7 @@ import discord
 # import sentry_sdk
 from discord.ext import commands
 
+from src.app.core.chat.view import DispandView
 from src.const.log import command_log, login_log
 from src.utils.cog import CogLoader
 from src.utils.finder import Finder
@@ -95,6 +96,10 @@ class Bot(commands.Bot):
             self.logger.info(msg)
 
     async def setup_views(self) -> None:
+        # NOTICE: message_url is only for LinkButton
+        # This parameter is not used after once sended
+        # So, this is dummy value
+        self.add_view(DispandView(message_url="MISSING"))
         pass
 
     async def set_pre_invoke_hook(self) -> None:
