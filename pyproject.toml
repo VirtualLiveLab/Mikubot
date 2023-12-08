@@ -42,6 +42,7 @@ ignore = [
     "ERA",     # : 役立つこともあるが、コメントアウトしていないコードも警告されるので無視する
     "COM812",  # recommended by ruff formatter
     "ISC001",  # recommended by ruff formatter
+    "UP040",   # discord.py can not understand new type syntax
 ]
 select = ["ALL"]
 
