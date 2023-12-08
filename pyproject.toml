@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{ include = "mikubot_v2" }]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
 discord-py = { git = "https://github.com/Rapptz/discord.py.git", rev = "master", extras = [
     "voice",
     "speed",
@@ -29,7 +29,7 @@ poetry-plugin-export = "^1.6.0"
 
 [tool.ruff]
 # https://qiita.com/yuji38kwmt/items/63e82126076204923520
-target-version = "py311"
+target-version = "py312"
 line-length = 125
 ignore = [
     "E203",
@@ -54,11 +54,11 @@ select = ["ALL"]
 ]
 
 [tool.black]
-target-version = ["py311"]
+target-version = ["py312"]
 line-length = 125
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 exclude = [".venv"]
 follow_imports = "normal"
 warn_redundant_casts = true
