@@ -13,8 +13,6 @@ if TYPE_CHECKING:
     # import some original class
     from src.app.bot import Bot
 
-    pass
-
 
 class RoleError(Exception):
     pass

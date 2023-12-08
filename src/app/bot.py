@@ -100,7 +100,6 @@ class Bot(commands.Bot):
         # This parameter is not used after once sended
         # So, this is dummy value
         self.add_view(DispandView(message_url="MISSING"))
-        pass
 
     async def set_pre_invoke_hook(self) -> None:
         @self.before_invoke

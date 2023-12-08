@@ -11,8 +11,6 @@ if TYPE_CHECKING:
     # import some original class
     from src.app.bot import Bot
 
-    pass
-
 
 class Role(commands.Cog):
     role = app_commands.Group(name="role", description="ロール関連のコマンド")

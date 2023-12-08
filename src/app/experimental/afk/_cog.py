@@ -12,8 +12,6 @@ if TYPE_CHECKING:
     # import some original class
     from src.app.bot import Bot
 
-    pass
-
 
 class AFK(commands.Cog):
     def __init__(self, bot: "Bot") -> None:
