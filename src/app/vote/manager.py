@@ -1,10 +1,10 @@
-from typing import Annotated
+from typing import Annotated, TypeAlias
 from uuid import uuid4
 
 from pydantic import UUID4, BaseModel, Field
 
-type OptionId = Annotated[UUID4, "OptionId"]
-type VotedUserId = Annotated[int, "VotedUserId"]
+OptionId: TypeAlias = Annotated[UUID4, "OptionId"]
+VotedUserId: TypeAlias = Annotated[int, "VotedUserId"]
 
 
 class VoteOption(BaseModel):
