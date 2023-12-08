@@ -14,8 +14,6 @@ if TYPE_CHECKING:
     # import some original class
     from src.app.bot import Bot
 
-    pass
-
 
 class NewVote(commands.Cog):
     __RENAMED_OPTIONS: ClassVar[dict[str, str]] = {f"option{i}": f"選択肢{i}" for i in range(1, 21)}

@@ -7,29 +7,28 @@ readme = "README.md"
 packages = [{ include = "mikubot_v2" }]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
 discord-py = { git = "https://github.com/Rapptz/discord.py.git", rev = "master", extras = [
     "voice",
     "speed",
 ] }
 pydantic = "^2.0"
-aiohttp = "^3.8.4"
+aiohttp = "^3.9.1"
 # ductile-ui = { git = "https://github.com/sushi-chaaaan/ductile-ui.git", rev = "main" }
 ductile-ui = "^0.2.6"
 typing-extensions = "^4.8.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "^22.12.0"
 mypy = "^1.4.1"
 poethepoet = "^0.20.0"
 python-dotenv = "^0.21.1"
 pre-commit = "^3.1.0"
-ruff = "^0.0.290"
+ruff = "^0.1.7"
 poetry-plugin-export = "^1.6.0"
 
 [tool.ruff]
 # https://qiita.com/yuji38kwmt/items/63e82126076204923520
-target-version = "py311"
+target-version = "py312"
 line-length = 125
 ignore = [
     "E203",
@@ -41,8 +40,23 @@ ignore = [
     "ANN101",  # missing-type-self: 引数selfには型ヒントは付けていないため
     "ANN102",  # missing-type-cls: 引数clsには型ヒントは付けていないため
     "ERA",     # : 役立つこともあるが、コメントアウトしていないコードも警告されるので無視する
+    "COM812",  # recommended by ruff formatter
+    "ISC001",  # recommended by ruff formatter
 ]
 select = ["ALL"]
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
 
 [tool.ruff.per-file-ignores]
 "./src/app/**" = [
@@ -53,12 +67,9 @@ select = ["ALL"]
     "S101",   # allow to use assert in tests
 ]
 
-[tool.black]
-target-version = ["py311"]
-line-length = 125
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 exclude = [".venv"]
 follow_imports = "normal"
 warn_redundant_casts = true
@@ -69,7 +80,7 @@ implicit_reexport = true
 [tool.poe.tasks]
 install = "poetry run pre-commit install"
 lint = "poetry run ruff check ./src"
-format = "poetry run black ./src"
+format = "poetry run ruff format ./src"
 export = "poetry export -f requirements.txt -o requirements.txt --only main --without-hashes"
 
 [build-system]

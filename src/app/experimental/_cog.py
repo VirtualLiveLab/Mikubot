@@ -17,8 +17,6 @@ if TYPE_CHECKING:
     # import some original class
     from src.app.bot import Bot
 
-    pass
-
 
 class TestCog(commands.Cog):
     def __init__(self, bot: "Bot") -> None:

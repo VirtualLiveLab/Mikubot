@@ -1,6 +1,6 @@
-ARG PYTHON_VERSION_CODE=3.11
+ARG PYTHON_VERSION_CODE=3.12
 
-FROM python:${PYTHON_VERSION_CODE}-buster as builder
+FROM python:${PYTHON_VERSION_CODE}-bullseye as builder
 ARG PYTHON_VERSION_CODE
 WORKDIR /opt
 # python environment variables
@@ -12,7 +12,7 @@ COPY requirements.txt /opt/
 RUN python -m pip install --no-cache-dir -U pip setuptools wheel && \
     python -m pip install --no-cache-dir -r requirements.txt
 
-FROM python:${PYTHON_VERSION_CODE}-slim-buster as runner
+FROM python:${PYTHON_VERSION_CODE}-slim-bullseye as runner
 ARG PYTHON_VERSION_CODE
 WORKDIR /app
 # permission settings
