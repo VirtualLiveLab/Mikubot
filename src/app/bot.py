@@ -58,7 +58,8 @@ class Bot(commands.Bot):
             failed_views=self.failed_views,
         )
         await channel.send(embed=emb)
-        await self.change_presence(activity=discord.Game(name="プロセカ"))
+        await self.change_presence(activity=discord.CustomActivity(name="ハウトゥー世界征服"))
+        # await self.change_presence(activity=discord.Game(name="プロセカ"))
 
     async def load_exts(self) -> None:
         # load cogs automatically
