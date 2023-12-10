@@ -5,6 +5,8 @@ from src.const.discord import MAX_EMBEDS_PER_MESSAGE
 from src.const.enums import Color
 from src.utils.time import TimeUtils
 
+from .cog import OMKIJI_RESULT_DICT, OmikujiResult
+
 
 def user_embed(
     user: discord.Member | discord.User,
@@ -75,3 +77,11 @@ def process_message_to_embeds(message: discord.Message, color: int = Color.MIKU)
         embeds.append(_e)
 
     return embeds
+
+
+def omikuji_embed(result: OmikujiResult) -> Embed:
+    return Embed(
+        title="おみくじ",
+        color=Color.MIKU,
+        description=f"{result}\n{OMKIJI_RESULT_DICT[result]}",
+    )
