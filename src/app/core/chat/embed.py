@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import discord
 from discord import Embed
 
@@ -5,7 +7,8 @@ from src.const.discord import MAX_EMBEDS_PER_MESSAGE
 from src.const.enums import Color
 from src.utils.time import TimeUtils
 
-from .cog import OMKIJI_RESULT_DICT, OmikujiResult
+if TYPE_CHECKING:
+    from .cog import OmikujiResult
 
 
 def user_embed(
@@ -79,9 +82,9 @@ def process_message_to_embeds(message: discord.Message, color: int = Color.MIKU)
     return embeds
 
 
-def omikuji_embed(result: OmikujiResult) -> Embed:
+def omikuji_embed(result: "OmikujiResult", description: str) -> Embed:
     return Embed(
         title="おみくじ",
         color=Color.MIKU,
-        description=f"{result}\n{OMKIJI_RESULT_DICT[result]}",
+        description=f"{result}\n{description}",
     )
