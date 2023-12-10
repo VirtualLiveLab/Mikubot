@@ -43,7 +43,7 @@ class Chat(commands.Cog):
     async def omikuji(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer(ephemeral=True, thinking=True)
         result = await get_omikuji_result()
-        await asyncio.sleep(3)
+        await asyncio.sleep(1)
         embed = omikuji_embed(result, OMKIJI_RESULT_DICT[result])
         await interaction.followup.send(embed=embed, ephemeral=True)
 
