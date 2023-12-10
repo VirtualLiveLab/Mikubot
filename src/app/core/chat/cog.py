@@ -44,7 +44,7 @@ class Chat(commands.Cog):
         await interaction.response.defer(ephemeral=True, thinking=True)
         result = await get_omikuji_result()
         await asyncio.sleep(3)
-        embed = omikuji_embed(result)
+        embed = omikuji_embed(result, OMKIJI_RESULT_DICT[result])
         await interaction.followup.send(embed=embed, ephemeral=True)
 
     @app_commands.command(name="miku", description="ミクさんが返事をしてくれるよ！")  # type: ignore[arg-type]
