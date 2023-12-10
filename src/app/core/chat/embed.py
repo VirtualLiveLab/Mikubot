@@ -86,5 +86,5 @@ def omikuji_embed(result: "OmikujiResult", description: str) -> Embed:
     return Embed(
         title="おみくじ",
         color=Color.MIKU,
-        description=f"{result}\n{description}",
+        description=f"# {result}\n{description}",
     )
