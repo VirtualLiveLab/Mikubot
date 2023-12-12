@@ -45,7 +45,7 @@ class Opinion(commands.Cog):
         else:
             e = Embed(title="送信完了！", description="貴重なご意見ありがとうございます！", color=Color.MIKU)
 
-        await interaction.edit_original_response(embed=e)
+        await interaction.followup.send(embed=e, ephemeral=True)
 
 
 async def setup(bot: commands.Bot) -> None:
