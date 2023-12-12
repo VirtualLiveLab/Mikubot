@@ -2,11 +2,13 @@ import os
 from traceback import print_exc
 
 import discord
-from app.core.opinion.view import OpinionModal
-from const.enums import Color
 from discord import Embed, app_commands
 from discord.ext import commands
-from utils.finder import Finder
+
+from src.const.enums import Color
+from src.utils.finder import Finder
+
+from .view import OpinionModal
 
 
 class Opinion(commands.Cog):
