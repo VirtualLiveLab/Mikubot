@@ -32,9 +32,8 @@ class Opinion(commands.Cog):
                 color=Color.MIKU,
             )
             # replace 0 with channel id
-            channel = await Finder(self.bot).find_channel(
-                int(os.environ["OPINION_CHANNEL_ID"]), expected_type=discord.TextChannel
-            )
+            finder = Finder(self.bot)
+            channel = await finder.find_channel(int(os.environ["OPINION_CHANNEL_ID"]), expected_type=discord.Thread)
             await channel.send(embed=embed)
         except Exception:  # noqa: BLE001
             print_exc()
