@@ -13,6 +13,7 @@ from src.utils.finder import Finder
 from src.utils.logger import get_my_logger
 
 from .embed import ready_embed
+from .tree import BotCommandTree
 
 if not __debug__:
     from dotenv import load_dotenv
@@ -41,6 +42,7 @@ class Bot(commands.Bot):
         super().__init__(
             command_prefix=self.config.get("prefix", "!"),
             intents=intents,
+            tree_cls=BotCommandTree,
         )
 
     async def setup_hook(self) -> None:
