@@ -7,6 +7,7 @@ import discord
 from discord.ext import commands
 
 from src.app.core.chat.view import DispandView
+from src.app.utils.view import DeleteView
 from src.const.log import command_log, login_log
 from src.utils.cog import CogLoader
 from src.utils.finder import Finder
@@ -102,6 +103,7 @@ class Bot(commands.Bot):
         # NOTICE: message_url is only for LinkButton
         # This parameter is not used after once sended
         # So, this is dummy value
+        self.add_view(DeleteView())
         self.add_view(DispandView(message_url="MISSING"))
 
     async def set_pre_invoke_hook(self) -> None:
