@@ -81,6 +81,7 @@ class Bot(commands.Bot):
             except Exception:
                 msg = f"Failed to load {cog}"
                 self.logger.exception(msg)
+                self.failed_exts.append(cog)
 
     async def sync_app_commands(self) -> None:
         try:
@@ -103,8 +104,18 @@ class Bot(commands.Bot):
         # NOTICE: message_url is only for LinkButton
         # This parameter is not used after once sended
         # So, this is dummy value
-        self.add_view(DeleteView())
-        self.add_view(DispandView(message_url="MISSING"))
+        views = [
+            DispandView(message_url="MISSING"),
+            DeleteView(),
+        ]
+
+        for v in views:
+            try:
+                self.add_view(v)
+            except Exception:
+                msg = f"Failed to setup {v}"
+                self.logger.exception(msg)
+                self.failed_views.append(v)
 
     async def set_pre_invoke_hook(self) -> None:
         @self.before_invoke
