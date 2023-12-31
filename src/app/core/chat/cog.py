@@ -55,11 +55,11 @@ class Chat(commands.Cog):
 
     @app_commands.command(name="omikuji", description="おみくじを引くよ！")  # type: ignore[arg-type]
     async def omikuji(self, interaction: discord.Interaction) -> None:
-        await interaction.response.defer(ephemeral=True, thinking=True)
+        await interaction.response.defer(ephemeral=False, thinking=True)
         result = await get_omikuji_result()
         await asyncio.sleep(1)
         embed = omikuji_embed(result, OMKIJI_RESULT_DICT[result])
-        await interaction.followup.send(embed=embed, ephemeral=True)
+        await interaction.followup.send(embed=embed, ephemeral=False)
 
     @app_commands.command(name="miku", description="ミクさんが返事をしてくれるよ！")  # type: ignore[arg-type]
     async def call_miku(self, interaction: discord.Interaction) -> None:
