@@ -1,0 +1,58 @@
+import asyncio
+from typing import TYPE_CHECKING
+
+from discord import AllowedMentions, Thread, app_commands
+from discord.ext import commands
+from ductile.controller import InteractionController
+
+from src.utils.chunk import chunk_str_iter_with_max_str_length
+from src.utils.finder import Finder
+
+from .view import AddRolesToThreadView
+
+if TYPE_CHECKING:
+    # import some original class
+    from discord import Interaction, Member, Role
+
+    from src.app.bot import Bot
+
+
+class ThreadCog(commands.Cog):
+    thread = app_commands.Group(name="thread", description="スレッド関連のコマンド")
+
+    def __init__(self, bot: "Bot") -> None:
+        self.bot = bot
+
+    @thread.command(name="add-role", description="スレッドに指定したロールのメンバーを追加します。")
+    async def add_role_command(self, interaction: "Interaction", target: Thread) -> None:
+        await interaction.response.defer()
+        controller = InteractionController(
+            AddRolesToThreadView(target_mention=target.mention),
+            interaction=interaction,
+            timeout=None,
+        )
+        await controller.send()
+        _, state = await controller.wait()
+        accepted: bool = state["accepted"]
+        if not accepted:
+            return
+        selected_roles: list["Role"] = state["selected"]
+        member_set: set["Member"] = {m for r in selected_roles for m in r.members}
+
+        thread = await Finder(self.bot).find_channel(target.id, expected_type=Thread)
+        bot_msg = await thread.send(
+            f"{thread.mention}に以下のロールを持つメンバーを追加します。\n\n{','.join([r.mention for r in selected_roles])}",
+            silent=True,
+            allowed_mentions=AllowedMentions.none(),
+        )
+        await asyncio.sleep(2)
+
+        for string in chunk_str_iter_with_max_str_length([m.mention for m in member_set], 2000):
+            await bot_msg.edit(content="\n".join(string))
+            await asyncio.sleep(2)
+
+        return
+
+
+async def setup(bot: "Bot") -> None:
+    await bot.add_cog(ThreadCog(bot))
