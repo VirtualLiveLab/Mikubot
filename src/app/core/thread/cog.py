@@ -1,6 +1,7 @@
 import asyncio
 from typing import TYPE_CHECKING
 
+from app.utils.view import DeleteView
 from discord import AllowedMentions, Thread, app_commands
 from discord.ext import commands
 from ductile.controller import InteractionController
@@ -50,6 +51,12 @@ class ThreadCog(commands.Cog):
         for string in chunk_str_iter_with_max_str_length([m.mention for m in member_set], 2000):
             await bot_msg.edit(content="\n".join(string))
             await asyncio.sleep(2)
+
+        await bot_msg.edit(
+            content=f"{thread.mention}に{len(member_set)}人のメンバーを追加しました。このメッセージは30秒後に自動で削除されます。",
+            delete_after=30,
+            view=DeleteView(),
+        )
 
         return
 
