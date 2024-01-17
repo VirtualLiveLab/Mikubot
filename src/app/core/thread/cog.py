@@ -24,6 +24,8 @@ class ThreadCog(commands.Cog):
     def __init__(self, bot: "Bot") -> None:
         self.bot = bot
 
+    @app_commands.rename(target="スレッド")
+    @app_commands.describe(target="追加先スレッド。補完に出なくてもIDを直打ちすれば入力できます。")
     @thread.command(name="add-role", description="スレッドに指定したロールのメンバーを追加します。")
     async def add_role_command(self, interaction: "Interaction", target: Thread) -> None:
         await interaction.response.defer()
