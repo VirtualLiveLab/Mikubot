@@ -5,7 +5,7 @@ from discord import AllowedMentions, Thread, app_commands
 from discord.ext import commands
 from ductile.controller import InteractionController
 
-from src.utils.chunk import chunk_list_with_max_str_length
+from src.utils.chunk import chunk_str_iter_with_max_str_length
 from src.utils.finder import Finder
 
 from .view import AddRolesToThreadView
@@ -47,7 +47,7 @@ class ThreadCog(commands.Cog):
         )
         await asyncio.sleep(2)
 
-        for string in chunk_list_with_max_str_length([m.mention for m in member_set], 2000):
+        for string in chunk_str_iter_with_max_str_length([m.mention for m in member_set], 2000):
             await bot_msg.edit(content="\n".join(string))
             await asyncio.sleep(2)
 
