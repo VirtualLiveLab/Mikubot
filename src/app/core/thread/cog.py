@@ -53,7 +53,7 @@ class ThreadCog(commands.Cog):
             await asyncio.sleep(2)
 
         await bot_msg.edit(
-            content=f"{thread.mention}に{len(member_set)}人のメンバーを追加しました。このメッセージは30秒後に自動で削除されます。",
+            content=f"{thread.mention}に{len(member_set)}人のメンバーを追加しました。\nこのメッセージは30秒後に自動で削除されます。",
             delete_after=30,
             view=DeleteView(),
         )
