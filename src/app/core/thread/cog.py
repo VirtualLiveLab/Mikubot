@@ -1,11 +1,11 @@
 import asyncio
 from typing import TYPE_CHECKING
 
-from app.utils.view import DeleteView
 from discord import AllowedMentions, Thread, app_commands
 from discord.ext import commands
 from ductile.controller import InteractionController
 
+from src.app.utils.view import DeleteView
 from src.utils.chunk import chunk_str_iter_with_max_str_length
 from src.utils.finder import Finder
 
