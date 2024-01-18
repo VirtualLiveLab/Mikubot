@@ -1,0 +1,84 @@
+name: Deploy to OnP pana
+
+on:
+  push:
+    branches-ignore:
+      - "**" # disable push event
+    # branches:
+    #   - master
+    paths-ignore:
+      - "legacy/**"
+      - "**.md"
+      - ".vscode/**"
+      - "railway.toml"
+      - "renovate.json"
+  workflow_dispatch:
+
+env:
+  CONTAINER_NAME: mikubot
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ vars.IMAGE_TAG }}
+          cache-from: type=gha
+          cache-to: type=gha, mode=max
+
+      # Add
+      - name: Connect to cloudflare warp
+        uses: Boostport/setup-cloudflare-warp@v1
+        with:
+          organization: virtual-live-lab
+          auth_client_id: ${{ secrets.CLOUDFLARE_AUTH_CLIENT_ID }} # 設定済
+          auth_client_secret: ${{ secrets.CLOUDFLARE_AUTH_CLIENT_SECRET }} # 設定済
+
+      - name: SSH to pana
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          # 使用する際にHOST, SSH_USER, SSH_KEYを変更する必要有
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          # always remove old container: https://stackoverflow.com/questions/34228864/stop-and-delete-docker-container-if-its-running
+          script: |
+            echo ${{secrets.GITHUB_TOKEN}} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+            docker pull ${{ vars.IMAGE_TAG }}
+            docker stop ${{ env.CONTAINER_NAME }} || true && docker rm ${{ env.CONTAINER_NAME }} || true
+            docker run \
+              -d \
+              --name ${{env.CONTAINER_NAME}} \
+              --env DISCORD_BOT_TOKEN=${{secrets.DISCORD_TOKEN}} \
+              --env LOG_CHANNEL_ID=${{vars.LOG_CHANNEL_ID}} \
+              --env GUILD_ID=${{vars.GUILD_ID}} \
+              --env OPINION_CHANNEL_ID=${{vars.OPINION_CHANNEL_ID}} \
+              ${{ vars.IMAGE_TAG }}
+            docker image prune -f
+          script_stop: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
