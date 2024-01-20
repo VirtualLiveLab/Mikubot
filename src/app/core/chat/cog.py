@@ -6,9 +6,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.app.utils.view import DeleteView
 from src.utils.extract import MessageExtractor
-from src.utils.twitter import extract_tweet_url_list, replace_twitter_url_with_vx
 
 from .embed import omikuji_embed, process_message_to_embeds, user_embed
 from .view import DispandView
@@ -41,17 +39,18 @@ class Chat(commands.Cog):
             case _:
                 pass
 
-    @commands.Cog.listener("on_message")
-    async def replace_twitter_url_with_vx(self, message: discord.Message) -> None:
-        if message.author.bot:
-            return
+    # NOTICE: Discord側がTwitter埋め込みを復活させたので不要になりました
+    # @commands.Cog.listener("on_message")
+    # async def replace_twitter_url_with_vx(self, message: discord.Message) -> None:
+    #     if message.author.bot:
+    #         return
 
-        if (matched := extract_tweet_url_list(message.content)) == []:
-            return
+    #     if (matched := extract_tweet_url_list(message.content)) == []:
+    #         return
 
-        replaced = [replace_twitter_url_with_vx(m) for m in matched]
-        processed = " ".join([f"[ツイート{i + 1}]({r})" for i, r in enumerate(replaced)])
-        await message.reply(content=processed, view=DeleteView(), silent=True, mention_author=False)
+    #     replaced = [replace_twitter_url_with_vx(m) for m in matched]
+    #     processed = " ".join([f"[ツイート{i + 1}]({r})" for i, r in enumerate(replaced)])
+    #     await message.reply(content=processed, view=DeleteView(), silent=True, mention_author=False)
 
     @app_commands.command(name="omikuji", description="おみくじを引くよ！")  # type: ignore[arg-type]
     async def omikuji(self, interaction: discord.Interaction) -> None:
