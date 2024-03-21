@@ -1,12 +1,41 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generic, LiteralString, TypeVar
+
+from .interface import IUrlExtractorPlugin
 
 if TYPE_CHECKING:
-    from .interface import IUrlExtractorPlugin
+    from collections.abc import Awaitable
+    from re import Pattern
 
 
-class UrlExtractor:
-    def __init__(self) -> None:
-        self.__plugins: "list[IUrlExtractorPlugin]" = []
+_K = TypeVar("_K", bound=LiteralString)
+_PLUGIN = TypeVar("_PLUGIN", bound=IUrlExtractorPlugin)
 
-    def use(self, plugin: "IUrlExtractorPlugin") -> None:
-        self.__plugins.append(plugin)
+
+class UrlExtractor(Generic[_K, _PLUGIN]):
+    def __init__(self, plugins: dict[_K, _PLUGIN], /) -> None:
+        self.__plugins = plugins
+
+    def extract(self, url: str) -> dict[_K, str]:  # noqa: ARG002
+        return {}
+
+
+class ExamplePlugin(IUrlExtractorPlugin):
+    def get_url_pattern(self) -> "Pattern[str] | str":
+        return r"https://www.google.com"
+
+    def extract(self, url: str) -> "str | Awaitable[str]":  # noqa: ARG002
+        return "Google"
+
+
+class ExamplePluginB(IUrlExtractorPlugin):
+    def get_url_pattern(self) -> "Pattern[str] | str":
+        return r"https://www.google.com"
+
+    def extract(self, url: str) -> "str | Awaitable[str]":  # noqa: ARG002
+        return "Google"
+
+
+a = UrlExtractor({"a": ExamplePlugin(), "b": ExamplePluginB()})
+
+aa = a.extract("https://www.google.com")
+aaa = aa["a"]  # a, b will be inferred
