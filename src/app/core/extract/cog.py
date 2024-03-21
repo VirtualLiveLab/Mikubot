@@ -1,3 +1,4 @@
+import os
 from typing import TYPE_CHECKING
 
 import discord
@@ -25,7 +26,9 @@ class Extract(commands.Cog):
         if self.bot.user is not None and message.author.id == self.bot.user.id:
             return
 
-        url_extractor = UrlExtractor({"discord": DiscordPlugin(), "notion": NotionPlugin(workspace="virtual-live-lab")})
+        url_extractor = UrlExtractor(
+            {"discord": DiscordPlugin(), "notion": NotionPlugin(workspace=os.environ["NOTION_DOMAIN"])}
+        )
         matches = await url_extractor.find_all_async(message.content)
         self.__logger.debug("matches: %s", matches)
 
