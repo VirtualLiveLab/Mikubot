@@ -80,7 +80,14 @@ class NotionExtractor:
         return {"url": url, "title": title, "emoji": emoji, "last_updated": last_updated}
 
     def _get_safe_title(self, obj: dict[str, Any]) -> str:
-        titles = glom(obj, {"titles": ("properties.title.title", ["plain_text"])}, default={"titles": []})
+        props = pd if isinstance(pd := obj.get("properties"), dict) else None
+        if props is None:
+            return ""
+        title_keys = [k for k, v in props.items() if isinstance(v, dict) and v.get("type") == "title"]
+        if len(title_keys) == 0 or not isinstance((title_key := title_keys[0]), str):
+            return ""
+
+        titles = glom(obj, {"titles": (f"properties.{title_key}.title", ["plain_text"])}, default={"titles": []})
         if (
             isinstance(titles, dict)
             and isinstance((t_arr := titles.get("titles")), list)
