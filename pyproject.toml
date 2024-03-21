@@ -17,6 +17,8 @@ aiohttp = "^3.9.1"
 # ductile-ui = { git = "https://github.com/sushi-chaaaan/ductile-ui.git", rev = "main" }
 ductile-ui = "^0.2.6"
 typing-extensions = "^4.8.0"
+asyncer = "^0.0.5"
+result = "^0.16.1"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.4.1"
