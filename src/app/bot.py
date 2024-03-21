@@ -105,7 +105,7 @@ class Bot(commands.Bot):
         # This parameter is not used after once sended
         # So, this is dummy value
         views = [
-            DispandView(message_url="MISSING"),
+            DispandView(message_url="MISSING", button_label="MISSING"),
             DeleteView(),
         ]
 

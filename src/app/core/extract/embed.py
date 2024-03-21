@@ -2,6 +2,7 @@ import discord
 
 from src.const.discord import MAX_EMBEDS_PER_MESSAGE
 from src.const.enums import Color
+from src.utils.extract import NotionPage
 
 
 def process_message_to_embeds(message: discord.Message, color: int = Color.MIKU) -> list[discord.Embed]:
@@ -53,3 +54,14 @@ def process_message_to_embeds(message: discord.Message, color: int = Color.MIKU)
         embeds.append(_e)
 
     return embeds
+
+
+def process_notion_page_to_embeds(page: NotionPage) -> discord.Embed:
+    e = discord.Embed(
+        title=f"{page['emoji']} {page['title']}" if page["emoji"] else page["title"],
+        url=page["url"],
+        color=Color.MIKU,
+        timestamp=page["last_updated"],
+    )
+    e.set_footer(text="Created on Notion")
+    return e

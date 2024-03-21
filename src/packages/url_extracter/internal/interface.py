@@ -1,12 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Annotated, ClassVar, TypedDict
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from re import Pattern
-
-
-class PluginConfig(TypedDict):
-    auto_escape: Annotated[bool, True]
 
 
 class IUrlExtractorPlugin(ABC):
@@ -14,10 +10,8 @@ class IUrlExtractorPlugin(ABC):
     Interface for URL extractor plugins.
     """
 
-    config: ClassVar[PluginConfig] = {"auto_escape": True}
-
     @abstractmethod
-    def url_pattern(self) -> "Pattern[str]":
+    def url_pattern(self) -> "Pattern[str] | str":
         """
         Returns the regular expression pattern used to match URLs.
         """

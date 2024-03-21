@@ -2,12 +2,11 @@ import re
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .interface import IUrlExtractorPlugin, PluginConfig
+    from .interface import IUrlExtractorPlugin
 
 
 class InternalPlugin:
     def __init__(self, key: str, plugin: "IUrlExtractorPlugin", /, *, index: int) -> None:
-        self.__config = plugin.config
         self.__key = key
         self.__index = index
         self.__pattern = self.__compile_pattern(plugin.url_pattern())
@@ -21,14 +20,9 @@ class InternalPlugin:
         return self.__index
 
     @property
-    def config(self) -> "PluginConfig":
-        return self.__config
-
-    @property
     def pattern(self) -> re.Pattern[str]:
         return self.__pattern
 
-    def __compile_pattern(self, pattern: re.Pattern[str], /) -> re.Pattern[str]:
-        if self.__config["auto_escape"]:
-            return re.compile(re.escape(pattern.pattern))
-        return re.compile(pattern.pattern)
+    def __compile_pattern(self, pattern: re.Pattern[str] | str, /) -> re.Pattern[str]:
+        p = pattern if isinstance(pattern, str) else pattern.pattern
+        return re.compile(p)

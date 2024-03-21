@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING, Generic, LiteralString, TypeVar
 from asyncer import asyncify
 from result import Err, Ok
 
+from src.utils.logger import get_my_logger
+
 from .internal import InternalPlugin, IUrlExtractorPlugin
 
 if TYPE_CHECKING:
@@ -19,6 +21,7 @@ class UrlExtractor(Generic[_K, _PLUGIN]):
 
     def __init__(self, plugins: dict[_K, _PLUGIN], /) -> None:
         self.__plugins = {k: InternalPlugin(k, p, index=i) for i, (k, p) in enumerate(plugins.items())}
+        self.__logger = get_my_logger(self.__class__.__name__)
 
     def find_all(self, string: str) -> "dict[_K, set[Match[str]] | None]":
         """Find all occurrences of URLs in the given string using the registered plugins.
@@ -64,9 +67,11 @@ class UrlExtractor(Generic[_K, _PLUGIN]):
         try:
             found_iter = set(pattern.finditer(string=string))
             if len(found_iter) == 0:
+                self.__logger.debug("No matches found.")
                 return Ok(None)
             return Ok(found_iter)
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
+            self.__logger.exception("An error occurred while searching for matches.")
             return Err(e)
 
     def _safe_match_first(self, /, *, pattern: "Pattern[str]", string: str) -> "Result[Match[str] | None, Exception]":
@@ -83,5 +88,6 @@ class UrlExtractor(Generic[_K, _PLUGIN]):
         """
         try:
             return Ok(pattern.search(string=string))
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
+            self.__logger.exception("An error occurred while searching for a match.")
             return Err(e)
