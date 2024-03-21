@@ -14,21 +14,14 @@ regex_extra_url = (
 )
 
 
-class MessageExtractor:
+class DiscordExtractor:
     def __init__(self, client: Client) -> None:
         self._client = client
         self._finder = Finder(client)
 
-    async def from_message(self, *, message: discord.Message) -> list[Message]:
-        if message.guild is None:
-            return []
-
-        # extract messages
-        return await self._extract_from_message(message)
-
-    async def _extract_from_message(self, message: Message) -> list[Message]:
+    async def from_matches(self, matches: set[re.Match[str]]) -> list[Message]:
         messages: list[Message] = []
-        for ids in re.finditer(regex_discord_message_url, message.content):
+        for ids in matches:
             if int(ids["guild"]) not in [g.id for g in self._client.guilds]:
                 continue
 
