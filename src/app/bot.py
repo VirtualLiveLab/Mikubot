@@ -6,7 +6,7 @@ import discord
 # import sentry_sdk
 from discord.ext import commands
 
-from src.app.core.chat.view import DispandView
+from src.app.core.extract.view import DispandView
 from src.app.utils.view import DeleteView
 from src.const.log import command_log, login_log
 from src.utils.cog import CogLoader
@@ -105,7 +105,7 @@ class Bot(commands.Bot):
         # This parameter is not used after once sended
         # So, this is dummy value
         views = [
-            DispandView(message_url="MISSING"),
+            DispandView(message_url="MISSING", button_label="MISSING"),
             DeleteView(),
         ]
 

@@ -6,10 +6,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.utils.extract import MessageExtractor
-
-from .embed import omikuji_embed, process_message_to_embeds, user_embed
-from .view import DispandView
+from .embed import omikuji_embed, user_embed
 
 if TYPE_CHECKING:
     # import some original class
@@ -70,24 +67,6 @@ class Chat(commands.Cog):
         await interaction.response.defer(ephemeral=False)
         emb = user_embed(interaction.user)
         await interaction.followup.send(embed=emb)
-
-    @commands.Cog.listener("on_message")
-    async def on_message(self, message: discord.Message) -> None:
-        if self.bot.user is not None and message.author.id == self.bot.user.id:
-            return
-
-        extractor = MessageExtractor(self.bot)
-        extracted_messages = await extractor.from_message(message=message)
-
-        for msg in extracted_messages:
-            try:
-                await message.channel.send(
-                    embeds=process_message_to_embeds(msg),
-                    view=DispandView(message_url=msg.jump_url),
-                )
-            except Exception:
-                self.bot.logger.exception("dispand error")
-        return
 
 
 OmikujiResult: TypeAlias = Literal[

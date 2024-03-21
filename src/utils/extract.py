@@ -1,34 +1,29 @@
+import contextlib
+import os
 import re
+from datetime import datetime
+from typing import Any, TypedDict
 
 import discord
 from discord import Client, Message
+from glom import glom
+from notion_client import AsyncClient as NotionAsyncClient
+from notion_client.client import ClientOptions
+from notion_client.helpers import is_full_page
+
+from src.utils.logger import get_my_logger
 
 from .finder import Finder
 
-regex_discord_message_url = (
-    "(?!<)https://(ptb.|canary.)?discord(app)?.com/channels/"
-    "(?P<guild>[0-9]{17,20})/(?P<channel>[0-9]{17,20})/(?P<message>[0-9]{17,20})(?!>)"
-)
-regex_extra_url = (
-    r"\?base_aid=(?P<base_author_id>[0-9]{17,20})&aid=(?P<author_id>[0-9]{17,20})&extra=(?P<extra_messages>(|[0-9,]+))"
-)
 
-
-class MessageExtractor:
+class DiscordExtractor:
     def __init__(self, client: Client) -> None:
         self._client = client
         self._finder = Finder(client)
 
-    async def from_message(self, *, message: discord.Message) -> list[Message]:
-        if message.guild is None:
-            return []
-
-        # extract messages
-        return await self._extract_from_message(message)
-
-    async def _extract_from_message(self, message: Message) -> list[Message]:
+    async def from_matches(self, matches: set[re.Match[str]]) -> list[Message]:
         messages: list[Message] = []
-        for ids in re.finditer(regex_discord_message_url, message.content):
+        for ids in matches:
             if int(ids["guild"]) not in [g.id for g in self._client.guilds]:
                 continue
 
@@ -49,3 +44,66 @@ class MessageExtractor:
             return await channel.fetch_message(message_id)
         except Exception:  # noqa: BLE001
             return None
+
+
+class NotionPage(TypedDict):
+    url: str
+    title: str
+    emoji: str | None
+    last_updated: datetime | None
+
+
+class NotionExtractor:
+    def __init__(self) -> None:
+        self.__client = NotionAsyncClient(options=ClientOptions(auth=os.getenv("NOTION_TOKEN")))
+        self.__logger = get_my_logger(self.__class__.__name__)
+
+    async def from_matches(self, matches: set[re.Match[str]]) -> list[NotionPage]:
+        page_ids = [pid for m in matches if isinstance((pid := m.group("page_uuid")), str)]
+        self.__logger.debug("page_ids: %s", page_ids)
+
+        full_pages: list[NotionPage] = []
+        for pid in page_ids:
+            resp = await self.__client.pages.retrieve(pid)
+            self.__logger.debug("page retrieved.")
+            if is_full_page(resp):
+                self.__logger.debug("is full page")
+                full_pages.append(self._process_page_object(resp))
+
+        return full_pages
+
+    def _process_page_object(self, obj: dict[str, Any]) -> NotionPage:
+        url: str = glom(obj, "url", default="")
+        title = self._get_safe_title(obj)
+        emoji: str | None = glom(obj, "icon.emoji", default=None)
+        last_updated = self._get_safe_last_updated(obj)
+        return {"url": url, "title": title, "emoji": emoji, "last_updated": last_updated}
+
+    def _get_safe_title(self, obj: dict[str, Any]) -> str:
+        titles = glom(obj, {"titles": ("properties.title.title", ["plain_text"])}, default={"titles": []})
+        if (
+            isinstance(titles, dict)
+            and isinstance((t_arr := titles.get("titles")), list)
+            and len(t_arr) > 0
+            and isinstance((t := t_arr[0]), str)
+        ):
+            return t
+        return ""
+
+    def _get_safe_last_updated(self, obj: dict[str, Any]) -> datetime | None:
+        dt: datetime | None = None
+
+        last_edited = glom(obj, "last_edited_time", default=None)
+        if isinstance(last_edited, str):
+            with contextlib.suppress(ValueError):
+                dt = datetime.fromisoformat(last_edited)
+
+        if dt:
+            return dt
+
+        created = glom(obj, "created_time", default=None)
+        if isinstance(created, str):
+            with contextlib.suppress(ValueError):
+                dt = datetime.fromisoformat(created)
+
+        return dt
