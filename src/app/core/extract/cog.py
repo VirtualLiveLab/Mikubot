@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 import discord
 from discord.ext import commands
 
-from src.packages.url_extracter import DiscordPlugin, NotionPlugin, UrlExtractor
+from src.packages.url_extractor import DiscordPlugin, NotionPlugin, UrlExtractor
 from src.utils.extract import DiscordExtractor, NotionExtractor
 from src.utils.logger import get_my_logger
 
