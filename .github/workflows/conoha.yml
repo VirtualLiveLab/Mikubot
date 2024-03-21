@@ -64,6 +64,7 @@ jobs:
               --env LOG_CHANNEL_ID=${{vars.LOG_CHANNEL_ID}} \
               --env GUILD_ID=${{vars.GUILD_ID}} \
               --env OPINION_CHANNEL_ID=${{vars.OPINION_CHANNEL_ID}} \
+              --env NOTION_TOKEN=${{secrets.NOTION_TOKEN}} \
               ${{ vars.IMAGE_TAG }}
             docker image prune -f
           script_stop: true
