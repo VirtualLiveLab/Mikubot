@@ -51,6 +51,7 @@ class NotionPage(TypedDict):
     title: str
     emoji: str | None
     last_updated: datetime | None
+    image: str | None
 
 
 class NotionExtractor:
@@ -73,11 +74,18 @@ class NotionExtractor:
         return full_pages
 
     def _process_page_object(self, obj: dict[str, Any]) -> NotionPage:
-        url: str = glom(obj, "url", default="")
+        url = self._get_safe_url(obj)
         title = self._get_safe_title(obj)
-        emoji: str | None = glom(obj, "icon.emoji", default=None)
+        emoji = self._get_safe_emoji(obj)
         last_updated = self._get_safe_last_updated(obj)
-        return {"url": url, "title": title, "emoji": emoji, "last_updated": last_updated}
+        image = self._get_safe_image(obj)
+        return {"url": url, "title": title, "emoji": emoji, "last_updated": last_updated, "image": image}
+
+    def _get_safe_url(self, obj: dict[str, Any]) -> str:
+        return url if isinstance((url := glom(obj, "url", default="")), str) else ""
+
+    def _get_safe_emoji(self, obj: dict[str, Any]) -> str | None:
+        return emoji if isinstance((emoji := glom(obj, "icon.emoji", default=None)), str) else None
 
     def _get_safe_title(self, obj: dict[str, Any]) -> str:
         props = pd if isinstance(pd := obj.get("properties"), dict) else None
@@ -114,3 +122,16 @@ class NotionExtractor:
                 dt = datetime.fromisoformat(created)
 
         return dt
+
+    def _get_safe_image(self, obj: dict[str, Any]) -> str | None:
+        cover_type = t if isinstance((t := glom(obj, "cover.type", default=None)), str) else None
+        if cover_type is None:
+            return None
+
+        match cover_type:
+            case "external":
+                return url if isinstance((url := glom(obj, "cover.external.url", default=None)), str) else None
+            case "file":
+                return url if isinstance((url := glom(obj, "cover.file.url", default=None)), str) else None
+            case _:
+                return None

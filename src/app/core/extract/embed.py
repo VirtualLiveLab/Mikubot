@@ -63,5 +63,6 @@ def process_notion_page_to_embeds(page: NotionPage) -> discord.Embed:
         color=Color.MIKU,
         timestamp=page["last_updated"],
     )
+    e.set_image(url=page["image"])
     e.set_footer(text="Created on Notion")
     return e
