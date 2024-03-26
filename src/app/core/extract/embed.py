@@ -2,7 +2,8 @@ import discord
 
 from src.const.discord import MAX_EMBEDS_PER_MESSAGE
 from src.const.enums import Color
-from src.utils.extract import NotionPage
+
+from .processor import NotionPage
 
 
 def process_message_to_embeds(message: discord.Message, color: int = Color.MIKU) -> list[discord.Embed]:

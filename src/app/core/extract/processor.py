@@ -1,6 +1,7 @@
 import contextlib
 import os
 import re
+from collections.abc import Iterable
 from datetime import datetime
 from typing import Any, TypedDict
 
@@ -11,17 +12,17 @@ from notion_client import AsyncClient as NotionAsyncClient
 from notion_client.client import ClientOptions
 from notion_client.helpers import is_full_page
 
+from src.packages.url_extractor import IUrlAsyncProcessor
+from src.utils.finder import Finder
 from src.utils.logger import get_my_logger
 
-from .finder import Finder
 
-
-class DiscordExtractor:
+class DiscordProcessor(IUrlAsyncProcessor[Message]):
     def __init__(self, client: Client) -> None:
         self._client = client
         self._finder = Finder(client)
 
-    async def from_matches(self, matches: set[re.Match[str]]) -> list[Message]:
+    async def from_matches_async(self, matches: Iterable[re.Match[str]]) -> list[Message]:
         messages: list[Message] = []
         for ids in matches:
             if int(ids["guild"]) not in [g.id for g in self._client.guilds]:
@@ -54,12 +55,12 @@ class NotionPage(TypedDict):
     image: str | None
 
 
-class NotionExtractor:
+class NotionProcessor(IUrlAsyncProcessor[NotionPage]):
     def __init__(self) -> None:
         self.__client = NotionAsyncClient(options=ClientOptions(auth=os.getenv("NOTION_TOKEN")))
         self.__logger = get_my_logger(self.__class__.__name__)
 
-    async def from_matches(self, matches: set[re.Match[str]]) -> list[NotionPage]:
+    async def from_matches_async(self, matches: Iterable[re.Match[str]]) -> list[NotionPage]:
         page_ids = [pid for m in matches if isinstance((pid := m.group("page_uuid")), str)]
         self.__logger.debug("page_ids: %s", page_ids)
 

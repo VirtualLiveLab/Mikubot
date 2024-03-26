@@ -5,10 +5,10 @@ import discord
 from discord.ext import commands
 
 from src.packages.url_extractor import DiscordPlugin, NotionPlugin, UrlExtractor
-from src.utils.extract import DiscordExtractor, NotionExtractor
 from src.utils.logger import get_my_logger
 
 from .embed import process_message_to_embeds, process_notion_page_to_embeds
+from .processor import DiscordProcessor, NotionProcessor
 from .view import DispandView
 
 if TYPE_CHECKING:
@@ -34,8 +34,8 @@ class Extract(commands.Cog):
 
         if (d := matches["discord"]) is not None:
             self.__logger.debug("discord message url found: %s", d)
-            extractor = DiscordExtractor(self.bot)
-            extracted_messages = await extractor.from_matches(matches=d)
+            extractor = DiscordProcessor(self.bot)
+            extracted_messages = await extractor.from_matches_async(matches=d)
 
             for msg in extracted_messages:
                 try:
@@ -49,8 +49,8 @@ class Extract(commands.Cog):
 
         if (n := matches["notion"]) is not None:
             self.__logger.debug("notion url found: %s", n)
-            extractor = NotionExtractor()
-            extracted_messages = await extractor.from_matches(matches=n)
+            extractor = NotionProcessor()
+            extracted_messages = await extractor.from_matches_async(matches=n)
             for page in extracted_messages:
                 try:
                     await message.channel.send(
