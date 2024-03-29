@@ -19,7 +19,7 @@ class AddRolesToThreadView(View):
         self.selected = State["list[Role]"]([], self)
 
     async def on_timeout(self) -> None:
-        self.accepted.set_state(False)  # noqa: FBT003
+        self.accepted.set_state(False)
         return await super().on_timeout()
 
     def render(self) -> ViewObject:
@@ -33,11 +33,11 @@ class AddRolesToThreadView(View):
 
         async def handle_start(interaction: Interaction) -> None:
             await interaction.response.defer()
-            self.accepted.set_state(True)  # noqa: FBT003
+            self.accepted.set_state(True)
             stop_view()
 
         def stop_view() -> None:
-            self.disabled.set_state(True)  # noqa: FBT003
+            self.disabled.set_state(True)
             self.stop()
 
         def embed() -> Embed:
