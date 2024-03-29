@@ -52,7 +52,7 @@ class Chat(commands.Cog):
     @app_commands.command(name="omikuji", description="おみくじを引くよ！")  # type: ignore[arg-type]
     async def omikuji(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer(ephemeral=False, thinking=True)
-        result = await get_omikuji_result()
+        result = get_omikuji_result()
         await asyncio.sleep(1)
         embed = omikuji_embed(result, OMKIJI_RESULT_DICT[result])
         await interaction.followup.send(embed=embed, ephemeral=False)
@@ -84,7 +84,7 @@ OMKIJI_RESULT_DICT: dict[OmikujiResult, str] = {
 }
 
 
-async def get_omikuji_result() -> OmikujiResult:
+def get_omikuji_result() -> OmikujiResult:
     result: OmikujiResult = "大吉"
     rand = secrets.randbelow(8)
     match rand:
