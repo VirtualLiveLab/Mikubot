@@ -36,19 +36,6 @@ class Chat(commands.Cog):
             case _:
                 pass
 
-    # NOTICE: Discord側がTwitter埋め込みを復活させたので不要になりました
-    # @commands.Cog.listener("on_message")
-    # async def replace_twitter_url_with_vx(self, message: discord.Message) -> None:
-    #     if message.author.bot:
-    #         return
-
-    #     if (matched := extract_tweet_url_list(message.content)) == []:
-    #         return
-
-    #     replaced = [replace_twitter_url_with_vx(m) for m in matched]
-    #     processed = " ".join([f"[ツイート{i + 1}]({r})" for i, r in enumerate(replaced)])
-    #     await message.reply(content=processed, view=DeleteView(), silent=True, mention_author=False)
-
     @app_commands.command(name="omikuji", description="おみくじを引くよ！")  # type: ignore[arg-type]
     async def omikuji(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer(ephemeral=False, thinking=True)
