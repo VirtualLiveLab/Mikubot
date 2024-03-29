@@ -62,8 +62,6 @@ jobs:
               --name ${{env.CONTAINER_NAME}} \
               --env DISCORD_BOT_TOKEN=${{secrets.DISCORD_TOKEN}} \
               --env LOG_CHANNEL_ID=${{vars.LOG_CHANNEL_ID}} \
-              --env GUILD_ID=${{vars.GUILD_ID}} \
-              --env OPINION_CHANNEL_ID=${{vars.OPINION_CHANNEL_ID}} \
               --env NOTION_TOKEN=${{secrets.NOTION_TOKEN}} \
               --env NOTION_DOMAIN=${{vars.NOTION_DOMAIN}} \
               ${{ vars.IMAGE_TAG }}
