@@ -25,7 +25,7 @@ if not __debug__:
 
 class Bot(commands.Bot):
     def __init__(self) -> None:
-        # self.init_sentry()
+        self.init_sentry()
         self.config = {"prefix": "!"}
         self.logger = get_my_logger(__name__, level="DEBUG")
 
