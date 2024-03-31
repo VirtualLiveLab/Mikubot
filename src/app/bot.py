@@ -2,6 +2,7 @@ import asyncio
 import os
 
 import discord
+import sentry_sdk
 
 # import sentry_sdk
 from discord.ext import commands
@@ -112,14 +113,14 @@ class Bot(commands.Bot):
         async def write_debug_log(ctx: commands.Context) -> None:
             self.logger.debug(command_log(ctx))
 
-    # def init_sentry(self) -> None:
-    #     sentry_sdk.init(
-    #         dsn=os.environ["SENTRY_DSN"],
-    #         # Set traces_sample_rate to 1.0 to capture 100%
-    #         # of transactions for performance monitoring.
-    #         # We recommend adjusting this value in production.
-    #         traces_sample_rate=1.0,
-    #     )
+    def init_sentry(self) -> None:
+        sentry_sdk.init(
+            dsn=os.environ["SENTRY_DSN"],
+            # Set traces_sample_rate to 1.0 to capture 100%
+            # of transactions for performance monitoring.
+            # We recommend adjusting this value in production.
+            traces_sample_rate=0.75,
+        )
 
     def runner(self, *, token: str) -> None:
         try:
@@ -139,11 +140,12 @@ class Bot(commands.Bot):
     async def shutdown(self, status: int = 0) -> None:
         import sys
 
-        # from sentry_sdk import Hub
-        # # shutdown Sentry
-        # client = Hub.current.client
-        # if client is not None:
-        #     client.close(timeout=2.0)
+        from sentry_sdk import Hub
+
+        # shutdown Sentry
+        client = Hub.current.client
+        if client is not None:
+            client.close(timeout=2.0)
 
         await self.close()
         sys.exit(status)
