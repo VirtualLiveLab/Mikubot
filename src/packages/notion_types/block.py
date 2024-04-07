@@ -50,37 +50,35 @@ class Block(BaseModel):
     """
     Identifier for this block.
     """
-    parent: Annotated[PageParent | DataBaseParent | BlockParent | None, Field(default_factory=None)]
+    parent: Annotated[PageParent | DataBaseParent | BlockParent | None, Field(default_factory=lambda: None)]
     """
     Information about the block's parent. See Parent object.
     """
-    type: Annotated[BlockType | None, Field(default_factory=None)]
+    type: Annotated[BlockType | None, Field(default_factory=lambda: None)]
     """
     Type of block.
     """
-    created_time: Annotated[datetime | None, Field(default_factory=None)]
+    created_time: Annotated[datetime | None, Field(default_factory=lambda: None)]
     """
     Date and time when this block was created. Formatted as an ISO 8601 date time string.
     """
-    created_by: Annotated[PersonUser | BotUser | None, Field(default_factory=None)]
+    created_by: Annotated[PersonUser | BotUser | None, Field(default_factory=lambda: None)]
     """
     User who created the block.
     """
-    last_edited_time: Annotated[datetime | None, Field(default_factory=None)]
+    last_edited_time: Annotated[datetime | None, Field(default_factory=lambda: None)]
     """
     Date and time when this block was last updated. Formatted as an ISO 8601 date time string.
     """
-    last_edited_by: Annotated[PersonUser | BotUser | None, Field(default_factory=None)]
+    last_edited_by: Annotated[PersonUser | BotUser | None, Field(default_factory=lambda: None)]
     """
     User who last updated the block.
     """
-    archived: Annotated[bool | None, Field(default_factory=None)]
+    archived: Annotated[bool | None, Field(default_factory=lambda: None)]
     """
     The archived status of the block.
     """
-    has_children: Annotated[bool | None, Field(default_factory=None)]
+    has_children: Annotated[bool | None, Field(default_factory=lambda: None)]
     """
     Whether or not the block has children blocks nested within it.
     """
-
-    model_config = {"frozen": True}

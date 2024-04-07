@@ -30,11 +30,11 @@ class BaseUser(BaseModel):
     """
     Unique identifier for this user.
     """
-    name: Annotated[str | None, Field(default_factory=None)]
+    name: Annotated[str | None, Field(default_factory=lambda: None)]
     """
     User's name, as displayed in Notion.
     """
-    avatar_url: Annotated[Url | None, Field(default_factory=None)]
+    avatar_url: Annotated[Url | None, Field(default_factory=lambda: None)]
     """
     Chosen avatar image.
     """
@@ -43,7 +43,7 @@ class BaseUser(BaseModel):
 
 
 class PersonUserPerson(BaseModel):
-    email: Annotated[str | None, Field(default_factory=None)]
+    email: Annotated[str | None, Field(default_factory=lambda: None)]
     """
     Email address of person.
     This is only present if an integration has user capabilities that allow access to email addresses.
@@ -53,11 +53,11 @@ class PersonUserPerson(BaseModel):
 
 
 class PersonUser(BaseUser):
-    type: Annotated[Literal["person"] | None, Field(default_factory=None)]
+    type: Annotated[Literal["person"] | None, Field(default_factory=lambda: None)]
     """
     Always `person`.
     """
-    person: Annotated[PersonUserPerson | None, Field(default_factory=None)]
+    person: Annotated[PersonUserPerson | None, Field(default_factory=lambda: None)]
     """
     Additional information about the person.
     """
@@ -66,11 +66,11 @@ class PersonUser(BaseUser):
 
 
 class BotUserBotOwnerWorkspace(BaseModel):
-    type: Annotated[Literal["workspace"] | None, Field(default_factory=None)]
+    type: Annotated[Literal["workspace"] | None, Field(default_factory=lambda: None)]
     """
     Always `workspace`.
     """
-    workspace: Annotated[Literal[True] | None, Field(default_factory=None)]
+    workspace: Annotated[Literal[True] | None, Field(default_factory=lambda: None)]
     """
     Always `True`.
     """
@@ -79,11 +79,11 @@ class BotUserBotOwnerWorkspace(BaseModel):
 
 
 class BotUserBotOwnerUser(BaseModel):
-    type: Annotated[Literal["person"] | None, Field(default_factory=None)]
+    type: Annotated[Literal["person"] | None, Field(default_factory=lambda: None)]
     """
     Always `person`.
     """
-    user: Annotated[PersonUser | None, Field(default_factory=None)]
+    user: Annotated[PersonUser | None, Field(default_factory=lambda: None)]
     """
     Information about the user.
     """
@@ -92,7 +92,7 @@ class BotUserBotOwnerUser(BaseModel):
 
 
 class BotUserBot(BaseModel):
-    owner: Annotated[BotUserBotOwnerUser | BotUserBotOwnerWorkspace | None, Field(default_factory=None)]
+    owner: Annotated[BotUserBotOwnerUser | BotUserBotOwnerWorkspace | None, Field(default_factory=lambda: None)]
     """
     Information about the owner of the bot.
     """
@@ -101,11 +101,11 @@ class BotUserBot(BaseModel):
 
 
 class BotUser(BaseUser):
-    type: Annotated[Literal["bot"] | None, Field(default_factory=None)]
+    type: Annotated[Literal["bot"] | None, Field(default_factory=lambda: None)]
     """
     Always `bot`.
     """
-    bot: Annotated[BotUserBot | None, Field(default_factory=None)]
+    bot: Annotated[BotUserBot | None, Field(default_factory=lambda: None)]
     """
     Additional information about the bot.
     """
