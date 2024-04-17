@@ -56,9 +56,7 @@ class Chat(commands.Cog):
         await interaction.followup.send(embed=emb)
 
 
-OmikujiResult: TypeAlias = Literal[
-    "大吉", "中吉", "小吉", "吉", "末吉", "凶", "大凶", "<:moji_azukaban:1180225908821471232>"
-]
+OmikujiResult: TypeAlias = Literal["大吉", "中吉", "小吉", "吉", "末吉", "凶", "大凶"]
 OMKIJI_RESULT_DICT: dict[OmikujiResult, str] = {
     "大吉": "大吉だよ！",
     "中吉": "中吉だよ！",
@@ -67,13 +65,12 @@ OMKIJI_RESULT_DICT: dict[OmikujiResult, str] = {
     "末吉": "末吉だよ！",
     "凶": "凶だよ！",
     "大凶": "大凶だよ！",
-    "<:moji_azukaban:1180225908821471232>": "あずかばんだよ！",
 }
 
 
 def get_omikuji_result() -> OmikujiResult:
     result: OmikujiResult = "大吉"
-    rand = secrets.randbelow(8)
+    rand = secrets.randbelow(6)
     match rand:
         case 0:
             result = "大吉"
@@ -87,10 +84,6 @@ def get_omikuji_result() -> OmikujiResult:
             result = "末吉"
         case 5:
             result = "凶"
-        case 6:
-            result = "大凶"
-        case 7:
-            result = "<:moji_azukaban:1180225908821471232>"
         case _:
             result = "大凶"
 
