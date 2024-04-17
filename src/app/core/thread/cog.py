@@ -6,14 +6,14 @@ from discord.ext import commands
 from ductile.controller import InteractionController
 
 from src.app.utils.view import DeleteView
-from src.utils.chunk import chunk_str_iter_with_max_str_length
+from src.utils.chunk import chunk_str_iter_with_max_length
 from src.utils.finder import Finder
 
 from .view import AddRolesToThreadView
 
 if TYPE_CHECKING:
     # import some original class
-    from discord import Interaction, Member, Role
+    from discord import Interaction, Role
 
     from src.app.bot import Bot
 
@@ -40,7 +40,8 @@ class ThreadCog(commands.Cog):
         if not accepted:
             return
         selected_roles: list["Role"] = state["selected"]
-        member_set: set["Member"] = {m for r in selected_roles for m in r.members}
+        # chunk_str_iter_with_max_lengthに渡す前に重複排除したいので、多少重くてもsetを使う
+        member_mention_set: set[str] = {m.mention for r in selected_roles for m in r.members}
 
         thread = await Finder(self.bot).find_channel(target.id, expected_type=Thread)
         bot_msg = await thread.send(
@@ -50,12 +51,16 @@ class ThreadCog(commands.Cog):
         )
         await asyncio.sleep(2)
 
-        for string in chunk_str_iter_with_max_str_length([m.mention for m in member_set], 2000):
-            await bot_msg.edit(content="\n".join(string))
+        for string in chunk_str_iter_with_max_length(
+            member_mention_set,
+            max_length=2000,
+            separator="\n",
+        ):
+            await bot_msg.edit(content=string)
             await asyncio.sleep(2)
 
         await bot_msg.edit(
-            content=f"{thread.mention}に{len(member_set)}人のメンバーを追加しました。\nこのメッセージは30秒後に自動で削除されます。",
+            content=f"{thread.mention}に{len(member_mention_set)}人のメンバーを追加しました。\nこのメッセージは30秒後に自動で削除されます。",
             delete_after=30,
             view=DeleteView(),
         )
