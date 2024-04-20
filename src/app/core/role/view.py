@@ -1,6 +1,6 @@
 from discord import Embed, Interaction, Role
 from ductile import State, View, ViewObject
-from ductile.ui import RoleSelect
+from ductile.ui import Button, RoleSelect
 
 from src.const.discord import MAX_EMBED_FIELD_VALUE_LENGTH
 from src.const.enums import Color
@@ -49,5 +49,56 @@ class RoleCheckView(View):
                     },
                     on_select=handle_select,
                 ),
+            ],
+        )
+
+
+class AndMentionView(View):
+    def __init__(self) -> None:
+        super().__init__()
+        self.disabled = State[bool](False, self)  # noqa: FBT003
+        self.selected = State[list[Role]]([], self)
+
+    def render(self) -> ViewObject:
+        default_embed = Embed(
+            title="ANDメンション",
+            description="指定された複数のロールをすべて持っているメンバーをメンションします。",
+            color=Color.MIKU,
+        )
+
+        async def handle_select(interaction: Interaction, values: list[Role]) -> None:
+            await interaction.response.defer()
+            self.selected.set_state(values)
+
+        async def stop_view(interaction: Interaction) -> None:
+            await interaction.response.defer()
+            self.disabled.set_state(True)
+            self.stop()
+
+        def role_embed(roles: list[Role]) -> Embed:
+            e = Embed(
+                title="ANDメンション",
+                description="以下のロールをすべて持っているメンバーをメンションします。",
+                color=Color.MIKU,
+            )
+            e.add_field(
+                name="対象ロール",
+                value="\n".join([r.mention for r in roles]),
+            )
+            return e
+
+        return ViewObject(
+            embeds=[default_embed if (r := self.selected()) == [] else role_embed(r)],
+            components=[
+                RoleSelect(
+                    config={"min_values": 1, "max_values": 5},
+                    style={
+                        "placeholder": "メンションしたいロールを選択してください。(最大5個まで)",
+                        "row": 0,
+                        "disabled": self.disabled(),
+                    },
+                    on_select=handle_select,
+                ),
+                Button("完了", style={"color": "green", "row": 1, "disabled": self.disabled()}, on_click=stop_view),
             ],
         )
