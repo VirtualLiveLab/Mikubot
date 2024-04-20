@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from src.app.bot import Bot
 
 
-class Vote(commands.Cog):
+class OldVote(commands.Cog):
     __renamed_options: ClassVar[dict[str, str]] = {f"option{i}": f"選択肢{i}" for i in range(1, 21)}
 
     def __init__(self, bot: "Bot") -> None:
@@ -147,4 +147,4 @@ class Vote(commands.Cog):
 
 
 async def setup(bot: "Bot") -> None:
-    await bot.add_cog(Vote(bot))
+    await bot.add_cog(OldVote(bot))

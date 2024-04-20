@@ -12,4 +12,7 @@ class BotCommandTree(app_commands.CommandTree):
         super().__init__(client, fallback_to_global=fallback_to_global)
 
     async def on_error(self, interaction: "Interaction[Client]", error: "AppCommandError") -> None:
+        """
+        TODO: Add logging here
+        """
         return await super().on_error(interaction, error)

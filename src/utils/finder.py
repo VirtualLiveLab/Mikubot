@@ -22,12 +22,10 @@ class Finder:
         self,
         channel_id: int,
         expected_type: None = None,
-    ) -> GuildChannel | PrivateChannel | Thread:
-        ...
+    ) -> GuildChannel | PrivateChannel | Thread: ...
 
     @overload
-    async def find_channel(self, channel_id: int, expected_type: type[T]) -> T:
-        ...
+    async def find_channel(self, channel_id: int, expected_type: type[T]) -> T: ...
 
     async def find_channel(
         self,

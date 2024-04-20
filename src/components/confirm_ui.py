@@ -66,11 +66,19 @@ class ConfirmView(View):
             embeds=[e],
             components=[
                 Button(
-                    style={"color": "grey", "emoji": CIRCLE_EMOJI, "disabled": self.result() is not None},
+                    style={
+                        "color": "grey",
+                        "emoji": CIRCLE_EMOJI,
+                        "disabled": self.result() is not None,
+                    },
                     on_click=handle_approve,
                 ),
                 Button(
-                    style={"color": "grey", "emoji": CROSS_EMOJI, "disabled": self.result() is not None},
+                    style={
+                        "color": "grey",
+                        "emoji": CROSS_EMOJI,
+                        "disabled": self.result() is not None,
+                    },
                     on_click=handle_reject,
                 ),
             ],

@@ -98,7 +98,13 @@ class VotePanel(View):
 
 
 class UserVoteView(View):
-    def __init__(self, *, options: list[VoteOption], prev_chosen: OptionId | None, panel_url: str | None) -> None:
+    def __init__(
+        self,
+        *,
+        options: list[VoteOption],
+        prev_chosen: OptionId | None,
+        panel_url: str | None,
+    ) -> None:
         super().__init__()
         self.__options = options
         self.__prev_chosen = prev_chosen
@@ -157,14 +163,23 @@ class UserVoteView(View):
             components=[
                 *[
                     Button(
-                        style={"color": "grey", "emoji": option.emoji, "disabled": self.__prev_chosen == option.option_id},
+                        style={
+                            "color": "grey",
+                            "emoji": option.emoji,
+                            "disabled": self.__prev_chosen == option.option_id,
+                        },
                         on_click=self.get_vote_handler(option),
                     )
                     for option in self.__options
                 ],
                 Button(
                     "投票取り消し",
-                    style={"color": "red", "emoji": WASTE_BASKET, "disabled": self.__prev_chosen is None, "row": 4},
+                    style={
+                        "color": "red",
+                        "emoji": WASTE_BASKET,
+                        "disabled": self.__prev_chosen is None,
+                        "row": 4,
+                    },
                     on_click=self.devote_handler,
                 ),
             ],

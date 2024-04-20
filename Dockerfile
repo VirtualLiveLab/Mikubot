@@ -8,9 +8,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
 # install python dependencies
-COPY requirements.txt /opt/
+COPY requirements.lock pyproject.toml README.md ./
 RUN python -m pip install --no-cache-dir -U pip setuptools wheel && \
-    python -m pip install --no-cache-dir -r requirements.txt
+    python -m pip install --no-cache-dir -r requirements.lock
 
 FROM python:${PYTHON_VERSION_CODE}-slim-bullseye as runner
 ARG PYTHON_VERSION_CODE

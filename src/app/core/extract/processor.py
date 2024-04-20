@@ -38,7 +38,10 @@ class DiscordProcessor(IUrlAsyncProcessor[Message]):
 
     async def _fetch_message_from_id(self, *, channel_id: int, message_id: int) -> Message | None:
         channel = await self._finder.find_channel(channel_id)
-        if not isinstance(channel, discord.TextChannel | discord.VoiceChannel | discord.StageChannel | discord.Thread):
+        if not isinstance(
+            channel,
+            discord.TextChannel | discord.VoiceChannel | discord.StageChannel | discord.Thread,
+        ):
             return None
 
         try:
@@ -80,7 +83,13 @@ class NotionProcessor(IUrlAsyncProcessor[NotionPage]):
         emoji = self._get_safe_emoji(obj)
         last_updated = self._get_safe_last_updated(obj)
         image = self._get_safe_image(obj)
-        return {"url": url, "title": title, "emoji": emoji, "last_updated": last_updated, "image": image}
+        return {
+            "url": url,
+            "title": title,
+            "emoji": emoji,
+            "last_updated": last_updated,
+            "image": image,
+        }
 
     def _get_safe_url(self, obj: dict[str, Any]) -> str:
         return url if isinstance((url := glom(obj, "url", default="")), str) else ""
@@ -96,7 +105,11 @@ class NotionProcessor(IUrlAsyncProcessor[NotionPage]):
         if len(title_keys) == 0 or not isinstance((title_key := title_keys[0]), str):
             return ""
 
-        titles = glom(obj, {"titles": (f"properties.{title_key}.title", ["plain_text"])}, default={"titles": []})
+        titles = glom(
+            obj,
+            {"titles": (f"properties.{title_key}.title", ["plain_text"])},
+            default={"titles": []},
+        )
         if (
             isinstance(titles, dict)
             and isinstance((t_arr := titles.get("titles")), list)

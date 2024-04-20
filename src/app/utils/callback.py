@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Literal
 
-from .embed import fix_embed, wip_embed
+from .embed import deprecated_embed, fix_embed, wip_embed
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -11,9 +11,16 @@ async def command_unavailable_callback(
     /,
     *,
     ephemeral: bool = False,
-    status: Literal["FIX", "WIP"],
+    status: Literal["FIX", "WIP", "DEPRECATED"],
+    deprecated_alternative: str = "",
 ) -> None:
-    e = wip_embed() if status == "WIP" else fix_embed()
+    match status:
+        case "DEPRECATED":
+            e = deprecated_embed(deprecated_alternative)
+        case "FIX":
+            e = fix_embed()
+        case "WIP":
+            e = wip_embed()
     if interaction.response.is_done():
         await interaction.followup.send(embed=e, ephemeral=ephemeral)
         return

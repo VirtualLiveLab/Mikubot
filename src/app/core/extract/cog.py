@@ -27,7 +27,10 @@ class Extract(commands.Cog):
             return
 
         url_extractor = UrlExtractor(
-            {"discord": DiscordPlugin(), "notion": NotionPlugin(workspace=os.environ["NOTION_DOMAIN"])}
+            {
+                "discord": DiscordPlugin(),
+                "notion": NotionPlugin(workspace=os.environ["NOTION_DOMAIN"]),
+            }
         )
         matches = await url_extractor.find_all_async(message.content)
         self.__logger.debug("matches: %s", matches)
@@ -41,7 +44,10 @@ class Extract(commands.Cog):
                 try:
                     await message.channel.send(
                         embeds=process_message_to_embeds(msg),
-                        view=DispandView(message_url=msg.jump_url, button_label="元のメッセージを見る"),
+                        view=DispandView(
+                            message_url=msg.jump_url,
+                            button_label="元のメッセージを見る",
+                        ),
                     )
                 except Exception:
                     self.bot.logger.exception("dispand error: discord")

@@ -14,5 +14,4 @@ poetry.lock
 
 # docs
 docs/*
-README.md
 LICENSE
