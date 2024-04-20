@@ -1,40 +1,47 @@
-[tool.poetry]
-name = "mikubot-v2"
+[project]
+name = "mikubot"
 version = "0.1.0"
-description = ""
-authors = ["sushi-chaaaan <mail@sushichan.live>"]
+description = "Add your description here"
+authors = [{ name = "sushi-chaaaan", email = "mail@sushichan.live" }]
+dependencies = [
+    "discord-py[voice,speed] @ git+https://github.com/Rapptz/discord.py.git@d853a3f0a7e19d290021434e85f9c4c14089a874",
+    "pydantic>=2.7.0",
+    "aiohttp>=3.9.5",
+    "ductile-ui>=0.2.6",
+    "typing-extensions>=4.11.0",
+    "asyncer>=0.0.5",
+    "result>=0.16.1",
+    "notion-client>=2.2.1",
+    "glom>=23.5.0",
+    "sentry-sdk>=1.45.0",
+]
 readme = "README.md"
-packages = [{ include = "mikubot_v2" }]
+requires-python = ">= 3.12"
 
-[tool.poetry.dependencies]
-python = "^3.12"
-discord-py = { git = "https://github.com/Rapptz/discord.py.git", rev = "master", extras = [
-    "voice",
-    "speed",
-] }
-pydantic = "^2.0"
-aiohttp = "^3.9.1"
-# ductile-ui = { git = "https://github.com/sushi-chaaaan/ductile-ui.git", rev = "main" }
-ductile-ui = "^0.2.6"
-typing-extensions = "^4.8.0"
-asyncer = "^0.0.5"
-result = "^0.16.1"
-notion-client = "^2.2.1"
-glom = "^23.5.0"
-sentry-sdk = "^1.44.0"
 
-[tool.poetry.group.dev.dependencies]
-mypy = "^1.4.1"
-poethepoet = "^0.20.0"
-python-dotenv = "^0.21.1"
-pre-commit = "^3.1.0"
-ruff = "^0.1.7"
-poetry-plugin-export = "^1.6.0"
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "mypy>=1.9.0",
+    "python-dotenv>=1.0.1",
+    "pre-commit>=3.7.0",
+    "ruff>=0.4.1",
+]
+
+[tool.rye.scripts]
+dev = { cmd = ["python", "main.py"], env-file = ".env" }
+install = { cmd = ["pre-commit", "install"] }
 
 [tool.ruff]
 # https://qiita.com/yuji38kwmt/items/63e82126076204923520
 target-version = "py312"
 line-length = 125
+
+[tool.ruff.lint]
 ignore = [
     "E203",
     "D",
@@ -51,20 +58,7 @@ ignore = [
 ]
 select = ["ALL"]
 
-[tool.ruff.format]
-# Like Black, use double quotes for strings.
-quote-style = "double"
-
-# Like Black, indent with spaces, rather than tabs.
-indent-style = "space"
-
-# Like Black, respect magic trailing commas.
-skip-magic-trailing-comma = false
-
-# Like Black, automatically detect the appropriate line ending.
-line-ending = "auto"
-
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "./src/app/**" = [
     "INP001", # add __init__.py to app directory is too much work
 ]
@@ -72,6 +66,17 @@ line-ending = "auto"
     "INP001", # add __init__.py to tests directory is too much work
     "S101",   # allow to use assert in tests
 ]
+
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
 
 
 [tool.mypy]
@@ -83,12 +88,9 @@ warn_unused_ignores = true
 disallow_untyped_defs = true
 implicit_reexport = true
 
-[tool.poe.tasks]
-install = "poetry run pre-commit install"
-lint = "poetry run ruff check ./src"
-format = "poetry run ruff format ./src"
-export = "poetry export -f requirements.txt -o requirements.txt --only main --without-hashes"
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
