@@ -99,6 +99,10 @@ class AndMentionView(View):
                     },
                     on_select=handle_select,
                 ),
-                Button("完了", style={"color": "green", "row": 1, "disabled": self.disabled()}, on_click=stop_view),
+                Button(
+                    "完了",
+                    style={"color": "green", "row": 1, "disabled": self.disabled()},
+                    on_click=stop_view,
+                ),
             ],
         )

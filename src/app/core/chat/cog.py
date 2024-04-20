@@ -30,9 +30,9 @@ class Chat(commands.Cog):
             case "うおうお":
                 await message.add_reaction("\N{FISH}")
             case "ふろ":
-                await message.add_reaction("\N{bathtub}")
+                await message.add_reaction("\N{BATHTUB}")
             case "Docker":
-                await message.add_reaction("\N{whale}")
+                await message.add_reaction("\N{WHALE}")
             case _:
                 pass
 
