@@ -23,7 +23,10 @@ def process_message_to_embeds(message: discord.Message, color: int = Color.MIKU)
         name="送信した人",
         value=message.author.mention,
     )
-    if not isinstance(message.channel, discord.DMChannel | discord.PartialMessageable | discord.GroupChannel):
+    if not isinstance(
+        message.channel,
+        discord.DMChannel | discord.PartialMessageable | discord.GroupChannel,
+    ):
         e.add_field(
             name="チャンネル",
             value=message.channel.mention or "",

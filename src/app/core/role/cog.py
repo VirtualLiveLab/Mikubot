@@ -33,11 +33,17 @@ class Role(commands.Cog):
         )
         await controller.send()
 
-    @role.command(name="and-mention", description="指定した複数のロールをすべて持っているメンバーをメンションします。")
+    @role.command(
+        name="and-mention",
+        description="指定した複数のロールをすべて持っているメンバーをメンションします。",
+    )
     async def and_mention(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer(ephemeral=True)
         if interaction.channel is None or not issubclass(type(interaction.channel), discord.abc.Messageable):
-            await interaction.followup.send("このコマンドはメッセージ可能なチャンネルでのみ実行できます。", ephemeral=True)
+            await interaction.followup.send(
+                "このコマンドはメッセージ可能なチャンネルでのみ実行できます。",
+                ephemeral=True,
+            )
             return
         # channelはMessagableであることが保証されている
         channel: discord.abc.Messageable = interaction.channel  # type: ignore[assignment]
@@ -51,15 +57,20 @@ class Role(commands.Cog):
         await controller.send()
         _, states = await controller.wait()
         # states["selected"]は通常長さ1～5のlist[Role]であることが期待される
+        # 不正な入力では長さ0のlistもありえる
         # 長さが1だったら普通のメンションでいいので断る
+        min_roles = 2
         selected: list[discord.Role] = (
-            r if isinstance(r := states.get("selected", []), list) and len(r) > 1 and isinstance(r[0], discord.Role) else []
+            r
+            if isinstance(r := states.get("selected", []), list) and len(r) >= min_roles and isinstance(r[0], discord.Role)
+            else []
         )
         if selected == []:
             await interaction.followup.send(
                 "ロールが2つ以上選択されなかったため、処理を中断しました。メンション先ロールが1つであれば通常のメンションを利用してください。",
                 ephemeral=True,
             )
+            return
 
         # 人数が小さい順にsort
         sorted_roles = sorted(selected, key=lambda r: len(r.members))
@@ -67,11 +78,20 @@ class Role(commands.Cog):
         biggest = sorted_roles.pop()
         # 人数が最も多いRoleのMemberから、残りのRoleをすべて持っているMemberのIDを抽出
         target_members: list[int] = await filter_users_by_roles(biggest.members, [r.id for r in sorted_roles])
-        target_mentions = [f"<@{m}>" for m in target_members]
+        if target_members == []:
+            await interaction.followup.send(
+                "指定されたロールをすべて持っているメンバーが見つかりませんでした。",
+                ephemeral=True,
+            )
+            return
 
+        target_mentions = [f"<@{m}>" for m in target_members]
         # メンション文字列を2000文字以下ごとに分割して送信
         for string in chunk_str_iter_with_max_length(
-            target_mentions, max_length=2000, separator="\n", ignore_oversize_fragment=True
+            target_mentions,
+            max_length=2000,
+            separator="\n",
+            ignore_oversize_fragment=True,
         ):
             await channel.send(content=string)
             await asyncio.sleep(1)
