@@ -1,17 +1,21 @@
 import asyncio
 import os
+import sys
 
 import discord
+import sentry_sdk
 
 # import sentry_sdk
 from discord.ext import commands
+from sentry_sdk import Hub
 
-from src.app.core.chat.view import DispandView
+from src.app.core.extract.view import DispandView
 from src.app.utils.view import DeleteView
-from src.const.log import command_log, login_log
-from src.utils.cog import CogLoader
+from src.config.intent import get_full_intents
+from src.const.log import login_log
 from src.utils.finder import Finder
 from src.utils.logger import get_my_logger
+from src.utils.path import PyPathFinder
 
 from .embed import ready_embed
 from .tree import BotCommandTree
@@ -24,7 +28,7 @@ if not __debug__:
 
 class Bot(commands.Bot):
     def __init__(self) -> None:
-        # self.init_sentry()
+        self.init_sentry()
         self.config = {"prefix": "!"}
         self.logger = get_my_logger(__name__, level="DEBUG")
 
@@ -32,29 +36,23 @@ class Bot(commands.Bot):
         self.failed_exts: list[str] = []
         self.failed_views: list[str] = []
 
-        # set local application command sync target
-        self.local_app_cmd_sync_target = discord.Object(int(os.environ["GUILD_ID"]))
-
-        # set intents
-        intents = discord.Intents.all()
-        intents.typing = False
-        intents.presences = False
-
         super().__init__(
             command_prefix=self.config.get("prefix", "!"),
-            intents=intents,
+            intents=get_full_intents(),
             tree_cls=BotCommandTree,
         )
+        """
+        tree_clsにBotCommandTreeを渡すことで、Application Command全般に追加操作を適用できる
+        """
 
     async def setup_hook(self) -> None:
-        await self.set_pre_invoke_hook()
         await self.load_exts()
         await self.sync_app_commands()
         await self.setup_views()
 
     async def on_ready(self) -> None:
         self.logger.info(login_log(user=self.user, guild_amount=len(self.guilds)))
-        channel = await Finder(self).find_channel(int(os.environ["LOG_CHANNEL_ID"]), expected_type=discord.TextChannel)
+        channel = await Finder(self).find_channel(int(os.environ["LOG_CHANNEL_ID"]), expected_type=discord.Thread)
         emb = ready_embed(
             latency=self.latency,
             failed_exts=self.failed_exts,
@@ -67,8 +65,9 @@ class Bot(commands.Bot):
     async def load_exts(self) -> None:
         # load cogs automatically
         # "cog.py" under the "app" directory will loaded
-        loader = CogLoader("src/app")
-        cogs = loader.glob_cog("cog.py", as_relative=True)
+        # cogs = [ "src.app.help.cog", ... ]
+        path = PyPathFinder("src/app")
+        cogs = path.glob_path("cog.py", as_relative=True)
 
         if cogs is None or cogs == []:
             return
@@ -84,20 +83,19 @@ class Bot(commands.Bot):
                 self.failed_exts.append(cog)
 
     async def sync_app_commands(self) -> None:
+        """
+        Sync application commands. Must called after cog loaded.
+
+        (If you called this before cog loaded, commands in cogs will not be synced)
+        """
         try:
             # execute global sync
+            # サーバー固有のコマンドは基本的に追加しない方針なので、guild=None
             synced = await self.tree.sync(guild=None)
-            # execute guild sync
-            if self.local_app_cmd_sync_target is not None:
-                local_synced = await self.tree.sync(guild=self.local_app_cmd_sync_target)
-            else:
-                local_synced = None
         except Exception:
             self.logger.exception("Failed to sync application commands")
         else:
             msg = f"{len(synced)} Application commands synced successfully"
-            if local_synced is not None:
-                msg += f"\n{len(local_synced)} Local application commands synced successfully (Guild: {self.local_app_cmd_sync_target.id})"  # noqa: E501
             self.logger.info(msg)
 
     async def setup_views(self) -> None:
@@ -105,7 +103,7 @@ class Bot(commands.Bot):
         # This parameter is not used after once sended
         # So, this is dummy value
         views = [
-            DispandView(message_url="MISSING"),
+            DispandView(message_url="MISSING", button_label="MISSING"),
             DeleteView(),
         ]
 
@@ -117,19 +115,14 @@ class Bot(commands.Bot):
                 self.logger.exception(msg)
                 self.failed_views.append(v)
 
-    async def set_pre_invoke_hook(self) -> None:
-        @self.before_invoke
-        async def write_debug_log(ctx: commands.Context) -> None:
-            self.logger.debug(command_log(ctx))
-
-    # def init_sentry(self) -> None:
-    #     sentry_sdk.init(
-    #         dsn=os.environ["SENTRY_DSN"],
-    #         # Set traces_sample_rate to 1.0 to capture 100%
-    #         # of transactions for performance monitoring.
-    #         # We recommend adjusting this value in production.
-    #         traces_sample_rate=1.0,
-    #     )
+    def init_sentry(self) -> None:
+        sentry_sdk.init(
+            dsn=os.environ["SENTRY_DSN"],
+            # Set traces_sample_rate to 1.0 to capture 100%
+            # of transactions for performance monitoring.
+            # We recommend adjusting this value in production.
+            traces_sample_rate=0.75,
+        )
 
     def runner(self, *, token: str) -> None:
         try:
@@ -147,13 +140,10 @@ class Bot(commands.Bot):
             await self.shutdown()
 
     async def shutdown(self, status: int = 0) -> None:
-        import sys
-
-        # from sentry_sdk import Hub
-        # # shutdown Sentry
-        # client = Hub.current.client
-        # if client is not None:
-        #     client.close(timeout=2.0)
+        # shutdown Sentry
+        client = Hub.current.client
+        if client is not None:
+            client.close(timeout=2.0)
 
         await self.close()
         sys.exit(status)

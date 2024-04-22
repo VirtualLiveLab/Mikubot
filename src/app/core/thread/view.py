@@ -19,7 +19,7 @@ class AddRolesToThreadView(View):
         self.selected = State["list[Role]"]([], self)
 
     async def on_timeout(self) -> None:
-        self.accepted.set_state(False)  # noqa: FBT003
+        self.accepted.set_state(False)
         return await super().on_timeout()
 
     def render(self) -> ViewObject:
@@ -33,11 +33,11 @@ class AddRolesToThreadView(View):
 
         async def handle_start(interaction: Interaction) -> None:
             await interaction.response.defer()
-            self.accepted.set_state(True)  # noqa: FBT003
+            self.accepted.set_state(True)
             stop_view()
 
         def stop_view() -> None:
-            self.disabled.set_state(True)  # noqa: FBT003
+            self.disabled.set_state(True)
             self.stop()
 
         def embed() -> Embed:
@@ -47,7 +47,10 @@ class AddRolesToThreadView(View):
                 color=Color.MIKU,
             )
             e.add_field(name="対象スレッド", value=self.target_mention)
-            e.add_field(name="選択されているロール", value="\n".join([r.mention for r in self.selected()]))
+            e.add_field(
+                name="選択されているロール",
+                value="\n".join([r.mention for r in self.selected()]),
+            )
             return e
 
         return ViewObject(
@@ -55,13 +58,25 @@ class AddRolesToThreadView(View):
             components=[
                 RoleSelect(
                     config={"min_values": 1, "max_values": 5},
-                    style={"placeholder": "追加したいロールを選択してください。", "row": 0, "disabled": self.disabled()},
+                    style={
+                        "placeholder": "追加したいロールを選択してください。",
+                        "row": 0,
+                        "disabled": self.disabled(),
+                    },
                     on_select=handle_select,
                 ),
-                Button("キャンセル", style={"color": "red", "row": 2, "disabled": self.disabled()}, on_click=handle_cancel),
+                Button(
+                    "キャンセル",
+                    style={"color": "red", "row": 2, "disabled": self.disabled()},
+                    on_click=handle_cancel,
+                ),
                 Button(
                     "実行",
-                    style={"disabled": self.disabled() or self.selected() == [], "color": "green", "row": 2},
+                    style={
+                        "disabled": self.disabled() or self.selected() == [],
+                        "color": "green",
+                        "row": 2,
+                    },
                     on_click=handle_start,
                 ),
             ],
