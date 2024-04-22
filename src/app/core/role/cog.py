@@ -104,9 +104,14 @@ class Role(commands.Cog):
 このメンションは`/role and-mention`コマンドによって送信されました。
 メンションの理由などは送信者にお問い合わせください。""",
                 color=Color.MIKU,
-            ).add_field(
+            )
+            .add_field(
                 name="送信者",
                 value=f"<@{interaction.user.id}>",
+            )
+            .add_field(
+                name="対象ロール",
+                value=" AND\n".join([r.mention for r in selected]),
             )
         )
         return
