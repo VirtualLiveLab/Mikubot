@@ -90,7 +90,7 @@ class Role(commands.Cog):
         for string in chunk_str_iter_with_max_length(
             target_mentions,
             max_length=2000,
-            separator="\n",
+            separator=" ",
             ignore_oversize_fragment=True,
         ):
             await channel.send(content=string)
