@@ -35,7 +35,6 @@ cffi==1.16.0
     # via pycares
     # via pynacl
 discord-py @ git+https://github.com/Rapptz/discord.py.git@d853a3f0a7e19d290021434e85f9c4c14089a874
-    # via discord-py
     # via ductile-ui
 ductile-ui==0.2.6
 face==20.1.1
