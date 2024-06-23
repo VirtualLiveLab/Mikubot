@@ -40,7 +40,7 @@ discord-py @ git+https://github.com/Rapptz/discord.py.git@d853a3f0a7e19d29002143
     # via ductile-ui
 distlib==0.3.8
     # via virtualenv
-ductile-ui==0.2.6
+ductile-ui==0.3.0
 face==20.1.1
     # via glom
 filelock==3.14.0
@@ -79,9 +79,9 @@ pycares==4.4.0
     # via aiodns
 pycparser==2.22
     # via cffi
-pydantic==2.7.1
+pydantic==2.7.4
     # via ductile-ui
-pydantic-core==2.18.2
+pydantic-core==2.18.4
     # via pydantic
 pynacl==1.5.0
     # via discord-py
@@ -96,7 +96,7 @@ setuptools==69.5.1
 sniffio==1.3.1
     # via anyio
     # via httpx
-typing-extensions==4.11.0
+typing-extensions==4.12.2
     # via ductile-ui
     # via mypy
     # via pydantic
