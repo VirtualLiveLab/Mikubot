@@ -8,6 +8,7 @@ from ductile.controller import InteractionController
 
 from src.const.enums import Color
 from src.utils.chunk import chunk_str_iter_with_max_length
+from src.utils.mention import MentionHelper
 
 from .view import AndMentionView, RoleCheckView
 
@@ -85,7 +86,7 @@ class Role(commands.Cog):
             )
             return
 
-        target_mentions = [f"<@{m}>" for m in target_members]
+        target_mentions = [MentionHelper.get_user_mention(m_id) for m_id in target_members]
         # メンション文字列を2000文字以下ごとに分割して送信
         for string in chunk_str_iter_with_max_length(
             target_mentions,
@@ -107,7 +108,7 @@ class Role(commands.Cog):
             )
             .add_field(
                 name="送信者",
-                value=f"<@{interaction.user.id}>",
+                value=MentionHelper.get_user_mention(interaction.user.id),
             )
             .add_field(
                 name="対象ロール",
