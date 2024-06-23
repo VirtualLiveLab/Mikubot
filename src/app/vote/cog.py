@@ -103,7 +103,7 @@ class Vote(commands.Cog):
             option = [VoteOption(emoji=emoji_dict[str(i)], label=raw_options[i]) for i in range(len(raw_options))]
 
         vote_panel = VotePanel(question=question, options=option, is_anonymous=True)
-        controller = InteractionController(view=vote_panel, interaction=interaction, timeout=None)
+        controller = InteractionController(view=vote_panel, interaction=interaction, timeout=None, sync_interval=1)
         await controller.send()
 
 
