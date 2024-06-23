@@ -9,12 +9,47 @@ on:
       - ".vscode/**"
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   CONTAINER_NAME: mikubot
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup CPython
+        uses: actions/setup-python@v5
+        with:
+          cache: "pip"
+          cache-dependency-path: "requirements-dev.lock"
+          python-version-file: ".python-version"
+
+      - name: install dependencies
+        id: install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.lock
+
+      - name: lint
+        if: ${{ always() && steps.install.outcome == 'success' }}
+        run: |
+          ruff check --output-format github .
+
+      - name: format
+        if: ${{ always() && steps.install.outcome == 'success' }}
+        run: |
+          ruff format --check .
+
   deploy:
     runs-on: ubuntu-latest
+
+    needs: check
     permissions:
       contents: read
       packages: write
@@ -65,7 +100,3 @@ jobs:
               ${{ vars.IMAGE_TAG }}
             docker image prune -f
           script_stop: true
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true

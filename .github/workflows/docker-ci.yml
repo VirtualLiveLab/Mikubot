@@ -9,6 +9,10 @@ on:
       - ".vscode/**"
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   docker-build-check:
     runs-on: ubuntu-latest
@@ -28,7 +32,3 @@ jobs:
           tags: ${{ vars.IMAGE_TAG }}
           cache-from: type=gha
           cache-to: type=gha, mode=max
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
