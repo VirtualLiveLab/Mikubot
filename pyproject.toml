@@ -30,6 +30,8 @@ dev-dependencies = ["mypy>=1.9.0", "python-dotenv>=1.0.1", "ruff>=0.4.1"]
 
 [tool.rye.scripts]
 dev = { cmd = ["python", "main.py"], env-file = ".env" }
+lint = { cmd = ["ruff", "check"] }
+fmt = { cmd = ["ruff", "format"] }
 
 [tool.ruff]
 # https://qiita.com/yuji38kwmt/items/63e82126076204923520
