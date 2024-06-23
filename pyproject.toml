@@ -26,16 +26,10 @@ build-backend = "hatchling.build"
 [tool.rye]
 managed = true
 virtual = true
-dev-dependencies = [
-    "mypy>=1.9.0",
-    "python-dotenv>=1.0.1",
-    "pre-commit>=3.7.0",
-    "ruff>=0.4.1",
-]
+dev-dependencies = ["mypy>=1.9.0", "python-dotenv>=1.0.1", "ruff>=0.4.1"]
 
 [tool.rye.scripts]
 dev = { cmd = ["python", "main.py"], env-file = ".env" }
-install = { cmd = ["pre-commit", "install"] }
 
 [tool.ruff]
 # https://qiita.com/yuji38kwmt/items/63e82126076204923520
