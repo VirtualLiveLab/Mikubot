@@ -39,7 +39,7 @@ class ThreadCog(commands.Cog):
         accepted: bool = state["accepted"]
         if not accepted:
             return
-        selected_roles: list["Role"] = state["selected"]
+        selected_roles: list[Role] = state["selected"]
         # chunk_str_iter_with_max_lengthに渡す前に重複排除したいので、多少重くてもsetを使う
         member_mention_set: set[str] = {m.mention for r in selected_roles for m in r.members}
 

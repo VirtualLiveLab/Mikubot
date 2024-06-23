@@ -1,17 +1,19 @@
 # unused directories
-.env*
 .git
-.gitignore
+.github
 .mypy_cache
-.python-version
-.pre-commit-config.yaml
+.ruff_cache
 .venv
 .vscode
-
 __pycache__
+
+# unused files
+.env*
+.gitignore
+.python-version
 log
-poetry.lock
 
 # docs
 docs/*
 LICENSE
+README.md

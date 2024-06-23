@@ -7,7 +7,7 @@ dependencies = [
     "discord-py[voice,speed] @ git+https://github.com/Rapptz/discord.py.git@d853a3f0a7e19d290021434e85f9c4c14089a874",
     "pydantic>=2.7.0",
     "aiohttp>=3.9.5",
-    "ductile-ui>=0.2.6",
+    "ductile-ui>=0.3.0",
     "typing-extensions>=4.11.0",
     "asyncer>=0.0.5",
     "result>=0.16.1",
@@ -16,7 +16,7 @@ dependencies = [
     "sentry-sdk>=1.45.0",
 ]
 readme = "README.md"
-requires-python = ">= 3.12"
+requires-python = ">= 3.11"
 
 
 [build-system]
@@ -26,20 +26,16 @@ build-backend = "hatchling.build"
 [tool.rye]
 managed = true
 virtual = true
-dev-dependencies = [
-    "mypy>=1.9.0",
-    "python-dotenv>=1.0.1",
-    "pre-commit>=3.7.0",
-    "ruff>=0.4.1",
-]
+dev-dependencies = ["mypy>=1.9.0", "python-dotenv>=1.0.1", "ruff>=0.4.1"]
 
 [tool.rye.scripts]
 dev = { cmd = ["python", "main.py"], env-file = ".env" }
-install = { cmd = ["pre-commit", "install"] }
+lint = { cmd = ["ruff", "check"] }
+fmt = { cmd = ["ruff", "format"] }
 
 [tool.ruff]
 # https://qiita.com/yuji38kwmt/items/63e82126076204923520
-target-version = "py312"
+target-version = "py311"
 line-length = 125
 
 [tool.ruff.lint]
@@ -81,7 +77,7 @@ line-ending = "auto"
 
 
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.11"
 exclude = [".venv"]
 follow_imports = "normal"
 warn_redundant_casts = true

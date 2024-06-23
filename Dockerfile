@@ -1,27 +1,21 @@
-ARG PYTHON_VERSION_CODE=3.12
+FROM python:3.11-bookworm as builder
 
-FROM python:${PYTHON_VERSION_CODE}-bullseye as builder
-ARG PYTHON_VERSION_CODE
-WORKDIR /opt
-# python environment variables
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
-# install python dependencies
-COPY requirements.lock pyproject.toml README.md ./
-RUN python -m pip install --no-cache-dir -U pip setuptools wheel && \
-    python -m pip install --no-cache-dir -r requirements.lock
-
-FROM python:${PYTHON_VERSION_CODE}-slim-bullseye as runner
-ARG PYTHON_VERSION_CODE
 WORKDIR /app
-# permission settings
-RUN groupadd -r app && useradd -r -g app app
-RUN chown -R app:app /app
-USER app
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONUSERBASE=/app/__pypackages__
 
-COPY --from=builder /usr/local/lib/python${PYTHON_VERSION_CODE}/site-packages /usr/local/lib/python${PYTHON_VERSION_CODE}/site-packages
-COPY --chown=app:app . ./
+COPY requirements.lock ./
+RUN pip install --user --no-cache-dir -r requirements.lock
 
-# start process
-ENTRYPOINT ["python", "main.py"]
+# https://github.com/GoogleContainerTools/distroless/blob/main/python3/BUILD
+# distroless/python3-debian12のPythonは3.11
+FROM gcr.io/distroless/python3-debian12:nonroot as runner
+WORKDIR /app
+ENV PYTHONUSERBASE=/app/__pypackages__
+
+USER nonroot
+COPY --from=builder /app/__pypackages__ /app/__pypackages__
+COPY --chown=nonroot:nonroot . ./
+
+CMD ["main.py"]

@@ -9,18 +9,6 @@ VLL Discord サーバーのためのBot
 <details>
 <summary>開発者向け</summary>
 
-### `poetry`と`pre-commit`を使用するようになりました
-
-pipではなくpoetryを使用するようになりました。また、pre-commitを使用して
-デプロイ用`requirements.txt`の自動生成を行うようになりました。
-
-```bash
-git clone <this repo>
-cd <this repo>
-poetry install
-poetry run pre-commit install
-```
-
 ### 依存ライブラリを更新しました
 
 `discord.py v1.7.3`及び`dislash.py`は今後利用できなくなる可能性があるため、`discord.py v2`ベースですべて書き直しました。
