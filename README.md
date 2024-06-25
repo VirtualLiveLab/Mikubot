@@ -1,37 +1,57 @@
-# Mikubot
 
-VLL Discord サーバーのためのBot
+# MikuBot
 
-~~TOKEN等はGithub ActionsのSecretsに格納しDockerでBuildする際に環境変数に加えています。~~
+A Discord bot for VirtualLiveLab
 
-イメージに焼き付けたくなかったので実行時に`--env`オプションで渡してます。
+## ローカル開発
 
-<details>
-<summary>開発者向け</summary>
+リポジトリをクローン
 
-### 依存ライブラリを更新しました
+```bash
+  gh repo clone VirtualLiveLab/Mikubot
+```
 
-`discord.py v1.7.3`及び`dislash.py`は今後利用できなくなる可能性があるため、`discord.py v2`ベースですべて書き直しました。
+プロジェクトへ移動
 
-### ファイル分割
+```bash
+  cd Mikubot
+```
 
-単一ファイルにすべての処理が書かれていたものを[Cog and Extension](https://discordpy.readthedocs.io/ja/latest/ext/commands/extensions.html)ベースのファイル分割に変更しました。
+開発環境をセットアップ
 
-起動時にファイル探索をし、**app/\*\*/cog.py** というファイル名のExtensionが自動で読み込まれます。
+```bash
+  rye sync
+```
 
-### スニペット
+.envをコピー
 
-VSCode向けの新規Cog作成スニペットを追加してあります。
+```bash
+  cp .env.example .env
+```
 
-### CI
+.envを編集
 
-- `pre-commit`を使用して、基本的なコードチェックを行っています。`requirements.txt`の更新を忘れるとCIが失敗します。
-  - Pull Request内であれば修正を自動でコミットしてくれます。
-- Dockerイメージのビルドまでを事前にテストしています。(起動確認はしていません)
-- typoチェッカーも回しています。
+[Environment Variables](#environment-variables)を参照
 
-### ビルド・デプロイ
+開発サーバーを起動
 
-GitHub Actionsでイメージをビルドして、ConoHa VPS上へ自動デプロイする設定になっています。
+```bash
+  rye run dev
+```
 
-</details>
+> [!TIP]
+> この開発サーバーはファイルを変更したら一度再起動しないと変更が反映されません。
+
+## Environment Variables
+
+このBotは以下の環境変数がないと動作しません。
+
+`DISCORD_BOT_TOKEN`: Discord Bot Token
+
+`LOG_CHANNEL_ID`: ログメッセージを送るチャンネルのID
+
+`NOTION_TOKEN`: Notion Integration Token
+
+`NOTION_DOMAIN`: Notion Domain
+
+`SENTRY_DSN`: 本番環境の場合のみ。開発時は変更しなくてOK
