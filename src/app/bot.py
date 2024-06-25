@@ -102,7 +102,7 @@ class Bot(commands.Bot):
         # NOTICE: message_url is only for LinkButton
         # This parameter is not used after once sended
         # So, this is dummy value
-        views = [
+        views: list[discord.ui.View] = [
             DispandView(message_url="MISSING", button_label="MISSING"),
             DeleteView(),
         ]
@@ -113,7 +113,7 @@ class Bot(commands.Bot):
             except Exception:
                 msg = f"Failed to setup {v}"
                 self.logger.exception(msg)
-                self.failed_views.append(v)
+                self.failed_views.append(str(v))
 
     def init_sentry(self) -> None:
         sentry_sdk.init(
