@@ -4,7 +4,7 @@ from discord import Embed, VoiceChannel
 from ductile import State, View
 from ductile.view import ViewObject
 
-from src.const.enums import TaskStatus
+from src.const.enums import Color, TaskStatus
 
 
 @dataclass
@@ -44,6 +44,7 @@ class MaximizeBitrateView(View):
             return Embed(
                 title=self.embed_title,
                 description=f"ボイスチャットが{self.tasks_amount}個見つかりました。\nビットレートを最大に調整しています。\n\n{get_tasks_string()}",
+                color=Color.MIKU,
             )
 
         return ViewObject(embeds=[embed_task()])
