@@ -75,13 +75,13 @@ def get_poll_embed(poll: discord.Poll, color: int = Color.MIKU) -> discord.Embed
         elif exp_jst.day == now_jst.day:  # 日本時間で今日中に終了する場合、相対残り時間で表示する
             embed.add_field(
                 name="投票締め切りまで",
-                value=DiscordTimestamp.from_datetime(exp, tz=UTC).to_discord_timestamp(DiscordTimestampStyle.RELATIVE),
+                value=DiscordTimestamp.from_datetime(exp, tz=UTC).export_with_style(DiscordTimestampStyle.RELATIVE),
                 inline=False,
             )
         else:  # それ以外の場合、通常の日時で表示する
             embed.add_field(
                 name="投票締め切りまで",
-                value=DiscordTimestamp.from_datetime(exp, tz=UTC).to_discord_timestamp(
+                value=DiscordTimestamp.from_datetime(exp, tz=UTC).export_with_style(
                     DiscordTimestampStyle.LONG_DATE_WITH_SHORT_TIME
                 ),
                 inline=False,
