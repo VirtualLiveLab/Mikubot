@@ -73,7 +73,7 @@ class Finder:
             role = next(r for r in roles if r.id == role_id)
             if not role:
                 self.logger.exception(literal.CHANNEL_NOT_FOUND)
-                raise
+                raise ValueError
         return role
 
     async def find_member(self, guild_id: int, user_id: int) -> discord.Member | None:

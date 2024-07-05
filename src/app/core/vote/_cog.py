@@ -123,10 +123,8 @@ class OldVote(commands.Cog):
             return False
 
         em = embeds[0]
-        if em.footer.text is None or em.footer.text != VOTE_FOOTER_MESSAGE:
-            return False
 
-        return True
+        return em.footer.text is not None and em.footer.text == VOTE_FOOTER_MESSAGE
 
     def process_vote_message(self, message: discord.Message) -> list[OldVoteOption]:
         em = message.embeds[0]

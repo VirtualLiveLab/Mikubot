@@ -115,7 +115,7 @@ def process_message_to_embeds(message: discord.Message, color: int = Color.MIKU)
     return embeds
 
 
-def process_notion_page_to_embeds(page: NotionPage) -> discord.Embed:  #
+def process_notion_page_to_embeds(page: NotionPage) -> discord.Embed:
     e = discord.Embed(
         title=f"{page['emoji']} {page['title']}" if page["emoji"] else page["title"],
         url=page["url"],
