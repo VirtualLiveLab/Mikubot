@@ -1,0 +1,14 @@
+{
+    "$schema": "https://json.schemastore.org/renovate.json",
+    "extends": [
+        "config:best-practices"
+    ],
+    "timezone": "Asia/Tokyo",
+    "prHourlyLimit": 0,
+    "automerge": false,
+    "rangeStrategy": "bump",
+    "branchConcurrentLimit": 0,
+    "enabledManagers": [
+        "github-actions"
+    ]
+}
