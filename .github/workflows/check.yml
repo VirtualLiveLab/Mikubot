@@ -1,9 +1,6 @@
 name: check
 
 on:
-  push:
-    branches-ignore:
-      - master
   pull_request:
     types:
       - opened
@@ -16,13 +13,16 @@ concurrency:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: setup CPython
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # v5.1.1
         with:
           cache: "pip"
           cache-dependency-path: "requirements-dev.lock"
@@ -35,11 +35,11 @@ jobs:
           pip install -r requirements-dev.lock
 
       - name: lint
-        if: ${{ always() && steps.install.outcome == 'success' }}
+        if: steps.install.outcome == 'success'
         run: |
           ruff check --output-format github .
 
-      - name: format
-        if: ${{ always() && steps.install.outcome == 'success' }}
+      - name: check format
+        if: steps.install.outcome == 'success'
         run: |
           ruff format --check .

@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Add your description here"
 authors = [{ name = "sushi-chaaaan", email = "mail@sushichan.live" }]
 dependencies = [
-    "discord-py[voice,speed] @ git+https://github.com/Rapptz/discord.py.git@978a96b25c47a818289ddb9ecc31d78d6a80b2bf",
+    "discord-py[voice,speed]>=2.4.0",
     "pydantic>=2.8.0",
     "aiohttp>=3.9.5",
     "ductile-ui>=0.3.0",
