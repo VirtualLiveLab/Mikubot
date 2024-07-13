@@ -84,6 +84,7 @@ jobs:
     timeout-minutes: 5
     permissions:
       contents: read
+      packages: read
 
     steps:
       - name: SSH to ConoHa VPS
