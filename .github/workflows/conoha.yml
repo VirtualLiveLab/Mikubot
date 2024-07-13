@@ -46,7 +46,7 @@ jobs:
         run: |
           ruff format --check .
 
-  deploy:
+  build:
     needs: check
     runs-on: ubuntu-22.04
     timeout-minutes: 5
@@ -78,6 +78,14 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha, mode=max
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+
+    steps:
       - name: SSH to ConoHa VPS
         uses: appleboy/ssh-action@55dabf81b49d4120609345970c91507e2d734799 # v1.0.0
         with:
