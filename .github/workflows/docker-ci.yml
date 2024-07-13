@@ -4,10 +4,10 @@ on:
   pull_request:
     branches:
       - master
-    paths-ignore:
-      - "**.md"
-      - ".vscode/**"
-  workflow_dispatch:
+    types:
+      - opened
+      - reopened
+      - synchronize
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -15,7 +15,11 @@ concurrency:
 
 jobs:
   docker-build-check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    timeout-minutes: 5
+
     steps:
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
