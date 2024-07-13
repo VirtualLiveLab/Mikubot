@@ -35,7 +35,7 @@ certifi==2024.7.4
 cffi==1.16.0
     # via pycares
     # via pynacl
-discord-py @ git+https://github.com/Rapptz/discord.py.git@978a96b25c47a818289ddb9ecc31d78d6a80b2bf
+discord-py==2.4.0
     # via ductile-ui
 ductile-ui==0.3.0
 face==20.1.1
