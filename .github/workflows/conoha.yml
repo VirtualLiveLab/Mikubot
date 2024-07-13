@@ -37,12 +37,12 @@ jobs:
           pip install -r requirements-dev.lock
 
       - name: lint
-        if: ${{ always() && steps.install.outcome == 'success' }}
+        if: steps.install.outcome == 'success'
         run: |
           ruff check --output-format github .
 
-      - name: format
-        if: ${{ always() && steps.install.outcome == 'success' }}
+      - name: check format
+        if: steps.install.outcome == 'success'
         run: |
           ruff format --check .
 
