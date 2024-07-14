@@ -59,7 +59,7 @@ class Bot(commands.Bot):
             failed_views=self.failed_views,
         )
         await channel.send(embed=emb)
-        await self.change_presence(activity=discord.CustomActivity(name="今年もよろしくねっ"))
+        await self.change_presence(activity=discord.CustomActivity(name="今日も暑いね〜"))
         # await self.change_presence(activity=discord.Game(name="プロセカ"))
 
     async def load_exts(self) -> None:
