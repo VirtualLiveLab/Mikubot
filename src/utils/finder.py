@@ -100,16 +100,3 @@ class Finder:
             self.logger.exception(literal.USER_NOT_FOUND, exc_info=e)
             user = None
         return user
-
-    # @staticmethod
-    # def find_bot_permissions(
-    #     guild: discord.Guild,
-    #     place: discord.abc.GuildChannel | discord.Thread,
-    # ) -> discord.Permissions:
-    #     role = guild.get_role(int(os.environ["BOT_ROLE"]))
-    #     if not role:
-    #         msg = "BOT_ROLE is not set"
-    #         raise Exception(msg)
-
-    #     perms: discord.Permissions = place.permissions_for(role)
-    #     return perms

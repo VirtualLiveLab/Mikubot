@@ -29,9 +29,11 @@ A Discord bot for VirtualLiveLab
   cp .env.example .env
 ```
 
-.envを編集
+[Environment Variables](#environment-variables)を参照して`.env`ファイルに環境変数を設定する
 
-[Environment Variables](#environment-variables)を参照
+> [!WARNING]
+> `.env.example`を編集するわけではないことに注意。
+> `.env`ファイルを編集すること。
 
 開発サーバーを起動
 
@@ -40,18 +42,20 @@ A Discord bot for VirtualLiveLab
 ```
 
 > [!TIP]
-> この開発サーバーはファイルを変更したら一度再起動しないと変更が反映されません。
+> この開発サーバーはファイルを変更したら一度再起動しないと変更が反映されない。
 
 ## Environment Variables
 
-このBotは以下の環境変数がないと動作しません。
+### ないと起動しないもの
 
-`DISCORD_BOT_TOKEN`: Discord Bot Token
+`DISCORD_BOT_TOKEN`: Discord Developer Portalから取得したBotのトークン
 
-`LOG_CHANNEL_ID`: ログメッセージを送るチャンネルのID
+### なくても起動するもの
 
-`NOTION_TOKEN`: Notion Integration Token
+`LOG_CHANNEL_ID`: ログメッセージを送るチャンネルのID。ない場合はログを送信しない。
 
-`NOTION_DOMAIN`: Notion Domain
+`NOTION_TOKEN`: Notion Integrationのトークン。Notion APIを使用するために必要。
 
-`SENTRY_DSN`: 本番環境の場合のみ。開発時は変更しなくてOK
+`NOTION_DOMAIN`: Notionワークスペースのドメイン。ここで設定したドメインのNotion Urlが送信されると検知される。
+
+`SENTRY_DSN`: 開発時は変更しなくてOK
