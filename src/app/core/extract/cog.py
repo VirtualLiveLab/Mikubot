@@ -29,7 +29,7 @@ class Extract(commands.Cog):
         url_extractor = UrlExtractor(
             {
                 "discord": DiscordPlugin(),
-                "notion": NotionPlugin(workspace=os.environ["NOTION_DOMAIN"]),
+                "notion": NotionPlugin(workspace=os.getenv("NOTION_DOMAIN") or ""),
             }
         )
         matches = await url_extractor.find_all_async(message.content)

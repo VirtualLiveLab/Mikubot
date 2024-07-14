@@ -1,6 +1,6 @@
 import asyncio
-import os
 import sys
+from os import getenv
 
 import discord
 import sentry_sdk
@@ -52,15 +52,8 @@ class Bot(commands.Bot):
 
     async def on_ready(self) -> None:
         self.logger.info(login_log(user=self.user, guild_amount=len(self.guilds)))
-        channel = await Finder(self).find_channel(int(os.environ["LOG_CHANNEL_ID"]), expected_type=discord.Thread)
-        emb = ready_embed(
-            latency=self.latency,
-            failed_exts=self.failed_exts,
-            failed_views=self.failed_views,
-        )
-        await channel.send(embed=emb)
         await self.change_presence(activity=discord.CustomActivity(name="今日も暑いね〜"))
-        # await self.change_presence(activity=discord.Game(name="プロセカ"))
+        await self.send_log_message_if_available()
 
     async def load_exts(self) -> None:
         # load cogs automatically
@@ -117,12 +110,24 @@ class Bot(commands.Bot):
 
     def init_sentry(self) -> None:
         sentry_sdk.init(
-            dsn=os.environ["SENTRY_DSN"],
+            dsn=getenv("SENTRY_DSN"),
             # Set traces_sample_rate to 1.0 to capture 100%
             # of transactions for performance monitoring.
             # We recommend adjusting this value in production.
             traces_sample_rate=0.75,
         )
+
+    async def send_log_message_if_available(self) -> None:
+        if (log_channel_id_str := getenv("LOG_CHANNEL_ID")) is None:
+            return
+
+        channel = await Finder(self).find_channel(int(log_channel_id_str), expected_type=discord.Thread)
+        emb = ready_embed(
+            latency=self.latency,
+            failed_exts=self.failed_exts,
+            failed_views=self.failed_views,
+        )
+        await channel.send(embed=emb)
 
     def runner(self, *, token: str) -> None:
         try:
