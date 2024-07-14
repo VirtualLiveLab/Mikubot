@@ -59,3 +59,18 @@ A Discord bot for VirtualLiveLab
 `NOTION_DOMAIN`: Notionワークスペースのドメイン。ここで設定したドメインのNotion Urlが送信されると検知される。
 
 `SENTRY_DSN`: 開発時は変更しなくてOK
+
+### 最小構成の`.env`の例
+
+```sh
+# 必ずセットするもの
+DISCORD_BOT_TOKEN="Discord Bot Token Here"
+
+# なくても起動するもの
+LOG_CHANNEL_ID=""
+
+NOTION_TOKEN=""
+NOTION_DOMAIN=""
+
+SENTRY_DSN=""
+```
