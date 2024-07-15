@@ -41,7 +41,7 @@ jobs:
 
             LATEST="${{vars.IMAGE}}:latest"
             echo "TAGS=${TAG},${LATEST}" >> "$GITHUB_OUTPUT"
-            echo "IS_STAGING=FALSE" >> "$GITHUB_OUTPUT
+            echo "IS_STAGING=FALSE" >> "$GITHUB_OUTPUT"
 
           elif [ "${TARGET_REF}" = "refs/heads/staging" ]; then
 
