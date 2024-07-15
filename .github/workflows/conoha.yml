@@ -15,7 +15,7 @@ env:
   STAGING_CONTAINER_NAME: "mikubot-staging"
 
 jobs:
-  check:
+  conoha-check:
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     permissions:
@@ -47,8 +47,8 @@ jobs:
         run: |
           ruff format --check .
 
-  setup:
-    needs: check
+  conoha-setup:
+    needs: conoha-check
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     permissions:
@@ -78,10 +78,10 @@ jobs:
         run: |
           echo "ENVIRONMENT=${{ env.ENVIRONMENT }}" >> "$GITHUB_OUTPUT"
 
-  build:
+  conoha-build:
     needs:
-      - check
-      - setup
+      - conoha-check
+      - conoha-setup
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     permissions:
@@ -111,7 +111,7 @@ jobs:
           TAG="${{vars.IMAGE}}:$(TZ=UTC-9 date +'%Y%m')-${SHA:0:7}"
           echo "TAG_FOR_PULL=${TAG}" >> "$GITHUB_OUTPUT"
 
-          if [ "${{ needs.setup.outputs.ENVIRONMENT }}" = "production" ]; then
+          if [ "${{ needs.conoha-setup.outputs.ENVIRONMENT }}" = "production" ]; then
 
             LATEST="${{vars.IMAGE}}:latest"
             echo "TAGS=${TAG},${LATEST}" >> "$GITHUB_OUTPUT"
@@ -131,13 +131,13 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha, mode=max
 
-  deploy:
+  conoha:
     needs:
-      - check
-      - setup
-      - build
-    if: ${{ needs.setup.outputs.ENVIRONMENT == 'production' || needs.setup.outputs.ENVIRONMENT == 'staging' }}
-    environment: ${{ needs.setup.outputs.ENVIRONMENT }}
+      - conoha-check
+      - conoha-setup
+      - conoha-build
+    if: ${{ needs.conoha-setup.outputs.ENVIRONMENT == 'production' || needs.conoha-setup.outputs.ENVIRONMENT == 'staging' }}
+    environment: ${{ needs.conoha-setup.outputs.ENVIRONMENT }}
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     permissions:
@@ -162,7 +162,7 @@ jobs:
               --env NOTION_TOKEN=${{secrets.NOTION_TOKEN}} \
               --env NOTION_DOMAIN=${{vars.NOTION_DOMAIN}} \
               --env SENTRY_DSN=${{secrets.SENTRY_DSN}} \
-              --env DEPLOY_ENV=${{ needs.setup.outputs.ENVIRONMENT }} \
-              ${{ needs.build.outputs.IMAGE_TAG_FOR_PULL }}
+              --env DEPLOY_ENV=${{ needs.conoha-setup.outputs.ENVIRONMENT }} \
+              ${{ needs.conoha-build.outputs.IMAGE_TAG_FOR_PULL }}
             docker image prune -f
           script_stop: true
