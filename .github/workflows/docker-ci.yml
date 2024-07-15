@@ -25,17 +25,16 @@ jobs:
 
     steps:
       - name: set target branch
-        id: target
         run: |
-          echo "TARGET_REF=refs/heads/${{ github.base_ref }}" >> "$GITHUB_OUTPUT"
+          echo "TARGET_REF=refs/heads/${{ github.base_ref }}" >> "$GITHUB_ENV"
 
       - name: staging
-        if: ${{ steps.target.outputs.TARGET_REF == 'refs/heads/staging' }}
+        if: ${{ env.TARGET_REF == 'refs/heads/staging' }}
         run: |
           echo "ENVIRONMENT=staging" >> "$GITHUB_ENV"
 
       - name: production
-        if: ${{ steps.target.outputs.TARGET_REF == 'refs/heads/master' }}
+        if: ${{ env.TARGET_REF == 'refs/heads/master' }}
         run: |
           echo "ENVIRONMENT=production" >> "$GITHUB_ENV"
 
@@ -67,8 +66,6 @@ jobs:
       - name: Create image tag
         id: tag
         run: |
-          TARGET_REF="refs/heads/${{ github.base_ref }}"
-
           SHA=${{github.sha}}
           TAG="${{vars.IMAGE}}:$(TZ=UTC-9 date +'%Y%m')-${SHA:0:7}"
           echo "TAG_FOR_PULL=${TAG}" >> "$GITHUB_OUTPUT"
