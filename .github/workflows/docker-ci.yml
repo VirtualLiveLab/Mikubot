@@ -25,23 +25,24 @@ jobs:
 
     steps:
       - name: set target branch
+        id: target
         run: |
-          echo "TARGET_REF=refs/heads/${{ github.base_ref }}" >> "$GITHUB_ENV"
+          echo "TARGET_REF=refs/heads/${{ github.base_ref }}" >> "$GITHUB_OUTPUT"
 
       - name: staging
-        if: ${{ env.TARGET_REF == 'refs/heads/staging' }}
+        if: ${{ steps.target.outcome.TARGET_REF == 'refs/heads/staging' }}
         run: |
           echo "ENVIRONMENT=staging" >> "$GITHUB_ENV"
 
       - name: production
-        if: ${{ env.TARGET_REF == 'refs/heads/master' }}
+        if: ${{ steps.target.outcome.TARGET_REF == 'refs/heads/master' }}
         run: |
           echo "ENVIRONMENT=production" >> "$GITHUB_ENV"
 
       - name: Error
-        if: ${{ github.ref != 'refs/heads/master' && github.ref != 'refs/heads/staging' }}
+        if: ${{ steps.target.outcome.TARGET_REF != 'refs/heads/master' && steps.target.outcome.TARGET_REF != 'refs/heads/staging' }}
         run: |
-          echo "[ERROR] Invalid branch: ${{ github.ref }}. Skipping deployment."
+          echo "[ERROR] Invalid target branch: ${{ steps.target.outcome.TARGET_REF }}. Skipping Docker CI."
           exit 1
 
       - name: Output environment
