@@ -24,13 +24,18 @@ jobs:
       ENVIRONMENT: ${{ steps.output.outputs.ENVIRONMENT }}
 
     steps:
+      - name: set target branch
+        id: target
+        run: |
+          echo "TARGET_REF=refs/heads/${{ github.base_ref }}" >> "$GITHUB_OUTPUT"
+
       - name: staging
-        if: ${{ github.ref == 'refs/heads/staging' }}
+        if: ${{ steps.target.outputs.TARGET_REF == 'refs/heads/staging' }}
         run: |
           echo "ENVIRONMENT=staging" >> "$GITHUB_ENV"
 
       - name: production
-        if: ${{ github.ref == 'refs/heads/master' }}
+        if: ${{ steps.target.outputs.TARGET_REF == 'refs/heads/master' }}
         run: |
           echo "ENVIRONMENT=production" >> "$GITHUB_ENV"
 
