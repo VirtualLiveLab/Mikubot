@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - master
+      - staging
     types:
       - opened
       - reopened
@@ -27,12 +28,38 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@4fd812986e6c8c2a69e18311145f9371337f27d4 # v3.4.0
 
+      - name: Create image tag
+        id: tag
+        run: |
+          TARGET_REF="refs/heads/${{ github.base_ref }}"
+
+          SHA=${{github.sha}}
+          TAG="${{vars.IMAGE}}:$(TZ=UTC-9 date +'%Y%m')-${SHA:0:7}"
+          echo "TAG_FOR_PULL=${TAG}" >> "$GITHUB_OUTPUT"
+
+          if [ "${TARGET_REF}" = "refs/heads/master" ]; then
+
+            LATEST="${{vars.IMAGE}}:latest"
+            echo "TAGS=${TAG},${LATEST}" >> "$GITHUB_OUTPUT"
+            echo "IS_STAGING=FALSE" >> "$GITHUB_OUTPUT"
+
+          elif [ "${TARGET_REF}" = "refs/heads/staging" ]; then
+
+            echo "TAGS=${TAG}" >> "$GITHUB_OUTPUT"
+            echo "IS_STAGING=TRUE" >> "$GITHUB_OUTPUT"
+
+          else
+            echo "[WARNING] Invalid target branch: ${TARGET_REF}. Skipping deployment."
+            exit 1
+          fi
+          echo "Generated image tag: ${TAG}"
+
       - name: Build
         uses: docker/build-push-action@1a162644f9a7e87d8f4b053101d1d9a712edc18c # v6.3.0
         with:
           context: .
           file: ./Dockerfile
           push: false
-          tags: ${{ vars.IMAGE_TAG }}
+          tags: ${{ steps.tag.outputs.TAGS }}
           cache-from: type=gha
           cache-to: type=gha, mode=max
