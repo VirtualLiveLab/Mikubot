@@ -60,6 +60,8 @@ A Discord bot for VirtualLiveLab
 
 `SENTRY_DSN`: 開発時は変更しなくてOK
 
+`DEPLOY_ENVIRONMENT`: 開発時は変更しなくてOK
+
 ### 最小構成の`.env`の例
 
 ```sh

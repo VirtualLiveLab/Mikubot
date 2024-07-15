@@ -109,8 +109,11 @@ class Bot(commands.Bot):
                 self.failed_views.append(str(v))
 
     def init_sentry(self) -> None:
+        environment = getenv("DEPLOY_ENVIRONMENT")
+
         sentry_sdk.init(
             dsn=getenv("SENTRY_DSN"),
+            environment=environment,
             # Set traces_sample_rate to 1.0 to capture 100%
             # of transactions for performance monitoring.
             # We recommend adjusting this value in production.

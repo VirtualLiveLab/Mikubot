@@ -15,7 +15,43 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  docker-build-check:
+  docker-ci-setup:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    timeout-minutes: 5
+    outputs:
+      ENVIRONMENT: ${{ steps.output.outputs.ENVIRONMENT }}
+
+    steps:
+      - name: set target branch
+        id: target
+        run: |
+          echo "TARGET_REF=refs/heads/${{ github.base_ref }}" >> "$GITHUB_ENV"
+
+      - name: staging
+        if: ${{ env.TARGET_REF == 'refs/heads/staging' }}
+        run: |
+          echo "ENVIRONMENT=staging" >> "$GITHUB_ENV"
+
+      - name: production
+        if: ${{ env.TARGET_REF == 'refs/heads/master' }}
+        run: |
+          echo "ENVIRONMENT=production" >> "$GITHUB_ENV"
+
+      - name: Error
+        if: ${{ env.TARGET_REF != 'refs/heads/master' && env.TARGET_REF != 'refs/heads/staging' }}
+        run: |
+          echo "[ERROR] Invalid target branch: ${{ env.TARGET_REF }}. Skipping deployment."
+          exit 1
+
+      - name: Output environment
+        id: output
+        run: |
+          echo "ENVIRONMENT=${{ env.ENVIRONMENT }}" >> "$GITHUB_OUTPUT"
+
+  docker-ci:
+    needs: docker-ci-setup
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -31,26 +67,17 @@ jobs:
       - name: Create image tag
         id: tag
         run: |
-          TARGET_REF="refs/heads/${{ github.base_ref }}"
-
           SHA=${{github.sha}}
           TAG="${{vars.IMAGE}}:$(TZ=UTC-9 date +'%Y%m')-${SHA:0:7}"
           echo "TAG_FOR_PULL=${TAG}" >> "$GITHUB_OUTPUT"
 
-          if [ "${TARGET_REF}" = "refs/heads/master" ]; then
+          if [ "${{ needs.docker-ci-setup.outputs.ENVIRONMENT }}" = "production" ]; then
 
             LATEST="${{vars.IMAGE}}:latest"
             echo "TAGS=${TAG},${LATEST}" >> "$GITHUB_OUTPUT"
-            echo "IS_STAGING=FALSE" >> "$GITHUB_OUTPUT"
-
-          elif [ "${TARGET_REF}" = "refs/heads/staging" ]; then
-
-            echo "TAGS=${TAG}" >> "$GITHUB_OUTPUT"
-            echo "IS_STAGING=TRUE" >> "$GITHUB_OUTPUT"
 
           else
-            echo "[WARNING] Invalid target branch: ${TARGET_REF}. Skipping deployment."
-            exit 1
+            echo "TAGS=${TAG}" >> "$GITHUB_OUTPUT"
           fi
           echo "Generated image tag: ${TAG}"
 
