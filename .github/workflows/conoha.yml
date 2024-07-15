@@ -5,18 +5,13 @@ on:
     branches:
       - master
       - staging
-  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  CONTAINER_NAME: "mikubot"
-  STAGING_CONTAINER_NAME: "mikubot-staging"
-
 jobs:
-  check:
+  conoha-check:
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     permissions:
@@ -48,8 +43,41 @@ jobs:
         run: |
           ruff format --check .
 
-  build:
-    needs: check
+  conoha-setup:
+    needs: conoha-check
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      ENVIRONMENT: ${{ steps.output.outputs.ENVIRONMENT }}
+
+    steps:
+      - name: staging
+        if: ${{ github.ref == 'refs/heads/staging' }}
+        run: |
+          echo "ENVIRONMENT=staging" >> "$GITHUB_ENV"
+
+      - name: production
+        if: ${{ github.ref == 'refs/heads/master' }}
+        run: |
+          echo "ENVIRONMENT=production" >> "$GITHUB_ENV"
+
+      - name: Error
+        if: ${{ github.ref != 'refs/heads/master' && github.ref != 'refs/heads/staging' }}
+        run: |
+          echo "[ERROR] Invalid branch: ${{ github.ref }}. Skipping deployment."
+          exit 1
+
+      - name: Output environment
+        id: output
+        run: |
+          echo "ENVIRONMENT=${{ env.ENVIRONMENT }}" >> "$GITHUB_OUTPUT"
+
+  conoha-build:
+    needs:
+      - conoha-check
+      - conoha-setup
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     permissions:
@@ -57,7 +85,6 @@ jobs:
       packages: write
     outputs:
       IMAGE_TAG_FOR_PULL: ${{steps.tag.outputs.TAG_FOR_PULL}}
-      IS_STAGING: ${{ steps.tag.outputs.IS_STAGING }}
 
     steps:
       - name: Checkout
@@ -80,20 +107,13 @@ jobs:
           TAG="${{vars.IMAGE}}:$(TZ=UTC-9 date +'%Y%m')-${SHA:0:7}"
           echo "TAG_FOR_PULL=${TAG}" >> "$GITHUB_OUTPUT"
 
-          if [ "${{ github.ref }}" = "refs/heads/master" ]; then
+          if [ "${{ needs.conoha-setup.outputs.ENVIRONMENT }}" = "production" ]; then
 
             LATEST="${{vars.IMAGE}}:latest"
             echo "TAGS=${TAG},${LATEST}" >> "$GITHUB_OUTPUT"
-            echo "IS_STAGING=FALSE" >> "$GITHUB_OUTPUT"
-
-          elif [ "${{ github.ref }}" = "refs/heads/staging" ]; then
-
-            echo "TAGS=${TAG}" >> "$GITHUB_OUTPUT"
-            echo "IS_STAGING=TRUE" >> "$GITHUB_OUTPUT"
 
           else
-            echo "[WARNING] Invalid branch: ${{ github.ref }}. Skipping deployment."
-            exit 1
+            echo "TAGS=${TAG}" >> "$GITHUB_OUTPUT"
           fi
           echo "Generated image tag: ${TAG}"
 
@@ -107,8 +127,13 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha, mode=max
 
-  deploy:
-    needs: build
+  conoha:
+    needs:
+      - conoha-check
+      - conoha-setup
+      - conoha-build
+    if: ${{ needs.conoha-setup.outputs.ENVIRONMENT == 'production' || needs.conoha-setup.outputs.ENVIRONMENT == 'staging' }}
+    environment: ${{ needs.conoha-setup.outputs.ENVIRONMENT }}
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     permissions:
@@ -125,39 +150,16 @@ jobs:
           # always remove old container: https://stackoverflow.com/questions/34228864/stop-and-delete-docker-container-if-its-running
           script: |
             echo ${{secrets.GITHUB_TOKEN}} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-            docker pull ${{ needs.build.outputs.IMAGE_TAG_FOR_PULL }}
-
-            if [ "${{ needs.build.outputs.IS_STAGING }}" = "TRUE" ]; then
-
-              docker stop ${{ env.STAGING_CONTAINER_NAME }} || true && docker rm ${{ env.STAGING_CONTAINER_NAME }} || true
-              docker run \
-                -d \
-                --name ${{ env.STAGING_CONTAINER_NAME }} \
-                --env DISCORD_BOT_TOKEN=${{secrets.STAGING_DISCORD_TOKEN}} \
-                --env LOG_CHANNEL_ID=${{vars.STAGING_LOG_CHANNEL_ID}} \
-                --env NOTION_TOKEN=${{secrets.STAGING_NOTION_TOKEN}} \
-                --env NOTION_DOMAIN=${{vars.NOTION_DOMAIN}} \
-                ${{ needs.build.outputs.IMAGE_TAG_FOR_PULL }}
-              docker image prune -f
-              exit 0
-
-            elif [ "${{ needs.build.outputs.IS_STAGING }}" = "FALSE" ]; then
-
-              docker stop ${{ env.CONTAINER_NAME }} || true && docker rm ${{ env.CONTAINER_NAME }} || true
-              docker run \
+            docker stop ${{ vars.CONTAINER_NAME }} || true && docker rm ${{ vars.CONTAINER_NAME }} || true
+            docker run \
               -d \
-                --name ${{ env.CONTAINER_NAME }} \
-                --env DISCORD_BOT_TOKEN=${{secrets.DISCORD_TOKEN}} \
-                --env LOG_CHANNEL_ID=${{vars.LOG_CHANNEL_ID}} \
-                --env NOTION_TOKEN=${{secrets.NOTION_TOKEN}} \
-                --env NOTION_DOMAIN=${{vars.NOTION_DOMAIN}} \
-                --env SENTRY_DSN=${{secrets.SENTRY_DSN}} \
-                ${{ needs.build.outputs.IMAGE_TAG_FOR_PULL }}
-              docker image prune -f
-              exit 0
-
-            else
-              echo "[ERROR] Invalid IS_STAGING value: ${{ needs.build.outputs.IS_STAGING }}"
-              exit 1
-            fi
+              --name ${{ vars.CONTAINER_NAME }} \
+              --env DISCORD_BOT_TOKEN=${{secrets.DISCORD_BOT_TOKEN}} \
+              --env LOG_CHANNEL_ID=${{vars.LOG_CHANNEL_ID}} \
+              --env NOTION_TOKEN=${{secrets.NOTION_TOKEN}} \
+              --env NOTION_DOMAIN=${{vars.NOTION_DOMAIN}} \
+              --env SENTRY_DSN=${{secrets.SENTRY_DSN}} \
+              --env DEPLOY_ENV=${{ needs.conoha-setup.outputs.ENVIRONMENT }} \
+              ${{ needs.conoha-build.outputs.IMAGE_TAG_FOR_PULL }}
+            docker image prune -f
           script_stop: true
