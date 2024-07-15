@@ -11,6 +11,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  CONTAINER_NAME: "mikubot"
+  STAGING_CONTAINER_NAME: "mikubot-staging"
+
 jobs:
   check:
     runs-on: ubuntu-22.04
@@ -53,7 +57,7 @@ jobs:
       packages: write
     outputs:
       IMAGE_TAG_FOR_PULL: ${{steps.tag.outputs.TAG_FOR_PULL}}
-      CONTAINER_NAME: ${{steps.container_name.outputs.CONTAINER_NAME}}
+      IS_STAGING: ${{ steps.tag.outputs.IS_STAGING }}
 
     steps:
       - name: Checkout
@@ -69,30 +73,27 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set container name
-        id: container_name
-        run: |
-          if [ "${{ github.ref }}" = "refs/heads/master" ]; then
-            echo "CONTAINER_NAME=mikubot" >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.ref }}" = "refs/heads/staging" ]; then
-            echo "CONTAINER_NAME=mikubot-staging" >> "$GITHUB_OUTPUT"
-          else
-            echo "[WARNING] Invalid branch: ${{ github.ref }}. Skipping deployment."
-            exit 1
-          fi
-
       - name: Create image tag
         id: tag
-        if: steps.container_name.outcome.success
         run: |
           SHA=${{github.sha}}
           TAG="${{vars.IMAGE}}:$(TZ=UTC-9 date +'%Y%m')-${SHA:0:7}"
           echo "TAG_FOR_PULL=$TAG" >> "$GITHUB_OUTPUT"
+
           if [ "${{ github.ref }}" = "refs/heads/master" ]; then
+
             LATEST="${{vars.IMAGE}}:latest"
             echo "TAGS=$TAG,$LATEST" >> "$GITHUB_OUTPUT"
-          else
+            echo "IS_STAGING=FALSE" >> "$GITHUB_OUTPUT
+
+          elif [ "${{ github.ref }}" = "refs/heads/staging" ]; then
+
             echo "TAGS=$TAG" >> "$GITHUB_OUTPUT"
+            echo "IS_STAGING=TRUE" >> "$GITHUB_OUTPUT"
+
+          else
+            echo "[WARNING] Invalid branch: ${{ github.ref }}. Skipping deployment."
+            exit 1
           fi
           echo "Generated image tag: $TAG"
 
@@ -125,15 +126,38 @@ jobs:
           script: |
             echo ${{secrets.GITHUB_TOKEN}} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
             docker pull ${{ needs.build.outputs.IMAGE_TAG_FOR_PULL }}
-            docker stop ${{ needs.build.outputs.CONTAINER_NAME }} || true && docker rm ${{ needs.build.outputs.CONTAINER_NAME }} || true
-            docker run \
+
+            if [ "${{ needs.build.outputs.IS_STAGING }}" = "TRUE" ]; then
+
+              docker stop ${{ env.STAGING_CONTAINER_NAME }} || true && docker rm ${{ env.STAGING_CONTAINER_NAME }} || true
+              docker run \
+                -d \
+                --name ${{ env.STAGING_CONTAINER_NAME }} \
+                --env DISCORD_BOT_TOKEN=${{secrets.STAGING_DISCORD_TOKEN}} \
+                --env LOG_CHANNEL_ID=${{vars.STAGING_LOG_CHANNEL_ID}} \
+                --env NOTION_TOKEN=${{secrets.STAGING_NOTION_TOKEN}} \
+                --env NOTION_DOMAIN=${{vars.NOTION_DOMAIN}} \
+                ${{ needs.build.outputs.IMAGE_TAG_FOR_PULL }}
+              docker image prune -f
+              exit 0
+
+            elif [ "${{ needs.build.outputs.IS_STAGING }}" = "FALSE" ]; then
+
+              docker stop ${{ env.CONTAINER_NAME }} || true && docker rm ${{ env.CONTAINER_NAME }} || true
+              docker run \
               -d \
-              --name ${{ needs.build.outputs.CONTAINER_NAME }} \
-              --env DISCORD_BOT_TOKEN=${{secrets.DISCORD_TOKEN}} \
-              --env LOG_CHANNEL_ID=${{vars.LOG_CHANNEL_ID}} \
-              --env NOTION_TOKEN=${{secrets.NOTION_TOKEN}} \
-              --env NOTION_DOMAIN=${{vars.NOTION_DOMAIN}} \
-              --env SENTRY_DSN=${{secrets.SENTRY_DSN}} \
-              ${{ needs.build.outputs.IMAGE_TAG_FOR_PULL }}
-            docker image prune -f
+                --name ${{ env.CONTAINER_NAME }} \
+                --env DISCORD_BOT_TOKEN=${{secrets.DISCORD_TOKEN}} \
+                --env LOG_CHANNEL_ID=${{vars.LOG_CHANNEL_ID}} \
+                --env NOTION_TOKEN=${{secrets.NOTION_TOKEN}} \
+                --env NOTION_DOMAIN=${{vars.NOTION_DOMAIN}} \
+                --env SENTRY_DSN=${{secrets.SENTRY_DSN}} \
+                ${{ needs.build.outputs.IMAGE_TAG_FOR_PULL }}
+              docker image prune -f
+              exit 0
+
+            else
+              echo "[ERROR] Invalid IS_STAGING value: ${{ needs.build.outputs.IS_STAGING }}"
+              exit 1
+            fi
           script_stop: true
