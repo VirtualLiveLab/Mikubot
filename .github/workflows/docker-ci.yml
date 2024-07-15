@@ -35,19 +35,19 @@ jobs:
           TAG="${{vars.IMAGE}}:$(TZ=UTC-9 date +'%Y%m')-${SHA:0:7}"
           echo "TAG_FOR_PULL=$TAG" >> "$GITHUB_OUTPUT"
 
-          if [ "${{ github.base_ref }}" = "refs/heads/master" ]; then
+          if [ "ref/heads/${{ github.base_ref }}" = "refs/heads/master" ]; then
 
             LATEST="${{vars.IMAGE}}:latest"
             echo "TAGS=$TAG,$LATEST" >> "$GITHUB_OUTPUT"
             echo "IS_STAGING=FALSE" >> "$GITHUB_OUTPUT
 
-          elif [ "${{ github.base_ref }}" = "refs/heads/staging" ]; then
+          elif [ "ref/heads/${{ github.base_ref }}" = "refs/heads/staging" ]; then
 
             echo "TAGS=$TAG" >> "$GITHUB_OUTPUT"
             echo "IS_STAGING=TRUE" >> "$GITHUB_OUTPUT"
 
           else
-            echo "[WARNING] Invalid branch: ${{ github.ref }}. Skipping deployment."
+            echo "[WARNING] Invalid target branch: ${{ github.base_ref }}. Skipping deployment."
             exit 1
           fi
           echo "Generated image tag: $TAG"
