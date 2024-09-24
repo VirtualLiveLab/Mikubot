@@ -62,6 +62,8 @@ A Discord bot for VirtualLiveLab
 
 `DEPLOY_ENVIRONMENT`: 開発時は変更しなくてOK
 
+`CF_ACCESS_CLIENT_ID`, `CF_ACCESS_CLIENT_SECRET`: Cloudflare AccessのクライアントIDとクライアントシークレット。`/wol` による部室PC遠隔起動に必要。
+
 ### 最小構成の`.env`の例
 
 ```sh
@@ -75,6 +77,10 @@ NOTION_TOKEN=""
 NOTION_DOMAIN=""
 
 SENTRY_DSN=""
+
+# PC遠隔起動機能
+CF_ACCESS_CLIENT_ID=""
+CF_ACCESS_CLIENT_SECRET=""
 ```
 
 ## 開発の流れ
