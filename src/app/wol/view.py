@@ -5,7 +5,7 @@ from ductile import State, View
 from ductile.ui import Button
 from ductile.view import ViewObject
 
-from .fn import ComputerBootResult, boot_computer
+from .fn import ComputerBootResult, boot_computer, get_computer_status
 
 if TYPE_CHECKING:
     from .fn import ComputerStatus
@@ -43,6 +43,12 @@ class WOLView(View):
             case ComputerBootResult.ERROR:
                 await interaction.followup.send("エラーが発生しました。", ephemeral=True)
 
+    async def handle_refresh(self, interaction: Interaction) -> None:
+        await interaction.response.defer(ephemeral=True)
+        current_status = await get_computer_status()
+        self.status.set_state(current_status)
+        await interaction.followup.send("状態を更新しました。", ephemeral=True)
+
     async def handle_wol_exit(self, interaction: Interaction) -> None:
         await interaction.response.defer(ephemeral=True)
         self.disabled.set_state(True)
@@ -71,19 +77,25 @@ class WOLView(View):
                 Button(
                     "左PCを起動する",
                     custom_id="wol_left",
-                    style={"color": "blurple", "disabled": self.disabled() or bool(self.status()["left"])},
+                    style={"color": "blurple", "disabled": self.disabled() or bool(self.status()["left"]), "row": 0},
                     on_click=self.handle_wol_left,
                 ),
                 Button(
                     "右PCを起動する",
                     custom_id="wol_right",
-                    style={"color": "blurple", "disabled": self.disabled() or bool(self.status()["right"])},
+                    style={"color": "blurple", "disabled": self.disabled() or bool(self.status()["right"]), "row": 0},
                     on_click=self.handle_wol_right,
+                ),
+                Button(
+                    "表示を更新する",
+                    custom_id="wol_refresh",
+                    style={"color": "green", "disabled": self.disabled(), "row": 0, "emoji": "🔄"},
+                    on_click=self.handle_refresh,
                 ),
                 Button(
                     "操作を終了する",
                     custom_id="wol_exit",
-                    style={"color": "red", "disabled": self.disabled()},
+                    style={"color": "red", "disabled": self.disabled(), "row": 1},
                     on_click=self.handle_wol_exit,
                 ),
             ],
