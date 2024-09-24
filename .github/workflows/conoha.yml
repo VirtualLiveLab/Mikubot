@@ -160,6 +160,8 @@ jobs:
               --env NOTION_DOMAIN=${{vars.NOTION_DOMAIN}} \
               --env SENTRY_DSN=${{secrets.SENTRY_DSN}} \
               --env DEPLOY_ENV=${{ needs.conoha-setup.outputs.ENVIRONMENT }} \
+              --env CF_ACCESS_CLIENT_ID=${{secrets.CF_ACCESS_CLIENT_ID}} \
+              --env CF_ACCESS_CLIENT_SECRET=${{secrets.CF_ACCESS_CLIENT_SECRET}} \
               ${{ needs.conoha-build.outputs.IMAGE_TAG_FOR_PULL }}
             docker image prune -f
           script_stop: true
