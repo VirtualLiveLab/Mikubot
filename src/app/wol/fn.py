@@ -63,7 +63,12 @@ async def boot_computer(computer: ComputerType) -> ComputerBootResult:
             data={"mac_address": LEFT_PC_MAC_ADDRESS if computer == "left" else RIGHT_PC_MAC_ADDRESS},
         ) as response,
     ):
-        return ComputerBootResult(await response.text())
+        res = await response.text()
+        if ComputerBootResult.STARTED.value in res:
+            return ComputerBootResult.STARTED
+        if ComputerBootResult.CANCELED.value in res:
+            return ComputerBootResult.CANCELED
+        return ComputerBootResult.ERROR
 
 
 class MissingEnvironmentValueError(Exception):
