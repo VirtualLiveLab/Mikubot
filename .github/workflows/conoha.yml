@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   conoha-check:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
       contents: read
@@ -45,7 +45,7 @@ jobs:
 
   conoha-setup:
     needs: conoha-check
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
       contents: read
@@ -78,7 +78,7 @@ jobs:
     needs:
       - conoha-check
       - conoha-setup
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
       contents: read
@@ -134,7 +134,7 @@ jobs:
       - conoha-build
     if: ${{ needs.conoha-setup.outputs.ENVIRONMENT == 'production' || needs.conoha-setup.outputs.ENVIRONMENT == 'staging' }}
     environment: ${{ needs.conoha-setup.outputs.ENVIRONMENT }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
       contents: read
