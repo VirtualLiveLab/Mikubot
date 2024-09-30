@@ -23,12 +23,12 @@ requires-python = ">= 3.11"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv]
+[tool.rye]
 managed = true
+virtual = true
 dev-dependencies = ["mypy>=1.10.0", "python-dotenv>=1.0.1", "ruff>=0.5.0"]
-package = false
 
-[tool.uv.scripts]
+[tool.rye.scripts]
 dev = { cmd = ["python", "main.py"], env-file = ".env" }
 lint = { cmd = ["ruff", "check"] }
 fmt = { cmd = ["ruff", "format"] }
