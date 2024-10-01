@@ -1,4 +1,4 @@
-FROM python:3.11-bookworm as builder
+FROM python:3.11-bookworm AS builder
 
 WORKDIR /app
 ENV UV_SYSTEM_PYTHON=true \
@@ -16,7 +16,7 @@ RUN --mount=from=ghcr.io/astral-sh/uv:0.4.17,source=/uv,target=/bin/uv \
 
 # https://github.com/GoogleContainerTools/distroless/blob/main/python3/BUILD
 # distroless/python3-debian12のPythonは3.11
-FROM gcr.io/distroless/python3-debian12:nonroot as runner
+FROM gcr.io/distroless/python3-debian12:nonroot AS runner
 WORKDIR /app
 
 # distrolessのPythonはデフォルトではsite-packagesを参照しない
