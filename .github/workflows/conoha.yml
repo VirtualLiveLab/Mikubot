@@ -32,7 +32,7 @@ jobs:
       - name: Install dependencies
         id: install
         run: |
-          uv sync --dev
+          uv sync --dev --frozen
 
       - name: lint
         if: steps.install.outcome == 'success'
