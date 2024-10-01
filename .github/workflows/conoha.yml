@@ -37,12 +37,12 @@ jobs:
       - name: lint
         if: steps.install.outcome == 'success'
         run: |
-          ruff check --output-format github .
+          uv run ruff check --output-format github .
 
       - name: check format
         if: steps.install.outcome == 'success'
         run: |
-          ruff format --check .
+          uv run ruff format --check .
 
   conoha-setup:
     needs: conoha-check
