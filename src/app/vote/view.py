@@ -47,7 +47,7 @@ class VotePanel(View):
                 description=f"{CIRCLE_EMOJI}を押すと投票が締め切られます。",
                 default_result=False,
             )
-            res = await conf_ui.send_and_wait(interaction, ephemeral=True, timeout=120)
+            res = await conf_ui.send_and_wait(interaction, ephemeral=True, view_timeout=120)
             if not res:
                 return
 

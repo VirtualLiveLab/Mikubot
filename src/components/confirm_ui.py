@@ -20,15 +20,15 @@ class ConfirmUI:
         target: discord.abc.Messageable | Interaction,
         *,
         ephemeral: bool = False,
-        timeout: float | None = None,
+        view_timeout: float | None = None,
     ) -> bool:
         controller: InteractionController | MessageableController
         view = ConfirmView(self.title, self.description)
 
         if isinstance(target, Interaction):
-            controller = InteractionController(view, interaction=target, ephemeral=ephemeral, timeout=timeout)
+            controller = InteractionController(view, interaction=target, ephemeral=ephemeral, timeout=view_timeout)
         else:
-            controller = MessageableController(view, messageable=target, timeout=timeout)
+            controller = MessageableController(view, messageable=target, timeout=view_timeout)
 
         await controller.send()
         res = await controller.wait()
