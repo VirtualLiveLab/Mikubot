@@ -28,11 +28,6 @@ managed = true
 dev-dependencies = ["mypy>=1.10.0", "python-dotenv>=1.0.1", "ruff>=0.5.0"]
 package = false
 
-[tool.uv.scripts]
-dev = { cmd = ["python", "main.py"], env-file = ".env" }
-lint = { cmd = ["ruff", "check"] }
-fmt = { cmd = ["ruff", "format"] }
-
 [tool.ruff]
 # https://qiita.com/yuji38kwmt/items/63e82126076204923520
 target-version = "py311"

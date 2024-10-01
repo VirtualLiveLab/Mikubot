@@ -1,0 +1,53 @@
+version: 3
+
+tasks:
+  setup:
+    desc: ローカルのPython仮想環境をセットアップする
+    cmds:
+      - uv sync --dev
+
+  up:
+    desc: ローカルのPython仮想環境を使ってBotを起動する
+    dotenv: [".env", "{{.ENV}}/.env.", "{{.HOME}}/.env"]
+    cmds:
+      - uv run main.py
+
+  lint:
+    desc: ruffでPythonをLintする
+    cmds:
+      - uv run ruff check
+
+  lint:fix:
+    desc: ruffでPythonをLintし、必要なら自動で修正する
+    cmds:
+      - uv run ruff check --fix
+
+  fmt:
+    desc: ruffでPythonをformatする
+    cmds:
+      - uv run ruff format
+
+  docker:build:
+    desc: Dockerイメージをビルドする
+    cmds:
+      - docker compose build
+
+  docker:build:nocache:
+    desc: Dockerイメージをビルドする (キャッシュは無視される)
+    cmds:
+      - docker compose build --no-cache
+
+  docker:up:
+    desc: Docker環境でBotを起動する
+    cmds:
+      - docker compose up -d
+
+  docker:down:
+    desc: Docker環境を停止する
+    cmds:
+      - docker compose down
+
+  default:
+    desc: ヘルプを表示する
+    cmds:
+      - task --list-all
