@@ -5,6 +5,13 @@ A Discord bot for VirtualLiveLab
 
 ## ローカル開発
 
+
+### 事前準備
+1. [このドキュメント](https://taskfile.dev/installation/) を参考に`go-task` をインストールしておくこと。
+2. [このドキュメント](https://docs.astral.sh/uv/getting-started/installation/) を参考に`uv` をインストールしておくこと。
+
+### 環境構築
+
 リポジトリをクローン
 
 ```bash
@@ -20,13 +27,7 @@ A Discord bot for VirtualLiveLab
 開発環境をセットアップ
 
 ```bash
-  rye sync
-```
-
-.envをコピー
-
-```bash
-  cp .env.example .env
+  task setup
 ```
 
 [Environment Variables](#environment-variables)を参照して`.env`ファイルに環境変数を設定する
@@ -35,10 +36,10 @@ A Discord bot for VirtualLiveLab
 > `.env.example`を編集するわけではないことに注意。
 > `.env`ファイルを編集すること。
 
-開発サーバーを起動
+ローカル環境でBotを起動
 
 ```bash
-  rye run dev
+  task up
 ```
 
 > [!TIP]
@@ -82,14 +83,3 @@ SENTRY_DSN=""
 CF_ACCESS_CLIENT_ID=""
 CF_ACCESS_CLIENT_SECRET=""
 ```
-
-## 開発の流れ
-
-1. 取り組む内容をIssueにする or 既にあるIssueを選ぶ
-2. Issueに自分をAssignする
-3. `staging`ブランチから新しいブランチを切る
-4. Issueの内容を実装する
-5. `staging`ブランチにPRを出す
-6. レビューを受けて問題がなければマージする
-7. `staging`ブランチでデプロイして、正しく動作するか確認する
-8. 問題がなければ`main`ブランチにPRを出してマージする

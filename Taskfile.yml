@@ -2,9 +2,25 @@ version: 3
 
 tasks:
   setup:
-    desc: ローカルのPython仮想環境をセットアップする
+    desc: ローカル開発環境をセットアップする
+    cmds:
+      - task: setup:python
+      - task: setup:dotenv
+
+  setup:python:
+    internal: true
+    desc: Python仮想環境をセットアップする
     cmds:
       - uv sync --dev
+
+  setup:dotenv:
+    internal: true
+    desc: .envファイルを作成する
+    preconditions:
+      - sh: test ! -f .env
+        msg: ".envファイルが既に存在します"
+    cmds:
+      - cp .env.example .env
 
   up:
     desc: ローカルのPython仮想環境を使ってBotを起動する
