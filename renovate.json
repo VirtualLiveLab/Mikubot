@@ -11,9 +11,6 @@
     "automerge": false,
     "rangeStrategy": "bump",
     "branchConcurrentLimit": 0,
-    "reviewers": [
-        "team:botdev"
-    ],
     "enabledManagers": [
         "pep621",
         "github-actions"
