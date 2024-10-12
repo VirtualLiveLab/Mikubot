@@ -19,27 +19,28 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
 
-      - name: setup CPython
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+      - name: Install uv
+        uses: astral-sh/setup-uv@f731690a1dacb2f6393acc910887b8cda1a97789 # v3.1.6
         with:
-          cache: "pip"
-          cache-dependency-path: "requirements-dev.lock"
-          python-version-file: ".python-version"
+          version: "0.4.17"
+          enable-cache: true
 
-      - name: install dependencies
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
         id: install
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements-dev.lock
+          uv sync --dev --frozen
 
       - name: lint
         if: steps.install.outcome == 'success'
         run: |
-          ruff check --output-format github .
+          uv run ruff check --output-format github .
 
       - name: check format
         if: steps.install.outcome == 'success'
         run: |
-          ruff format --check .
+          uv run ruff format --check .

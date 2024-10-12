@@ -5,15 +5,15 @@ description = "Add your description here"
 authors = [{ name = "sushi-chaaaan", email = "mail@sushichan.live" }]
 dependencies = [
     "discord-py[voice,speed]>=2.4.0",
-    "pydantic>=2.8.0",
-    "aiohttp>=3.9.5",
+    "pydantic>=2.9.2",
+    "aiohttp>=3.10.10",
     "ductile-ui>=0.3.0",
-    "typing-extensions>=4.12.0",
-    "asyncer>=0.0.5",
-    "result>=0.16.1",
+    "typing-extensions>=4.12.2",
+    "asyncer>=0.0.8",
+    "result>=0.17.0",
     "notion-client>=2.2.1",
     "glom>=23.5.0",
-    "sentry-sdk>=2.7.0",
+    "sentry-sdk>=2.16.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.11"
@@ -23,15 +23,10 @@ requires-python = ">= 3.11"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.rye]
+[tool.uv]
 managed = true
-virtual = true
-dev-dependencies = ["mypy>=1.10.0", "python-dotenv>=1.0.1", "ruff>=0.5.0"]
-
-[tool.rye.scripts]
-dev = { cmd = ["python", "main.py"], env-file = ".env" }
-lint = { cmd = ["ruff", "check"] }
-fmt = { cmd = ["ruff", "format"] }
+dev-dependencies = ["mypy>=1.11.2", "python-dotenv>=1.0.1", "ruff>=0.6.9"]
+package = false
 
 [tool.ruff]
 # https://qiita.com/yuji38kwmt/items/63e82126076204923520
