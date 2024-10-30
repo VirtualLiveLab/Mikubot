@@ -13,7 +13,7 @@ dependencies = [
     "result>=0.17.0",
     "notion-client>=2.2.1",
     "glom>=23.5.0",
-    "sentry-sdk>=2.16.0",
+    "sentry-sdk>=2.17.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.11"
@@ -25,7 +25,7 @@ build-backend = "hatchling.build"
 
 [tool.uv]
 managed = true
-dev-dependencies = ["mypy>=1.11.2", "python-dotenv>=1.0.1", "ruff>=0.6.9"]
+dev-dependencies = ["mypy>=1.13.0", "python-dotenv>=1.0.1", "ruff>=0.7.1"]
 package = false
 
 [tool.ruff]
