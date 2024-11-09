@@ -348,16 +348,16 @@ wheels = [
 
 [[package]]
 name = "glom"
-version = "23.5.0"
+version = "24.11.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
     { name = "boltons" },
     { name = "face" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ab/f8/9caa4312149741e7870cdce88c7d6388b0b0d076e4107303ed1417877abf/glom-23.5.0.tar.gz", hash = "sha256:06af5e3486aacc59382ba34e53ebeabd7a9345d78f7dbcbee26f03baa4b83bac", size = 196743 }
+sdist = { url = "https://files.pythonhosted.org/packages/05/89/b57cfbc448189426f2e01b244fbe9226b059ef5423a9d49c1d335a1f1026/glom-24.11.0.tar.gz", hash = "sha256:4325f96759a912044af7b6c6bd0dba44ad8c1eb6038aab057329661d2021bb27", size = 195120 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/46/23/9ee0ae745acb65d655bb11240722f98495dcecf543e9ff3b1d21cccea252/glom-23.5.0-py3-none-any.whl", hash = "sha256:fe4e9be4dc93c11a99f8277042e4bee95419c02cda4b969f504508b0a1aa6a66", size = 102741 },
+    { url = "https://files.pythonhosted.org/packages/9c/a2/75fd80784ec33da8d39cf885e8811a4fbc045a90db5e336b8e345e66dbb2/glom-24.11.0-py3-none-any.whl", hash = "sha256:991db7fcb4bfa9687010aa519b7b541bbe21111e70e58fdd2d7e34bbaa2c1fbd", size = 102690 },
 ]
 
 [[package]]
@@ -437,7 +437,7 @@ requires-dist = [
     { name = "asyncer", specifier = ">=0.0.8" },
     { name = "discord-py", extras = ["voice", "speed"], specifier = ">=2.4.0" },
     { name = "ductile-ui", specifier = ">=0.3.0" },
-    { name = "glom", specifier = ">=23.5.0" },
+    { name = "glom", specifier = ">=24.11.0" },
     { name = "notion-client", specifier = ">=2.2.1" },
     { name = "pydantic", specifier = ">=2.9.2" },
     { name = "result", specifier = ">=0.17.0" },

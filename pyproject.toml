@@ -12,7 +12,7 @@ dependencies = [
     "asyncer>=0.0.8",
     "result>=0.17.0",
     "notion-client>=2.2.1",
-    "glom>=23.5.0",
+    "glom>=24.11.0",
     "sentry-sdk>=2.18.0",
 ]
 readme = "README.md"
