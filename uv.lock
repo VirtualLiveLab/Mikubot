@@ -283,16 +283,16 @@ voice = [
 
 [[package]]
 name = "ductile-ui"
-version = "0.3.0"
+version = "0.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "discord-py" },
     { name = "pydantic" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c7/ec/b152036ae25b4cc7dbfccaf308f97b4d536f0e923999881a77705774812e/ductile_ui-0.3.0.tar.gz", hash = "sha256:9f206fa09ff955784527ca0e3e0c36211bf913d2484c3bc65c66b78afe94f3fa", size = 19902 }
+sdist = { url = "https://files.pythonhosted.org/packages/56/42/e2c648dc67b155e8c044212b5ba08d7a454343da127144cb1338d739b806/ductile_ui-0.4.0.tar.gz", hash = "sha256:7c4a85773bafb964abd989873d0d8fdafb527455d14653a15bb03e65726a42c9", size = 58809 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6d/73/b3f46241c458eb62ecb7753612098aa26043a9db8228cab71489501ae1ab/ductile_ui-0.3.0-py3-none-any.whl", hash = "sha256:89673e3259bb28332b02da83da90425afac0c0ff8618b089025259830b3175ee", size = 22201 },
+    { url = "https://files.pythonhosted.org/packages/27/28/3f2eec0a7c67838b7e331c5c19290615cffce53f40b80c6a5a877b4753e6/ductile_ui-0.4.0-py3-none-any.whl", hash = "sha256:cc47758700c8e716d8a81f935f5e5e4810ef8206efa565a1bbb857528107f895", size = 22524 },
 ]
 
 [[package]]
@@ -436,7 +436,7 @@ requires-dist = [
     { name = "aiohttp", specifier = ">=3.10.10" },
     { name = "asyncer", specifier = ">=0.0.8" },
     { name = "discord-py", extras = ["voice", "speed"], specifier = ">=2.4.0" },
-    { name = "ductile-ui", specifier = ">=0.3.0" },
+    { name = "ductile-ui", specifier = ">=0.4.0" },
     { name = "glom", specifier = ">=24.11.0" },
     { name = "notion-client", specifier = ">=2.2.1" },
     { name = "pydantic", specifier = ">=2.9.2" },

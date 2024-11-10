@@ -4,10 +4,13 @@
         "config:best-practices"
     ],
     "schedule": [
-        "before 4:00am on Sunday"
+        "before 4:00am on Monday"
     ],
     "timezone": "Asia/Tokyo",
     "prHourlyLimit": 0,
+    "labels": [
+        "renovate"
+    ],
     "automerge": false,
     "rangeStrategy": "bump",
     "branchConcurrentLimit": 0,
@@ -20,36 +23,24 @@
             "groupName": "github-actions",
             "matchManagers": [
                 "github-actions"
-            ],
-            "labels": [
-                "renovate"
-            ]
-        },
-        {
-            "groupName": "discord",
-            "matchPackageNames": [
-                "discord-py"
-            ],
-            "labels": [
-                "renovate"
             ]
         },
         {
             "groupName": "dependencies",
             "matchDepTypes": [
                 "project.dependencies"
-            ],
-            "labels": [
-                "renovate"
             ]
         },
         {
             "groupName": "devDependencies",
             "matchDepTypes": [
                 "tool.uv.dev-dependencies"
-            ],
-            "labels": [
-                "renovate"
+            ]
+        },
+        {
+            "groupName": "discord",
+            "matchPackageNames": [
+                "discord-py"
             ]
         }
     ]
