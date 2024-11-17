@@ -7,7 +7,7 @@ dependencies = [
     "discord-py[voice,speed]>=2.4.0",
     "pydantic>=2.9.2",
     "aiohttp>=3.11.2",
-    "ductile-ui>=0.4.0",
+    "ductile-ui==0.3.0",
     "typing-extensions>=4.12.2",
     "asyncer>=0.0.8",
     "result>=0.17.0",
