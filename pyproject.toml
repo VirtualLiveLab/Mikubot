@@ -41,8 +41,6 @@ ignore = [
     "RUF002",  # 全角記号など`ambiguous unicode character`も使いたいため
     "RUF003",  # 全角記号など`ambiguous unicode character`も使いたいため
     "PLC1901", # compare-to-empty-string : `if a == "`のように空文字列で直接比較したいときがあるため
-    "ANN101",  # missing-type-self: 引数selfには型ヒントは付けていないため
-    "ANN102",  # missing-type-cls: 引数clsには型ヒントは付けていないため
     "ERA",     # : 役立つこともあるが、コメントアウトしていないコードも警告されるので無視する
     "COM812",  # recommended by ruff formatter
     "ISC001",  # recommended by ruff formatter
