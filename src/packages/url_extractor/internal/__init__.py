@@ -2,8 +2,8 @@ from .interface import IUrlAsyncProcessor, IUrlExtractorPlugin, IUrlSyncProcesso
 from .plugin import InternalPlugin
 
 __all__ = [
-    "InternalPlugin",
+    "IUrlAsyncProcessor",
     "IUrlExtractorPlugin",
     "IUrlSyncProcessor",
-    "IUrlAsyncProcessor",
+    "InternalPlugin",
 ]
