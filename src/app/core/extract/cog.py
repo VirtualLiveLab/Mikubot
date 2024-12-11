@@ -7,7 +7,7 @@ from discord.ext import commands
 from src.packages.url_extractor import DiscordPlugin, NotionPlugin, UrlExtractor
 from src.utils.logger import get_my_logger
 
-from .embed import process_message_to_embeds, process_notion_page_to_embeds
+from .embed import process_notion_page_to_embeds
 from .processor import DiscordProcessor, NotionProcessor
 from .view import DispandView
 
@@ -42,13 +42,7 @@ class Extract(commands.Cog):
 
             for msg in extracted_messages:
                 try:
-                    await message.channel.send(
-                        embeds=process_message_to_embeds(msg),
-                        view=DispandView(
-                            message_url=msg.jump_url,
-                            button_label="元のメッセージを見る",
-                        ),
-                    )
+                    await msg.forward(message.channel)
                 except Exception:
                     self.bot.logger.exception("dispand error: discord")
             return
