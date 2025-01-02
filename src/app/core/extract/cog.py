@@ -51,7 +51,6 @@ class Extract(commands.Cog):
                     )
                 except Exception:
                     self.bot.logger.exception("dispand error: discord")
-            return
 
         if (n := matches["notion"]) is not None:
             self.__logger.debug("notion url found: %s", n)
