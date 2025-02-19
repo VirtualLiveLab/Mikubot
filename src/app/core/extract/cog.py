@@ -38,17 +38,11 @@ class Extract(commands.Cog):
         if (d := matches["discord"]) is not None:
             self.__logger.debug("discord message url found: %s", d)
             extractor = DiscordProcessor(self.bot)
-            extracted_messages = await extractor.from_matches_async(matches=d)
+            discord_messages = await extractor.from_matches_async(matches=d)
 
-            for msg in extracted_messages:
+            for msg in discord_messages:
                 try:
-                    await message.channel.send(
-                        embeds=process_message_to_embeds(msg),
-                        view=DispandView(
-                            message_url=msg.jump_url,
-                            button_label="元のメッセージを見る",
-                        ),
-                    )
+                    forwarded = await msg.forward(message.channel, fail_if_not_exists=False)
                 except Exception:
                     self.bot.logger.exception("dispand error: discord")
 
