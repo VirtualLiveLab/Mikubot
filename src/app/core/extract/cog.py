@@ -17,6 +17,9 @@ if TYPE_CHECKING:
     from src.app.bot import Bot
 
 
+DELETE_FORWARDED_MESSAGE_EMOJI = "🗑️"
+
+
 class Extract(commands.Cog):
     def __init__(self, bot: "Bot") -> None:
         self.bot = bot
@@ -44,7 +47,7 @@ class Extract(commands.Cog):
             for msg in discord_messages:
                 try:
                     forwarded = await msg.forward(message.channel, fail_if_not_exists=False)
-                    await forwarded.add_reaction("🗑️")
+                    await forwarded.add_reaction(DELETE_FORWARDED_MESSAGE_EMOJI)
                 except Exception:
                     self.bot.logger.exception("dispand error: discord")
 
@@ -71,7 +74,7 @@ class Extract(commands.Cog):
         if payload.user_id == bot_user_id:
             return
 
-        is_correct_emoji = payload.emoji.name is not None and payload.emoji.name == "🗑️"
+        is_correct_emoji = payload.emoji.name is not None and payload.emoji.name == DELETE_FORWARDED_MESSAGE_EMOJI
         # 自身が転送したメッセージ宛でないなら無視したい
         is_reaction_for_me = payload.message_author_id is not None and payload.message_author_id == bot_user_id
 
