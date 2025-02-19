@@ -150,6 +150,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           # always remove old container: https://stackoverflow.com/questions/34228864/stop-and-delete-docker-container-if-its-running
           script: |
+            set -euo pipefail
             echo ${{secrets.GITHUB_TOKEN}} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
             docker stop ${{ vars.CONTAINER_NAME }} || true && docker rm ${{ vars.CONTAINER_NAME }} || true
             docker run \
@@ -165,4 +166,3 @@ jobs:
               --env CF_ACCESS_CLIENT_SECRET=${{secrets.CF_ACCESS_CLIENT_SECRET}} \
               ${{ needs.conoha-build.outputs.IMAGE_TAG_FOR_PULL }}
             docker image prune -f
-          script_stop: true
