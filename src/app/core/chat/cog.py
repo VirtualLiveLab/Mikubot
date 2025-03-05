@@ -22,22 +22,21 @@ class Chat(commands.Cog):
         if message.author.bot:
             return
 
-        if "miku" in message.content:
-            await message.reply("MIKU!", mention_author=False)
+        match message.content:
+            case "miku":
+                await message.channel.send("MIKU!")
+            case "ミクさん！":
+                await message.channel.send("呼んだ？")
+            case "うおうお":
+                await message.add_reaction("\N{FISH}")
+            case "ふろ":
+                await message.add_reaction("\N{BATHTUB}")
+            case "Docker":
+                await message.add_reaction("\N{WHALE}")
+            case _:
+                pass
 
-        if "ミクさん！" in message.content:
-            await message.reply("呼んだ？", mention_author=False)
-
-        if "うお" in message.content:
-            await message.add_reaction("\N{FISH}")
-
-        if "ふろ" in message.content:
-            await message.add_reaction("\N{BATHTUB}")
-
-        if "Docker" in message.content:
-            await message.add_reaction("\N{WHALE}")
-
-    @app_commands.command(name="omikuji", description="おみくじを引くよ！")
+    @app_commands.command(name="omikuji", description="おみくじを引くよ！")  # type: ignore[arg-type]
     async def omikuji(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer(ephemeral=False, thinking=True)
         result = get_omikuji_result()
@@ -45,12 +44,12 @@ class Chat(commands.Cog):
         embed = omikuji_embed(result, OMKIJI_RESULT_DICT[result])
         await interaction.followup.send(embed=embed, ephemeral=False)
 
-    @app_commands.command(name="miku", description="ミクさんが返事をしてくれるよ！")
+    @app_commands.command(name="miku", description="ミクさんが返事をしてくれるよ！")  # type: ignore[arg-type]
     async def call_miku(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer(ephemeral=False)
         await interaction.followup.send("MIKU!")
 
-    @app_commands.command(name="helloworld", description="Hello World!")
+    @app_commands.command(name="helloworld", description="Hello World!")  # type: ignore[arg-type]
     async def hello_world(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer(ephemeral=False)
         emb = user_embed(interaction.user)
