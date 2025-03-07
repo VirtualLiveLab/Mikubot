@@ -21,6 +21,8 @@ jobs:
   setup:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
+    permissions:
+      contents: read
     outputs:
       environment: ${{ steps.output.outputs.ENVIRONMENT }}
 
@@ -51,8 +53,5 @@ jobs:
   deploy:
     needs: setup
     uses: ./.github/workflows/deploy.yml
-    permissions:
-      contents: read
-      packages: write
     with:
       environment: ${{ needs.setup.outputs.environment }}
