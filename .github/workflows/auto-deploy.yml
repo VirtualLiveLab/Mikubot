@@ -1,0 +1,57 @@
+name: Auto Deploy
+
+on:
+  push:
+    branches:
+      - master
+      - staging
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: read
+
+jobs:
+  setup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      environment: ${{ steps.output.outputs.ENVIRONMENT }}
+
+    steps:
+      - name: staging
+        id: detect-staging
+        if: github.ref == 'refs/heads/staging'
+        run: |
+          echo "ENVIRONMENT=staging" >> "$GITHUB_ENV"
+
+      - name: production
+        id: detect-production
+        if: github.ref == 'refs/heads/master'
+        run: |
+          echo "ENVIRONMENT=production" >> "$GITHUB_ENV"
+
+      - name: Error
+        if: steps.detect-staging.outcome == 'skipped' && steps.detect-production.outcome == 'skipped'
+        run: |
+          echo "[ERROR] Invalid target branch: ${{ github.ref }}. Skipping deployment."
+          exit 1
+
+      - name: Output environment
+        id: output
+        run: |
+          echo "ENVIRONMENT=${{ env.ENVIRONMENT }}" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: setup
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: ${{ needs.setup.outputs.environment }}
