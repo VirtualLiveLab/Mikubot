@@ -22,8 +22,8 @@ jobs:
     steps:
       - name: Fail if not production or staging
         run: |
-          if [[ "${{ inputs.environment }}" != "production" && "${{ inputs.environment }}" != "staging" ]]; then
-            echo "::error::Invalid environment: ${{ inputs.environment }}. Skipping deployment."
+          if [[ "${{ github.event.inputs.environment }}" != "production" && "${{ github.event.inputs.environment }}" != "staging" ]]; then
+            echo "::error::Invalid environment: ${{ github.event.inputs.environment }}. Skipping deployment."
             exit 1
           fi
 
