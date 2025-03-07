@@ -5,6 +5,14 @@ on:
     branches:
       - master
       - staging
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: デプロイする環境
+        options:
+          - production
+          - staging
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -55,19 +63,25 @@ jobs:
 
     steps:
       - name: staging
-        if: ${{ github.ref == 'refs/heads/staging' }}
+        id: detect-staging
+        if: >-
+          (github.event_name == 'push' && github.ref == 'refs/heads/staging') ||
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging')
         run: |
           echo "ENVIRONMENT=staging" >> "$GITHUB_ENV"
 
       - name: production
-        if: ${{ github.ref == 'refs/heads/master' }}
+        id: detect-production
+        if: >-
+          (github.event_name == 'push' && github.ref == 'refs/heads/master') ||
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
         run: |
           echo "ENVIRONMENT=production" >> "$GITHUB_ENV"
 
       - name: Error
-        if: ${{ github.ref != 'refs/heads/master' && github.ref != 'refs/heads/staging' }}
+        if: steps.detect-staging.outcome == 'skipped' && steps.detect-production.outcome == 'skipped'
         run: |
-          echo "[ERROR] Invalid branch: ${{ github.ref }}. Skipping deployment."
+          echo "[ERROR] Invalid target branch: ${{ github.ref }}. Skipping deployment."
           exit 1
 
       - name: Output environment
@@ -88,8 +102,17 @@ jobs:
       IMAGE_TAG_FOR_PULL: ${{steps.tag.outputs.TAG_FOR_PULL}}
 
     steps:
-      - name: Checkout
+      - name: Checkout for production
+        if: needs.conoha-setup.outputs.ENVIRONMENT == 'production'
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: master
+
+      - name: Checkout for staging
+        if: needs.conoha-setup.outputs.ENVIRONMENT == 'staging'
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: staging
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
