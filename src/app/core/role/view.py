@@ -26,7 +26,7 @@ class RoleCheckView(View):
         def role_embed(role: Role) -> Embed:
             value = "\n".join([m.mention for m in role.members])
             if len(value) > MAX_EMBED_FIELD_VALUE_LENGTH:
-                value = f"{value[:MAX_EMBED_FIELD_VALUE_LENGTH - 3]}..."
+                value = f"{value[: MAX_EMBED_FIELD_VALUE_LENGTH - 3]}..."
 
             e = Embed(
                 title="ロール概要",

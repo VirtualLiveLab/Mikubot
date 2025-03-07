@@ -1,4 +1,4 @@
-from enum import Enum, auto
+from enum import Enum, auto  # noqa: A005
 
 
 class UserVoteStatus(Enum):
