@@ -18,12 +18,17 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: read
+
 jobs:
   conoha-check:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
-    permissions:
-      contents: read
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -31,7 +36,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@f94ec6bedd8674c4426838e6b50417d36b6ab231 # v5.3.1
         with:
-          version: "0.4.17"
+          version: "0.6.5"
           enable-cache: true
 
       - name: Set up Python
@@ -56,8 +61,6 @@ jobs:
     needs: conoha-check
     runs-on: ubuntu-24.04
     timeout-minutes: 5
-    permissions:
-      contents: read
     outputs:
       ENVIRONMENT: ${{ steps.output.outputs.ENVIRONMENT }}
 
@@ -66,7 +69,7 @@ jobs:
         id: detect-staging
         if: >-
           (github.event_name == 'push' && github.ref == 'refs/heads/staging') ||
-          (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging')
+          (github.event_name == 'workflow_dispatch' && inputs.environment == 'staging')
         run: |
           echo "ENVIRONMENT=staging" >> "$GITHUB_ENV"
 
@@ -74,7 +77,7 @@ jobs:
         id: detect-production
         if: >-
           (github.event_name == 'push' && github.ref == 'refs/heads/master') ||
-          (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
+          (github.event_name == 'workflow_dispatch' && inputs.environment == 'production')
         run: |
           echo "ENVIRONMENT=production" >> "$GITHUB_ENV"
 
