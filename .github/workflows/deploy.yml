@@ -6,36 +6,6 @@ on:
       environment:
         type: string
         description: デプロイする環境 (production | staging)
-      container_name:
-        type: string
-        description: Bot のコンテナを識別するための名前 (vars.CONTAINER_NAME を期待)
-      image_name:
-        type: string
-        description: Bot の Docker イメージの名前 (vars.IMAGE を期待)
-      log_channel_id:
-        type: string
-        description: ログを送信する Discord チャンネルの ID (vars.LOG_CHANNEL_ID を期待)
-      notion_domain:
-        type: string
-        description: Notion のドメイン (vars.NOTION_DOMAIN を期待)
-
-    secrets:
-      HOST:
-        required: true
-      SSH_USER:
-        required: true
-      SSH_KEY:
-        required: true
-      DISCORD_BOT_TOKEN:
-        required: true
-      NOTION_TOKEN:
-        required: true
-      SENTRY_DSN:
-        required: true
-      CF_ACCESS_CLIENT_ID:
-        required: true
-      CF_ACCESS_CLIENT_SECRET:
-        required: true
 
 defaults:
   run:
@@ -45,39 +15,21 @@ permissions:
   contents: read
 
 jobs:
-  detect-env:
+  check-input:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
-    outputs:
-      environment: ${{ steps.output.outputs.ENVIRONMENT }}
 
     steps:
-      - name: Detect staging
-        id: detect-staging
-        if: inputs.environment == 'staging'
-        run: |
-          echo "ENVIRONMENT=staging" >> "$GITHUB_ENV"
-
-      - name: Detect production
-        id: detect-production
-        if: inputs.environment == 'production'
-        run: |
-          echo "ENVIRONMENT=production" >> "$GITHUB_ENV"
-
       - name: Fail if not production or staging
-        if: steps.detect-staging.outcome == 'skipped' && steps.detect-production.outcome == 'skipped'
         run: |
-          echo "::error::Invalid environment: ${{ inputs.environment }}. Skipping deployment."
-          exit 1
-
-      - name: Output environment
-        id: output
-        run: |
-          echo "environment=${{ env.ENVIRONMENT }}" >> "$GITHUB_OUTPUT"
+          if [[ "${{ inputs.environment }}" != "production" && "${{ inputs.environment }}" != "staging" ]]; then
+            echo "::error::Invalid environment: ${{ inputs.environment }}. Skipping deployment."
+            exit 1
+          fi
 
   check:
     needs:
-      - detect-env
+      - check-input
     runs-on: ubuntu-24.04
     timeout-minutes: 5
 
@@ -95,18 +47,21 @@ jobs:
 
       - name: Install dependencies
         id: install
-        run: uv sync --dev --frozen
+        run: |
+          uv sync --dev --frozen
 
       - name: lint
+        if: steps.install.outcome == 'success'
         run: |
           uv run ruff check --output-format github .
 
       - name: check format
-        run: uv run ruff format --check .
+        if: steps.install.outcome == 'success'
+        run: |
+          uv run ruff format --check .
 
   build:
     needs:
-      - detect-env
       - check
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -118,13 +73,13 @@ jobs:
 
     steps:
       - name: Checkout for production
-        if: needs.detect-env.outputs.environment == 'production'
+        if: inputs.environment == 'production'
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: master
 
       - name: Checkout for staging
-        if: needs.detect-env.outputs.environment == 'staging'
+        if: inputs.environment == 'staging'
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: staging
@@ -142,13 +97,13 @@ jobs:
       - name: Create image tag
         id: tag
         run: |
-          SHA=${{ github.sha }}
-          TAG="${{ inputs.image_name }}:$(TZ=UTC-9 date +'%Y%m')-${SHA:0:7}"
+          SHA=${{github.sha}}
+          TAG="${{vars.IMAGE}}:$(TZ=UTC-9 date +'%Y%m')-${SHA:0:7}"
           echo "TAG_FOR_PULL=${TAG}" >> "$GITHUB_OUTPUT"
 
-          if [ "${{ needs.detect-env.outputs.environment }}" = "production" ]; then
+          if [ "${{ inputs.environment }}" = "production" ]; then
 
-            LATEST="${{ inputs.image_name }}:latest"
+            LATEST="${{vars.IMAGE}}:latest"
             echo "TAGS=${TAG},${LATEST}" >> "$GITHUB_OUTPUT"
 
           else
@@ -168,9 +123,8 @@ jobs:
 
   deploy:
     needs:
-      - detect-env
       - build
-    environment: ${{ needs.detect-env.outputs.environment }}
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
@@ -187,18 +141,18 @@ jobs:
           # always remove old container: https://stackoverflow.com/questions/34228864/stop-and-delete-docker-container-if-its-running
           script: |
             set -euo pipefail
-            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-            docker stop ${{ inputs.container_name }} || true && docker rm ${{ inputs.container_name }} || true
+            echo ${{secrets.GITHUB_TOKEN}} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+            docker stop ${{ vars.CONTAINER_NAME }} || true && docker rm ${{ vars.CONTAINER_NAME }} || true
             docker run \
               -d \
-              --name ${{ inputs.container_name }} \
-              --env DISCORD_BOT_TOKEN=${{ secrets.DISCORD_BOT_TOKEN }} \
-              --env LOG_CHANNEL_ID=${{ inputs.log_channel_id }} \
-              --env NOTION_TOKEN=${{ secrets.NOTION_TOKEN }} \
-              --env NOTION_DOMAIN=${{ inputs.notion_domain }} \
-              --env SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
-              --env DEPLOY_ENV=${{ needs.detect-env.outputs.environment }} \
-              --env CF_ACCESS_CLIENT_ID=${{ secrets.CF_ACCESS_CLIENT_ID }} \
-              --env CF_ACCESS_CLIENT_SECRET=${{ secrets.CF_ACCESS_CLIENT_SECRET }} \
-              ${{ needs.build.outputs.IMAGE_TAG_FOR_PULL }}
+              --name ${{ vars.CONTAINER_NAME }} \
+              --env DISCORD_BOT_TOKEN=${{secrets.DISCORD_BOT_TOKEN}} \
+              --env LOG_CHANNEL_ID=${{vars.LOG_CHANNEL_ID}} \
+              --env NOTION_TOKEN=${{secrets.NOTION_TOKEN}} \
+              --env NOTION_DOMAIN=${{vars.NOTION_DOMAIN}} \
+              --env SENTRY_DSN=${{secrets.SENTRY_DSN}} \
+              --env DEPLOY_ENV=${{ needs.conoha-setup.outputs.ENVIRONMENT }} \
+              --env CF_ACCESS_CLIENT_ID=${{secrets.CF_ACCESS_CLIENT_ID}} \
+              --env CF_ACCESS_CLIENT_SECRET=${{secrets.CF_ACCESS_CLIENT_SECRET}} \
+              ${{ needs.conoha-build.outputs.IMAGE_TAG_FOR_PULL }}
             docker image prune -f
