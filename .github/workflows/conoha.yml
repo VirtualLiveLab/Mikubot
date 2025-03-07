@@ -1,41 +1,25 @@
 name: Deploy to ConoHa VPS
 
 on:
-  workflow_call:
+  push:
+    branches:
+      - master
+      - staging
+  workflow_dispatch:
     inputs:
       environment:
-        type: string
-        description: デプロイする環境 (production | staging)
+        type: choice
+        description: デプロイする環境
+        options:
+          - production
+          - staging
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-defaults:
-  run:
-    shell: bash
-
-permissions:
-  contents: read
-
 jobs:
-  check-input:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    permissions:
-      contents: read
-
-    steps:
-      - name: Fail if not production or staging
-        run: |
-          if [[ "${{ github.event.inputs.environment }}" != "production" && "${{ github.event.inputs.environment }}" != "staging" ]]; then
-            echo "::error::Invalid environment: ${{ github.event.inputs.environment }}. Skipping deployment."
-            exit 1
-          fi
-
-  check:
-    needs:
-      - check-input
+  conoha-check:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
@@ -47,7 +31,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@f94ec6bedd8674c4426838e6b50417d36b6ab231 # v5.3.1
         with:
-          version: "0.6.5"
+          version: "0.4.17"
           enable-cache: true
 
       - name: Set up Python
@@ -68,11 +52,49 @@ jobs:
         run: |
           uv run ruff format --check .
 
-  build:
-    needs:
-      - check
+  conoha-setup:
+    needs: conoha-check
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      ENVIRONMENT: ${{ steps.output.outputs.ENVIRONMENT }}
+
+    steps:
+      - name: staging
+        id: detect-staging
+        if: >-
+          (github.event_name == 'push' && github.ref == 'refs/heads/staging') ||
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging')
+        run: |
+          echo "ENVIRONMENT=staging" >> "$GITHUB_ENV"
+
+      - name: production
+        id: detect-production
+        if: >-
+          (github.event_name == 'push' && github.ref == 'refs/heads/master') ||
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
+        run: |
+          echo "ENVIRONMENT=production" >> "$GITHUB_ENV"
+
+      - name: Error
+        if: steps.detect-staging.outcome == 'skipped' && steps.detect-production.outcome == 'skipped'
+        run: |
+          echo "[ERROR] Invalid target branch: ${{ github.ref }}. Skipping deployment."
+          exit 1
+
+      - name: Output environment
+        id: output
+        run: |
+          echo "ENVIRONMENT=${{ env.ENVIRONMENT }}" >> "$GITHUB_OUTPUT"
+
+  conoha-build:
+    needs:
+      - conoha-check
+      - conoha-setup
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
     permissions:
       contents: read
       packages: write
@@ -81,13 +103,13 @@ jobs:
 
     steps:
       - name: Checkout for production
-        if: inputs.environment == 'production'
+        if: needs.conoha-setup.outputs.ENVIRONMENT == 'production'
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: master
 
       - name: Checkout for staging
-        if: inputs.environment == 'staging'
+        if: needs.conoha-setup.outputs.ENVIRONMENT == 'staging'
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: staging
@@ -109,7 +131,7 @@ jobs:
           TAG="${{vars.IMAGE}}:$(TZ=UTC-9 date +'%Y%m')-${SHA:0:7}"
           echo "TAG_FOR_PULL=${TAG}" >> "$GITHUB_OUTPUT"
 
-          if [ "${{ inputs.environment }}" = "production" ]; then
+          if [ "${{ needs.conoha-setup.outputs.ENVIRONMENT }}" = "production" ]; then
 
             LATEST="${{vars.IMAGE}}:latest"
             echo "TAGS=${TAG},${LATEST}" >> "$GITHUB_OUTPUT"
@@ -129,10 +151,13 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha, mode=max
 
-  deploy:
+  conoha:
     needs:
-      - build
-    environment: ${{ inputs.environment }}
+      - conoha-check
+      - conoha-setup
+      - conoha-build
+    if: ${{ needs.conoha-setup.outputs.ENVIRONMENT == 'production' || needs.conoha-setup.outputs.ENVIRONMENT == 'staging' }}
+    environment: ${{ needs.conoha-setup.outputs.ENVIRONMENT }}
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
