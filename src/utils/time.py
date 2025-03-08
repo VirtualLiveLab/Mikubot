@@ -1,4 +1,4 @@
-from datetime import UTC, datetime, timedelta, tzinfo
+from datetime import UTC, datetime, timedelta, tzinfo  # noqa: A005
 
 
 class JST(tzinfo):

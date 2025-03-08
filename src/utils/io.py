@@ -1,4 +1,4 @@
-import json
+import json  # noqa: A005
 from pathlib import Path
 from typing import Any
 
