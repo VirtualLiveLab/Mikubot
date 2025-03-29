@@ -16,6 +16,7 @@ def user_embed(
         embed.add_field(
             name=f"所持ロール ({len(owned_roles)})",
             value="\n".join([role.mention for role in owned_roles]) if owned_roles != [] else "なし",
+            inline=False,
         )
 
     embed.set_thumbnail(url=user.display_avatar.url)
