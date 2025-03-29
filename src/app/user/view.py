@@ -1,20 +1,23 @@
 import discord
 
-from src.const.enums import Color
-
 
 def user_embed(
     user: discord.Member | discord.User,
 ) -> discord.Embed:
-    embed = discord.Embed(
-        title=user.display_name,
-        color=Color.MIKU,
-    )
+    embed = discord.Embed(title=user.display_name, description=user.mention)
     embed.add_field(name="ユーザー名", value=user.display_name)
     embed.add_field(
         name="固有 ID",
         value=user.id,
     )
+    if isinstance(user, discord.Member):
+        owned_roles = [role for role in user.roles if role != user.guild.default_role]
+
+        embed.add_field(
+            name=f"所持ロール ({len(owned_roles)})",
+            value="\n".join([role.mention for role in owned_roles]) if owned_roles != [] else "なし",
+        )
+
     embed.set_thumbnail(url=user.display_avatar.url)
     return embed
 
