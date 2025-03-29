@@ -5,15 +5,15 @@ description = "Add your description here"
 authors = [{ name = "sushi-chaaaan", email = "mail@sushichan.live" }]
 dependencies = [
     "discord-py[voice,speed]>=2.5.2",
-    "pydantic>=2.9.2",
-    "aiohttp>=3.11.2",
-    "ductile-ui==0.3.0",
-    "typing-extensions>=4.12.2",
+    "pydantic>=2.11.1",
+    "aiohttp>=3.11.14",
+    "ductile-ui==0.4.0",
+    "typing-extensions>=4.13.0",
     "asyncer>=0.0.8",
     "result>=0.17.0",
-    "notion-client>=2.2.1",
+    "notion-client>=2.3.0",
     "glom>=24.11.0",
-    "sentry-sdk>=2.18.0",
+    "sentry-sdk>=2.24.1",
 ]
 readme = "README.md"
 requires-python = ">= 3.11"
