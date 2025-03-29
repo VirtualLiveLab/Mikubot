@@ -1,4 +1,4 @@
-from collections.abc import Generator, Iterable  # noqa: A005
+from collections.abc import Generator, Iterable
 from typing import LiteralString, TypeVar
 
 _T = TypeVar("_T")
