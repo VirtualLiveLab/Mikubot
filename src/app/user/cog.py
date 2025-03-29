@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from discord import Interaction, Member, app_commands
 from discord.ext import commands
 
-from .embed import user_embed
+from .view import UserEmbedView, user_embed
 
 if TYPE_CHECKING:
     # import some original class
@@ -22,7 +22,7 @@ class User(commands.Cog):
         await interaction.response.defer(ephemeral=True)
 
         embed = user_embed(interaction.user)
-        await interaction.followup.send(embed=embed, ephemeral=True)
+        await interaction.followup.send(embed=embed, view=UserEmbedView(bound_user=interaction.user), ephemeral=True)
 
     @user_group.command(name="fetch", description="ユーザーの情報を検索します。")
     @app_commands.rename(user="ユーザー")
@@ -31,7 +31,7 @@ class User(commands.Cog):
         await interaction.response.defer(ephemeral=True)
 
         embed = user_embed(user)
-        await interaction.followup.send(embed=embed, ephemeral=True)
+        await interaction.followup.send(embed=embed, view=UserEmbedView(bound_user=user), ephemeral=True)
 
 
 async def setup(bot: "Bot") -> None:
