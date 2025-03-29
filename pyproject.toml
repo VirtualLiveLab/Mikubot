@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Add your description here"
 authors = [{ name = "sushi-chaaaan", email = "mail@sushichan.live" }]
 dependencies = [
-    "discord-py[voice,speed]>=2.5.0",
+    "discord-py[voice,speed]>=2.5.2",
     "pydantic>=2.9.2",
     "aiohttp>=3.11.2",
     "ductile-ui==0.3.0",
@@ -25,7 +25,7 @@ build-backend = "hatchling.build"
 
 [tool.uv]
 managed = true
-dev-dependencies = ["mypy>=1.15.0", "python-dotenv>=1.0.1", "ruff>=0.9.10"]
+dev-dependencies = ["mypy>=1.15.0", "python-dotenv>=1.1.0", "ruff>=0.11.2"]
 package = false
 
 [tool.ruff]

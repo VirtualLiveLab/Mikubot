@@ -6,7 +6,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from .embed import omikuji_embed, user_embed
+from .embed import omikuji_embed
 
 if TYPE_CHECKING:
     # import some original class
@@ -36,7 +36,7 @@ class Chat(commands.Cog):
             case _:
                 pass
 
-    @app_commands.command(name="omikuji", description="おみくじを引くよ！")  # type: ignore[arg-type]
+    @app_commands.command(name="omikuji", description="おみくじを引くよ！")
     async def omikuji(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer(ephemeral=False, thinking=True)
         result = get_omikuji_result()
@@ -44,16 +44,10 @@ class Chat(commands.Cog):
         embed = omikuji_embed(result, OMKIJI_RESULT_DICT[result])
         await interaction.followup.send(embed=embed, ephemeral=False)
 
-    @app_commands.command(name="miku", description="ミクさんが返事をしてくれるよ！")  # type: ignore[arg-type]
+    @app_commands.command(name="miku", description="ミクさんが返事をしてくれるよ！")
     async def call_miku(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer(ephemeral=False)
         await interaction.followup.send("MIKU!")
-
-    @app_commands.command(name="helloworld", description="Hello World!")  # type: ignore[arg-type]
-    async def hello_world(self, interaction: discord.Interaction) -> None:
-        await interaction.response.defer(ephemeral=False)
-        emb = user_embed(interaction.user)
-        await interaction.followup.send(embed=emb)
 
 
 OmikujiResult: TypeAlias = Literal["大吉", "中吉", "小吉", "吉", "末吉", "凶", "大凶"]
