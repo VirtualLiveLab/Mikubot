@@ -23,7 +23,7 @@ def user_embed(
     return embed
 
 
-class UserEmbedView(discord.ui.View):
+class UserIdCopyView(discord.ui.View):
     def __init__(self, *, bound_user: discord.User | discord.Member) -> None:
         super().__init__(timeout=None)
         self.user = bound_user
