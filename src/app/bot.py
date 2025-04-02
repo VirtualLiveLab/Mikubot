@@ -9,6 +9,7 @@ import sentry_sdk
 from discord.ext import commands
 from sentry_sdk import Hub
 
+from src.app.admin.view import AdminUserInfoView
 from src.app.core.extract.view import DispandView
 from src.app.utils.view import DeleteView
 from src.config.intent import get_full_intents
@@ -96,6 +97,7 @@ class Bot(commands.Bot):
         # This parameter is not used after once sended
         # So, this is dummy value
         views: list[discord.ui.View] = [
+            AdminUserInfoView(),
             DispandView(message_url="MISSING", button_label="MISSING"),
             DeleteView(),
         ]
