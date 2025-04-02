@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from discord import AllowedMentions, Interaction, Member, app_commands
 from discord.ext import commands
 
-from .view import UserEmbedView, user_embed
+from .view import UserIdCopyView, user_embed
 
 if TYPE_CHECKING:
     # import some original class
@@ -24,7 +24,7 @@ class User(commands.Cog):
         embed = user_embed(interaction.user)
         await interaction.followup.send(
             embed=embed,
-            view=UserEmbedView(bound_user=interaction.user),
+            view=UserIdCopyView(bound_user=interaction.user),
             allowed_mentions=AllowedMentions.none(),  # 不要なメンションを避ける
             ephemeral=True,
         )
@@ -38,7 +38,7 @@ class User(commands.Cog):
         embed = user_embed(user)
         await interaction.followup.send(
             embed=embed,
-            view=UserEmbedView(bound_user=user),
+            view=UserIdCopyView(bound_user=user),
             allowed_mentions=AllowedMentions.none(),  # 不要なメンションを避ける
             ephemeral=True,
         )
