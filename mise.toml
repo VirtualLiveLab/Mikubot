@@ -1,0 +1,34 @@
+[env]
+_.file = '.env'
+
+[tools]
+uv = "0.6.17"
+
+[tasks.setup]
+depends = ["setup:*"]
+description = "Set up the dev environment"
+
+[tasks.tidy]
+depends = ["lint:fix", "format"]
+description = "Lint and format code"
+
+[tasks.up]
+depends = ["setup:*"]
+run = "uv run main.py"
+
+[tasks.lint]
+run = "uv run ruff check"
+description = "Lint code with ruff"
+
+[tasks."lint:fix"]
+run = "uv run ruff check --fix"
+description = "Lint and fix code with ruff"
+
+[tasks.format]
+run = "uv run ruff format"
+description = "Format code with ruff"
+
+[tasks."setup:python"]
+run = "uv sync --dev"
+hide = true
+description = "Set up Python environment"

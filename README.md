@@ -5,10 +5,9 @@ A Discord bot for VirtualLiveLab
 
 ## ローカル開発
 
-
 ### 事前準備
-1. [このドキュメント](https://taskfile.dev/installation/) を参考に`go-task` をインストールしておくこと。
-2. [このドキュメント](https://docs.astral.sh/uv/getting-started/installation/) を参考に`uv` をインストールしておくこと。
+
+[Getting started - mise](https://mise.jdx.dev/getting-started.html) を参考に`mise` をインストールしておく
 
 ### 環境構築
 
@@ -27,7 +26,7 @@ A Discord bot for VirtualLiveLab
 開発環境をセットアップ
 
 ```bash
-  task setup
+  mise i && mise run setup
 ```
 
 [Environment Variables](#environment-variables)を参照して`.env`ファイルに環境変数を設定する
@@ -39,7 +38,7 @@ A Discord bot for VirtualLiveLab
 ローカル環境でBotを起動
 
 ```bash
-  task up
+  mise run up
 ```
 
 > [!TIP]
