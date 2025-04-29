@@ -1,8 +1,7 @@
 [project]
 name = "mikubot"
 version = "0.1.0"
-description = "Add your description here"
-authors = [{ name = "sushi-chaaaan", email = "mail@sushichan.live" }]
+description = "A Discord bot for VirtualLiveLab"
 dependencies = [
     "discord-py[voice,speed]>=2.5.2",
     "pydantic>=2.9.2",
