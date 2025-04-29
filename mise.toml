@@ -3,6 +3,7 @@ _.file = '.env'
 
 [tools]
 uv = "0.6.17"
+# CI で uv のバージョンを読み取るために grep を使っているので、上 2 行を編集しないこと
 
 [tasks.setup]
 depends = ["setup:*"]
