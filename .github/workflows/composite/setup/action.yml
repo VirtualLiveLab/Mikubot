@@ -10,7 +10,7 @@ runs:
       run: echo "uv-version=$(grep -A 1 "\[tools\]" mise.toml | grep "uv" | cut -d'"' -f2)" >> "$GITHUB_OUTPUT"
 
     - name: Install uv
-      uses: astral-sh/setup-uv@d9e0f98d3fc6adb07d1e3d37f3043649ddad06a1 # v6.5.0
+      uses: astral-sh/setup-uv@6b9c6063abd6010835644d4c2e1bef4cf5cd0fca # v6.0.1
       with:
         version: ${{ steps.uv-version.outputs.uv-version }}
         enable-cache: true
