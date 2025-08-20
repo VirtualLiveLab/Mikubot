@@ -11,7 +11,6 @@ def get_help_embed(name: FeatureLabel) -> Embed:
         "ヘルプ": help_embed(),
         "その他": other_embed(),
         "投票": vote_embed(),
-        "ピン留め": pin_embed(),
         "メッセージ展開": dispand_embed(),
     }
     return d[name]
@@ -73,24 +72,6 @@ def vote_embed() -> Embed:
 `/vote`コマンドを実行すると、投票の詳細とリアクションがついたメッセージが送信されます。
 集計するときはそのメッセージを右クリック(PC) or 長押し(スマホ)して、
 「投票を集計」を選択してください。
-""",
-        inline=False,
-    )
-    return e
-
-
-def pin_embed() -> Embed:
-    e = _base_embed()
-    e.title = "ピン留め"
-    e.description = "メッセージをピン留め(もしくは解除)します。"
-    e.add_field(
-        name="使い方",
-        value="""
-メッセージを右クリック(PC) or 長押し(スマホ)して、
-「Pin / Unpin」を選択してください。
-
-まだピン留めされていないメッセージを選択するとピン留めされ、
-ピン留めされたメッセージを選択するとピン留めが解除されます。
 """,
         inline=False,
     )
