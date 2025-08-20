@@ -30,7 +30,7 @@ jobs:
       - run: gem install -N git-pr-release
 
       - name: Create / Update Release PR
-        run: git-pr-release
+        run: git-pr-release --squashed
         env:
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_PR_RELEASE_BRANCH_PRODUCTION: master
