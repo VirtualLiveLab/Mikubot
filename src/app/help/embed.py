@@ -77,6 +77,7 @@ def vote_embed() -> Embed:
     )
     return e
 
+
 def dispand_embed() -> Embed:
     e = _base_embed()
     e.title = "メッセージ展開"
