@@ -42,6 +42,11 @@
             "matchPackageNames": [
                 "discord-py"
             ]
+        },
+        {
+            "groupName": "ductile",
+            "matchPackageNames": ["ductile-ui"],
+            "enabled": false
         }
     ]
 }
