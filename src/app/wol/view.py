@@ -55,7 +55,7 @@ class WOLView(View):
         self.stop()
 
     def render(self) -> ViewObject:
-        def get_label(status: bool | None) -> str:
+        def get_label(*, status: bool | None) -> str:
             match status:
                 case True:
                     return "✅ 起動済み"
@@ -68,8 +68,8 @@ class WOLView(View):
             title="部室PC遠隔起動",
             description="部室のPCを遠隔で起動できます。\nただし、Botでは起動処理が実行されたかまでしか確認できないので、\n実際に起動したかどうかはAnyDeskなどで確認してください。",
         )
-        e.add_field(name="左PC", value=get_label(self.status()["left"]))
-        e.add_field(name="右PC", value=get_label(self.status()["right"]))
+        e.add_field(name="左PC", value=get_label(status=self.status()["left"]))
+        e.add_field(name="右PC", value=get_label(status=self.status()["right"]))
 
         return ViewObject(
             embeds=[e],
