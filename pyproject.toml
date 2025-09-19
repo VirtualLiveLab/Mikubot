@@ -24,7 +24,7 @@ build-backend = "hatchling.build"
 
 [tool.uv]
 managed = true
-dev-dependencies = ["mypy>=1.17.1", "python-dotenv>=1.1.1", "ruff>=0.12.12"]
+dev-dependencies = ["mypy>=1.18.2", "python-dotenv>=1.1.1", "ruff>=0.13.1"]
 package = false
 
 [tool.ruff]
