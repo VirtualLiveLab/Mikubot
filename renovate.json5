@@ -16,7 +16,8 @@
     "branchConcurrentLimit": 0,
     "enabledManagers": [
         "pep621",
-        "github-actions"
+        "github-actions",
+        "asdf" // .tool-versions
     ],
     "packageRules": [
         {
