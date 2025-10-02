@@ -11,8 +11,7 @@ dependencies = [
     "asyncer>=0.0.8",
     "result>=0.17.0",
     "notion-client>=2.5.0",
-    "glom>=24.11.0",
-    "sentry-sdk>=2.37.0",
+    "glom>=24.11.0"
 ]
 readme = "README.md"
 requires-python = ">= 3.11"
