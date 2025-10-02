@@ -58,8 +58,6 @@ A Discord bot for VirtualLiveLab
 
 `NOTION_DOMAIN`: Notionワークスペースのドメイン。ここで設定したドメインのNotion Urlが送信されると検知される。
 
-`SENTRY_DSN`: 開発時は変更しなくてOK
-
 `DEPLOY_ENVIRONMENT`: 開発時は変更しなくてOK
 
 `CF_ACCESS_CLIENT_ID`, `CF_ACCESS_CLIENT_SECRET`: Cloudflare AccessのクライアントIDとクライアントシークレット。`/wol` による部室PC遠隔起動に必要。
@@ -75,8 +73,6 @@ LOG_CHANNEL_ID=""
 
 NOTION_TOKEN=""
 NOTION_DOMAIN=""
-
-SENTRY_DSN=""
 
 # PC遠隔起動機能
 CF_ACCESS_CLIENT_ID=""

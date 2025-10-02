@@ -144,7 +144,6 @@ jobs:
               --env LOG_CHANNEL_ID=${{vars.LOG_CHANNEL_ID}} \
               --env NOTION_TOKEN=${{secrets.NOTION_TOKEN}} \
               --env NOTION_DOMAIN=${{vars.NOTION_DOMAIN}} \
-              --env SENTRY_DSN=${{secrets.SENTRY_DSN}} \
               --env DEPLOY_ENV=${{ needs.conoha-setup.outputs.ENVIRONMENT }} \
               --env CF_ACCESS_CLIENT_ID=${{secrets.CF_ACCESS_CLIENT_ID}} \
               --env CF_ACCESS_CLIENT_SECRET=${{secrets.CF_ACCESS_CLIENT_SECRET}} \

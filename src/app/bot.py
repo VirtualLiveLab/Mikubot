@@ -3,11 +3,7 @@ import sys
 from os import getenv
 
 import discord
-import sentry_sdk
-
-# import sentry_sdk
 from discord.ext import commands
-from sentry_sdk import Hub
 
 from src.app.admin.view import AdminUserInfoView
 from src.app.core.extract.view import DispandView
@@ -29,7 +25,6 @@ if not __debug__:
 
 class Bot(commands.Bot):
     def __init__(self) -> None:
-        self.init_sentry()
         self.config = {"prefix": "!"}
         self.logger = get_my_logger(__name__, level="DEBUG")
 
@@ -110,18 +105,6 @@ class Bot(commands.Bot):
                 self.logger.exception(msg)
                 self.failed_views.append(str(v))
 
-    def init_sentry(self) -> None:
-        environment = getenv("DEPLOY_ENVIRONMENT")
-
-        sentry_sdk.init(
-            dsn=getenv("SENTRY_DSN"),
-            environment=environment,
-            # Set traces_sample_rate to 1.0 to capture 100%
-            # of transactions for performance monitoring.
-            # We recommend adjusting this value in production.
-            traces_sample_rate=0.75,
-        )
-
     async def send_log_message_if_available(self) -> None:
         if (log_channel_id_str := getenv("LOG_CHANNEL_ID")) is None:
             return
@@ -150,10 +133,5 @@ class Bot(commands.Bot):
             await self.shutdown()
 
     async def shutdown(self, status: int = 0) -> None:
-        # shutdown Sentry
-        client = Hub.current.client
-        if client is not None:
-            client.close(timeout=2.0)
-
         await self.close()
         sys.exit(status)
