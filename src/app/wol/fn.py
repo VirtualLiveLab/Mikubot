@@ -4,19 +4,33 @@ from typing import Literal, TypeAlias, TypedDict
 
 import aiohttp
 
-# https://www.notion.so/virtual-live-lab/19805a3d88d94ba5b47408c054a2e9
-LEFT_PC_MAC_ADDRESS = "04:7C:16:01:41:A7"
-RIGHT_PC_MAC_ADDRESS = "FC:34:97:BA:12:F1"
-
-LEFT_PC_IP_ADDRESS = "192.168.39.31"
-RIGHT_PC_IP_ADDRESS = "192.168.39.30"
-
-ComputerType: TypeAlias = Literal["left", "right"]
+# https://www.notion.so/virtual-live-lab/ddf6d9708a2e45469f675c37e6d09e28
+ComputerType: TypeAlias = Literal["left", "right", "stream"]
 
 
 class ComputerStatus(TypedDict):
     left: bool | None
     right: bool | None
+    stream: bool | None
+
+
+class ComputerAddresses(TypedDict):
+    left: str
+    right: str
+    stream: str
+
+
+PC_MAC_ADDRESSES: ComputerAddresses = {
+    "left": "04:7C:16:01:41:A7",
+    "right": "FC:34:97:BA:12:F1",
+    "stream": "34:5A:60:A9:5F:CA",
+}
+
+PC_IP_ADDRESSES: ComputerAddresses = {
+    "left": "192.168.39.31",
+    "right": "192.168.39.30",
+    "stream": "192.168.39.32",
+}
 
 
 def convert_status_str_to_bool(response_text: str) -> bool | None:
@@ -33,15 +47,19 @@ async def get_computer_status() -> ComputerStatus:
     async with (
         get_cf_session() as session,
         session.get(
-            "https://wol.vlldev.com/check_status", params={"ip_address": LEFT_PC_IP_ADDRESS, "test_type": "icmp"}
+            "https://wol.vlldev.com/check_status", params={"ip_address": PC_IP_ADDRESSES["left"], "test_type": "icmp"}
         ) as left_response,
         session.get(
-            "https://wol.vlldev.com/check_status", params={"ip_address": RIGHT_PC_IP_ADDRESS, "test_type": "icmp"}
+            "https://wol.vlldev.com/check_status", params={"ip_address": PC_IP_ADDRESSES["right"], "test_type": "icmp"}
         ) as right_response,
+        session.get(
+            "https://wol.vlldev.com/check_status", params={"ip_address": PC_IP_ADDRESSES["stream"], "test_type": "icmp"}
+        ) as stream_response,
     ):
         left_is_wake = convert_status_str_to_bool(await left_response.text())
         right_is_wake = convert_status_str_to_bool(await right_response.text())
-        return {"left": left_is_wake, "right": right_is_wake}
+        stream_is_wake = convert_status_str_to_bool(await stream_response.text())
+        return {"left": left_is_wake, "right": right_is_wake, "stream": stream_is_wake}
 
 
 class ComputerBootResult(Enum):
@@ -60,7 +78,7 @@ async def boot_computer(computer: ComputerType) -> ComputerBootResult:
         get_cf_session() as session,
         session.post(
             "https://wol.vlldev.com/wakeup",
-            data={"mac_address": LEFT_PC_MAC_ADDRESS if computer == "left" else RIGHT_PC_MAC_ADDRESS},
+            data={"mac_address": PC_MAC_ADDRESSES[computer]},
         ) as response,
     ):
         res = await response.text()
