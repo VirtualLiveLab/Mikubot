@@ -43,6 +43,19 @@ class WOLView(View):
             case ComputerBootResult.ERROR:
                 await interaction.followup.send("エラーが発生しました。", ephemeral=True)
 
+    async def handle_wol_stream(self, interaction: Interaction) -> None:
+        await interaction.response.defer(ephemeral=True)
+        res = await boot_computer("stream")
+
+        match res:
+            case ComputerBootResult.STARTED:
+                self.status.set_state(lambda c: {**c, "stream": True})
+                await interaction.followup.send("配信PCの起動を開始しました。", ephemeral=True)
+            case ComputerBootResult.CANCELED:
+                await interaction.followup.send("配信PCは既に起動しています。", ephemeral=True)
+            case ComputerBootResult.ERROR:
+                await interaction.followup.send("エラーが発生しました。", ephemeral=True)
+
     async def handle_refresh(self, interaction: Interaction) -> None:
         await interaction.response.defer(ephemeral=True)
         current_status = await get_computer_status()
@@ -70,6 +83,7 @@ class WOLView(View):
         )
         e.add_field(name="左PC", value=get_label(status=self.status()["left"]))
         e.add_field(name="右PC", value=get_label(status=self.status()["right"]))
+        e.add_field(name="配信PC", value=get_label(status=self.status()["stream"]))
 
         return ViewObject(
             embeds=[e],
@@ -85,6 +99,12 @@ class WOLView(View):
                     custom_id="wol_right",
                     style={"color": "blurple", "disabled": self.disabled() or bool(self.status()["right"]), "row": 0},
                     on_click=self.handle_wol_right,
+                ),
+                Button(
+                    "配信PCを起動する",
+                    custom_id="wol_stream",
+                    style={"color": "blurple", "disabled": self.disabled() or bool(self.status()["stream"]), "row": 0},
+                    on_click=self.handle_wol_stream,
                 ),
                 Button(
                     "表示を更新する",
