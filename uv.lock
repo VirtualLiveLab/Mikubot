@@ -694,7 +694,7 @@ dev = [
 requires-dist = [
     { name = "aiohttp", specifier = ">=3.12.15" },
     { name = "asyncer", specifier = ">=0.0.8" },
-    { name = "discord-py", extras = ["voice", "speed"], specifier = ">=2.6.3" },
+    { name = "discord-py", extras = ["voice", "speed"], specifier = ">=2.6.4" },
     { name = "ductile-ui", specifier = "==0.3.0" },
     { name = "glom", specifier = ">=25.12.0" },
     { name = "notion-client", specifier = ">=2.5.0" },
