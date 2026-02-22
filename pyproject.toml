@@ -10,7 +10,7 @@ dependencies = [
     "typing-extensions>=4.15.0",
     "asyncer>=0.0.8",
     "result>=0.17.0",
-    "notion-client>=2.5.0",
+    "notion-client>=3.0.0",
     "glom>=25.12.0"
 ]
 readme = "README.md"
