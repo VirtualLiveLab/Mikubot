@@ -1,10 +1,8 @@
 from collections.abc import Generator, Iterable
-from typing import LiteralString, TypeVar
-
-_T = TypeVar("_T")
+from typing import LiteralString
 
 
-def chunks(iterable: list[_T], *, size: int) -> Generator[list[_T], None, None]:
+def chunks[T](iterable: list[T], *, size: int) -> Generator[list[T]]:
     """Yield successive chunks from iterable of size."""
     for i in range(0, len(iterable), size):
         yield iterable[i : i + size]
@@ -31,7 +29,7 @@ def chunk_str_iter_with_max_length(
     max_length: int,
     separator: LiteralString,
     ignore_oversize_fragment: bool = True,
-) -> Generator[str, None, None]:
+) -> Generator[str]:
     """
     Chunk the iterable of strings into strings with a maximum length.
 

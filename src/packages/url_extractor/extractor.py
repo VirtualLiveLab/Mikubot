@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Generic, LiteralString, TypeVar
+from typing import TYPE_CHECKING, LiteralString
 
 from asyncer import asyncify
 from result import Err, Ok
@@ -12,25 +12,22 @@ if TYPE_CHECKING:
 
     from result import Result
 
-_K = TypeVar("_K", bound=LiteralString)
-_PLUGIN = TypeVar("_PLUGIN", bound=IUrlExtractorPlugin)
 
-
-class UrlExtractor(Generic[_K, _PLUGIN]):
+class UrlExtractor[K: LiteralString, PLUGIN: IUrlExtractorPlugin]:
     """A class for extracting URLs using plugins."""
 
-    def __init__(self, plugins: dict[_K, _PLUGIN], /) -> None:
+    def __init__(self, plugins: dict[K, PLUGIN], /) -> None:
         self.__plugins = {k: InternalPlugin(k, p, index=i) for i, (k, p) in enumerate(plugins.items())}
         self.__logger = get_my_logger(self.__class__.__name__)
 
-    def find_all(self, string: str) -> "dict[_K, set[Match[str]] | None]":
+    def find_all(self, string: str) -> "dict[K, set[Match[str]] | None]":
         """Find all occurrences of URLs in the given string using the registered plugins.
 
         Args:
             string `str`: The input string to search for URLs.
 
         Returns:
-            `dict[_K, set[Match[str]] | None]`: A dictionary containing the plugin keys as keys and
+            `dict[K, set[Match[str]] | None]`: A dictionary containing the plugin keys as keys and
                 a set of matches or None as values. Each set of matches represents the URLs found
                 by the corresponding plugin.
         """
@@ -39,14 +36,14 @@ class UrlExtractor(Generic[_K, _PLUGIN]):
             for k, plugin in self.__plugins.items()
         }
 
-    async def find_all_async(self, string: str) -> "dict[_K, set[Match[str]] | None]":
+    async def find_all_async(self, string: str) -> "dict[K, set[Match[str]] | None]":
         """Find all occurrences of URLs in the given string using the registered plugins asynchronously.
 
         Args:
             string `str`: The input string to search for URLs.
 
         Returns:
-            `dict[_K, set[Match[str]] | None]`: A dictionary containing the plugin keys as keys and
+            `dict[K, set[Match[str]] | None]`: A dictionary containing the plugin keys as keys and
                 a set of matches or None as values. Each set of matches represents the URLs found
                 by the corresponding plugin.
         """
