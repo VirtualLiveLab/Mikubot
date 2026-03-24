@@ -1,11 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
     from re import Match, Pattern
-
-_R = TypeVar("_R")
 
 
 class IUrlExtractorPlugin(ABC):
@@ -21,26 +19,26 @@ class IUrlExtractorPlugin(ABC):
         raise NotImplementedError
 
 
-class IUrlSyncProcessor(ABC, Generic[_R]):
+class IUrlSyncProcessor[R](ABC):
     """
     Interface for URL processors.
     """
 
     @abstractmethod
-    def from_matches_sync(self, matches: "Iterable[Match[str]]") -> list[_R]:
+    def from_matches_sync(self, matches: "Iterable[Match[str]]") -> list[R]:
         """
         Extracts information from the given matches.
         """
         raise NotImplementedError
 
 
-class IUrlAsyncProcessor(ABC, Generic[_R]):
+class IUrlAsyncProcessor[R](ABC):
     """
     Interface for URL processors. For asynchronous processing.
     """
 
     @abstractmethod
-    async def from_matches_async(self, matches: "Iterable[Match[str]]") -> list[_R]:
+    async def from_matches_async(self, matches: "Iterable[Match[str]]") -> list[R]:
         """
         Extracts information from the given matches.
         """

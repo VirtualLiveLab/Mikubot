@@ -1,11 +1,11 @@
 import os
 from enum import Enum
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, TypedDict
 
 import aiohttp
 
 # https://www.notion.so/virtual-live-lab/ddf6d9708a2e45469f675c37e6d09e28
-ComputerType: TypeAlias = Literal["left", "right", "stream"]
+type ComputerType = Literal["left", "right", "stream"]
 
 
 class ComputerStatus(TypedDict):

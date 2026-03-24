@@ -1,6 +1,6 @@
 import asyncio
 import secrets
-from typing import TYPE_CHECKING, Literal, TypeAlias
+from typing import TYPE_CHECKING, Literal
 
 import discord
 from discord import app_commands
@@ -50,7 +50,7 @@ class Chat(commands.Cog):
         await interaction.followup.send("MIKU!")
 
 
-OmikujiResult: TypeAlias = Literal["大吉", "中吉", "小吉", "吉", "末吉", "凶", "大凶"]
+type OmikujiResult = Literal["大吉", "中吉", "小吉", "吉", "末吉", "凶", "大凶"]
 OMKIJI_RESULT_DICT: dict[OmikujiResult, str] = {
     "大吉": "大吉だよ！",
     "中吉": "中吉だよ！",
