@@ -1,4 +1,7 @@
-FROM python:3.11-bookworm AS builder
+# syntax=docker/dockerfile:1
+# check=error=true
+
+FROM python:3.13-slim-trixie AS builder
 
 WORKDIR /app
 ENV UV_SYSTEM_PYTHON=true \
@@ -7,7 +10,7 @@ ENV UV_SYSTEM_PYTHON=true \
     UV_LINK_MODE=copy
 
 # Install dependencies
-RUN --mount=from=ghcr.io/astral-sh/uv:0.4.17,source=/uv,target=/bin/uv \
+RUN --mount=from=ghcr.io/astral-sh/uv:0.11.0,source=/uv,target=/bin/uv \
     --mount=type=cache,target=${UV_CACHE_DIR} \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
@@ -15,8 +18,8 @@ RUN --mount=from=ghcr.io/astral-sh/uv:0.4.17,source=/uv,target=/bin/uv \
     && uv pip install -r requirements.txt --target /app/.uv-pip/site-packages
 
 # https://github.com/GoogleContainerTools/distroless/blob/main/python3/BUILD
-# distroless/python3-debian12のPythonは3.11
-FROM gcr.io/distroless/python3-debian12:nonroot AS runner
+# distroless/python3-debian13のPythonは3.13
+FROM gcr.io/distroless/python3-debian13:nonroot AS runner
 WORKDIR /app
 
 # distrolessのPythonはデフォルトではsite-packagesを参照しない

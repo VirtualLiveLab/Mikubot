@@ -11,10 +11,10 @@ dependencies = [
     "asyncer>=0.0.8",
     "result>=0.17.0",
     "notion-client>=2.5.0",
-    "glom>=25.12.0"
+    "glom>=25.12.0",
 ]
 readme = "README.md"
-requires-python = ">= 3.11"
+requires-python = ">= 3.13"
 
 [dependency-groups]
 dev = ["mypy>=1.17.1", "python-dotenv>=1.2.2", "ruff>=0.13.2"]
@@ -29,7 +29,7 @@ package = false
 
 [tool.ruff]
 # https://qiita.com/yuji38kwmt/items/63e82126076204923520
-target-version = "py311"
+target-version = "py313"
 line-length = 125
 
 [tool.ruff.lint]
@@ -43,7 +43,6 @@ ignore = [
     "ERA",     # : 役立つこともあるが、コメントアウトしていないコードも警告されるので無視する
     "COM812",  # recommended by ruff formatter
     "ISC001",  # recommended by ruff formatter
-    "UP040",   # discord.py can not understand new type syntax
 ]
 select = ["ALL"]
 
@@ -69,7 +68,7 @@ line-ending = "auto"
 
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.13"
 exclude = [".venv"]
 follow_imports = "normal"
 warn_redundant_casts = true
