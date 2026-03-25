@@ -1,6 +1,6 @@
-from typing import Literal, TypeAlias
+from typing import Literal
 
-FeatureLabel: TypeAlias = Literal["メッセージ展開", "投票", "その他", "ヘルプ"]
+type FeatureLabel = Literal["メッセージ展開", "投票", "その他", "ヘルプ"]
 FEATURE_LABEL_LIST: list[FeatureLabel] = [
     "メッセージ展開",
     "投票",
