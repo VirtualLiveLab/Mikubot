@@ -19,21 +19,21 @@ class ComputerAddresses(TypedDict):
     left: str
     right: str
     stream: str
-    kizai:str
+    kizai: str
 
 
 PC_MAC_ADDRESSES: ComputerAddresses = {
     "left": "04:7C:16:01:41:A7",
     "right": "FC:34:97:BA:12:F1",
     "stream": "34:5A:60:A9:5F:CA",
-    "kizai" : "4C:C5:D9:4F:2D:9D",
+    "kizai": "4C:C5:D9:4F:2D:9D",
 }
 
 PC_IP_ADDRESSES: ComputerAddresses = {
     "left": "192.168.39.31",
     "right": "192.168.39.30",
     "stream": "192.168.39.32",
-    "kizai": "192.168.39.33"
+    "kizai": "192.168.39.33",
 }
 
 
@@ -60,14 +60,14 @@ async def get_computer_status() -> ComputerStatus:
             "https://wol.vlldev.com/check_status", params={"ip_address": PC_IP_ADDRESSES["stream"], "test_type": "icmp"}
         ) as stream_response,
         session.get(
-        "https://wol.vlldev.com/check_status", params={"ip_address": PC_IP_ADDRESSES["kizai"], "test_type": "icmp"}
+            "https://wol.vlldev.com/check_status", params={"ip_address": PC_IP_ADDRESSES["kizai"], "test_type": "icmp"}
         ) as kizai_response,
     ):
         left_is_wake = convert_status_str_to_bool(await left_response.text())
         right_is_wake = convert_status_str_to_bool(await right_response.text())
         stream_is_wake = convert_status_str_to_bool(await stream_response.text())
         kizai_is_wake = convert_status_str_to_bool(await kizai_response.text())
-        return {"left": left_is_wake, "right": right_is_wake, "stream": stream_is_wake, "kizai":kizai_is_wake}
+        return {"left": left_is_wake, "right": right_is_wake, "stream": stream_is_wake, "kizai": kizai_is_wake}
 
 
 class ComputerBootResult(Enum):

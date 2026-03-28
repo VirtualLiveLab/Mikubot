@@ -69,7 +69,6 @@ class WOLView(View):
             case ComputerBootResult.ERROR:
                 await interaction.followup.send("エラーが発生しました。", ephemeral=True)
 
-
     async def handle_refresh(self, interaction: Interaction) -> None:
         await interaction.response.defer(ephemeral=True)
         current_status = await get_computer_status()
