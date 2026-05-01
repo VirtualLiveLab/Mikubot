@@ -605,20 +605,20 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "aiohttp", specifier = ">=3.12.15" },
-    { name = "asyncer", specifier = ">=0.0.8" },
+    { name = "aiohttp", specifier = ">=3.13.3" },
+    { name = "asyncer", specifier = ">=0.0.17" },
     { name = "discord-py", extras = ["voice", "speed"], specifier = ">=2.6.4" },
     { name = "ductile-ui", specifier = "==0.3.0" },
     { name = "glom", specifier = ">=25.12.0" },
-    { name = "notion-client", specifier = ">=2.5.0" },
-    { name = "pydantic", specifier = ">=2.11.7" },
+    { name = "notion-client", specifier = ">=2.7.0" },
+    { name = "pydantic", specifier = ">=2.12.5" },
     { name = "result", specifier = ">=0.17.0" },
     { name = "typing-extensions", specifier = ">=4.15.0" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "mypy", specifier = ">=1.17.1" },
+    { name = "mypy", specifier = ">=1.19.1" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
     { name = "ruff", specifier = ">=0.15.7" },
 ]
