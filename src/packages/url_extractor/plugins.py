@@ -20,5 +20,5 @@ class NotionPlugin(IUrlExtractorPlugin):
 
     def url_pattern(self) -> re.Pattern[str] | str:
         return re.compile(
-            rf"(?!<)https://www.notion.so/{self.__workspace}/" r"(?P<page_name>.+-)?(?P<page_uuid>[^\?]+)\??.*(?!>)"
+            rf"(?!<)https://((www\.)?notion\.so|app\.notion\.com/p)/{self.__workspace}/" r"(?P<page_name>.+-)?(?P<page_uuid>[^\?]+)\??.*(?!>)"
         )
