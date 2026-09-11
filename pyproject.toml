@@ -4,13 +4,13 @@ version = "0.1.0"
 description = "A Discord bot for VirtualLiveLab"
 dependencies = [
     "discord-py[voice,speed]>=2.6.4",
-    "pydantic>=2.12.5",
+    "pydantic>=2.13.5",
     "aiohttp>=3.13.3",
     "ductile-ui==0.3.0",
-    "typing-extensions>=4.15.0",
-    "asyncer>=0.0.17",
+    "typing-extensions>=4.16.0",
+    "asyncer>=0.0.18",
     "result>=0.17.0",
-    "notion-client>=2.7.0",
+    "notion-client>=3.1.0",
     "glom>=25.12.0",
 ]
 readme = "README.md"
